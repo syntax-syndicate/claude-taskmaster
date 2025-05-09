@@ -1,7 +1,7 @@
 /**
  * Integration tests for the MCP server 'rules' tool (add/remove brand rules)
  */
-
+import { jest } from '@jest/globals';
 import { rulesDirect } from '../../../mcp-server/src/core/direct-functions/rules.js';
 import fs from 'fs';
 import path from 'path';
