@@ -1096,7 +1096,9 @@ describe('rules command', () => {
 		jest.clearAllMocks();
 		program = setupCLI();
 		mockConsoleLog = jest.spyOn(console, 'log').mockImplementation(() => {});
-		mockConsoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+		mockConsoleError = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => {});
 		mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
 	});
 
@@ -1104,8 +1106,12 @@ describe('rules command', () => {
 		// Simulate: task-master rules add roo
 		await program.parseAsync(['rules', 'add', 'roo'], { from: 'user' });
 		// Expect some log output indicating success
-		expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringMatching(/adding rules for brand: roo/i));
-		expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringMatching(/completed adding rules for brand: roo/i));
+		expect(mockConsoleLog).toHaveBeenCalledWith(
+			expect.stringMatching(/adding rules for brand: roo/i)
+		);
+		expect(mockConsoleLog).toHaveBeenCalledWith(
+			expect.stringMatching(/completed adding rules for brand: roo/i)
+		);
 		// Should not exit with error
 		expect(mockExit).not.toHaveBeenCalledWith(1);
 	});
@@ -1114,8 +1120,12 @@ describe('rules command', () => {
 		// Simulate: task-master rules remove roo
 		await program.parseAsync(['rules', 'remove', 'roo'], { from: 'user' });
 		// Expect some log output indicating removal
-		expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringMatching(/removing rules for brand: roo/i));
-		expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringMatching(/completed removal for brand: roo/i));
+		expect(mockConsoleLog).toHaveBeenCalledWith(
+			expect.stringMatching(/removing rules for brand: roo/i)
+		);
+		expect(mockConsoleLog).toHaveBeenCalledWith(
+			expect.stringMatching(/completed removal for brand: roo/i)
+		);
 		// Should not exit with error
 		expect(mockExit).not.toHaveBeenCalledWith(1);
 	});
