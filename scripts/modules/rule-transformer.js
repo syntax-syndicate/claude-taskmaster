@@ -221,7 +221,8 @@ function convertAllRulesToBrandRules(projectDir, profile) {
 
 			// Determine target file name
 			let targetFilename;
-			if (fileMap[file]) { // If an explicit mapping exists, use it
+			if (fileMap[file]) {
+				// If an explicit mapping exists, use it
 				targetFilename = fileMap[file];
 			} else if (brandName === 'Roo' || brandName === 'Windsurf') {
 				// For Roo and Windsurf, change .mdc to .md if not in fileMap
