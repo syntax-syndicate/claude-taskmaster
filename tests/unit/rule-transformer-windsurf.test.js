@@ -3,12 +3,12 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { convertRuleToBrandRule } from '../../scripts/modules/rule-transformer.js';
-import * as rooProfile from '../../scripts/profiles/roo.js';
+import * as windsurfProfile from '../../scripts/profiles/windsurf.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-describe('Rule Transformer', () => {
+describe('Windsurf Rule Transformer', () => {
 	const testDir = path.join(__dirname, 'temp-test-dir');
 
 	beforeAll(() => {
@@ -40,15 +40,15 @@ Also has references to .mdc files.`;
 		fs.writeFileSync(testCursorRule, testContent);
 
 		// Convert it
-		const testRooRule = path.join(testDir, 'basic-terms.md');
-		convertRuleToBrandRule(testCursorRule, testRooRule, rooProfile);
+		const testWindsurfRule = path.join(testDir, 'basic-terms.md');
+		convertRuleToBrandRule(testCursorRule, testWindsurfRule, windsurfProfile);
 
 		// Read the converted file
-		const convertedContent = fs.readFileSync(testRooRule, 'utf8');
+		const convertedContent = fs.readFileSync(testWindsurfRule, 'utf8');
 
 		// Verify transformations
-		expect(convertedContent).toContain('Roo Code');
-		expect(convertedContent).toContain('roocode.com');
+		expect(convertedContent).toContain('Windsurf');
+		expect(convertedContent).toContain('windsurf.com');
 		expect(convertedContent).toContain('.md');
 		expect(convertedContent).not.toContain('cursor.so');
 		expect(convertedContent).not.toContain('Cursor rule');
@@ -71,11 +71,11 @@ alwaysApply: true
 		fs.writeFileSync(testCursorRule, testContent);
 
 		// Convert it
-		const testRooRule = path.join(testDir, 'tool-refs.md');
-		convertRuleToBrandRule(testCursorRule, testRooRule, rooProfile);
+		const testWindsurfRule = path.join(testDir, 'tool-refs.md');
+		convertRuleToBrandRule(testCursorRule, testWindsurfRule, windsurfProfile);
 
 		// Read the converted file
-		const convertedContent = fs.readFileSync(testRooRule, 'utf8');
+		const convertedContent = fs.readFileSync(testWindsurfRule, 'utf8');
 
 		// Verify transformations
 		expect(convertedContent).toContain('search_files tool');
@@ -99,15 +99,17 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 		fs.writeFileSync(testCursorRule, testContent);
 
 		// Convert it
-		const testRooRule = path.join(testDir, 'file-refs.md');
-		convertRuleToBrandRule(testCursorRule, testRooRule, rooProfile);
+		const testWindsurfRule = path.join(testDir, 'file-refs.md');
+		convertRuleToBrandRule(testCursorRule, testWindsurfRule, windsurfProfile);
 
 		// Read the converted file
-		const convertedContent = fs.readFileSync(testRooRule, 'utf8');
+		const convertedContent = fs.readFileSync(testWindsurfRule, 'utf8');
 
 		// Verify transformations
-		expect(convertedContent).toContain('(mdc:.roo/rules/dev_workflow.md)');
-		expect(convertedContent).toContain('(mdc:.roo/rules/taskmaster.md)');
+		expect(convertedContent).toContain('(mdc:.windsurf/rules/dev_workflow.md)');
+		expect(convertedContent).toContain('(mdc:.windsurf/rules/taskmaster.md)');
 		expect(convertedContent).not.toContain('(mdc:.cursor/rules/');
 	});
+
+
 });
