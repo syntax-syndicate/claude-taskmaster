@@ -6,10 +6,7 @@ const rulesDir = '.windsurf/rules';
 
 // File name mapping (specific files with naming changes)
 const fileMap = {
-	'cursor_rules.mdc': 'windsurf_rules.md',
-	'dev_workflow.mdc': 'dev_workflow.md',
-	'self_improve.mdc': 'self_improve.md',
-	'taskmaster.mdc': 'taskmaster.md'
+	'cursor_rules.mdc': 'windsurf_rules.md'
 	// Add other mappings as needed
 };
 
