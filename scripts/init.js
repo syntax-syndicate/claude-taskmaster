@@ -446,9 +446,15 @@ async function initializeProject(options = {}) {
 				try {
 					const mcpResult = await options.mcpServer.call('rules', mcpArgs);
 					if (mcpResult && mcpResult.success) {
-						log('success', `Brand rules added via MCP: ${selectedBrandRules.join(', ')}`);
+						log(
+							'success',
+							`Brand rules added via MCP: ${selectedBrandRules.join(', ')}`
+						);
 					} else {
-						log('error', `MCP rules add failed: ${mcpResult?.error?.message || 'Unknown error'}`);
+						log(
+							'error',
+							`MCP rules add failed: ${mcpResult?.error?.message || 'Unknown error'}`
+						);
 					}
 				} catch (err) {
 					log('error', `MCP server error: ${err.message}`);

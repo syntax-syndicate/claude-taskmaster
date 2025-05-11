@@ -110,6 +110,4 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 		expect(convertedContent).toContain('(mdc:.windsurf/rules/taskmaster.md)');
 		expect(convertedContent).not.toContain('(mdc:.cursor/rules/');
 	});
-
-
 });

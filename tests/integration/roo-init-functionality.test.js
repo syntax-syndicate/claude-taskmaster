@@ -19,26 +19,37 @@ describe('Roo Profile Initialization Functionality', () => {
 		expect(rooProfileContent).toContain(
 			'copyRecursiveSync(sourceDir, targetDir)'
 		);
-		expect(rooProfileContent).toContain("path.resolve(__dirname, '../../assets/roocode')"); // Verifies sourceDir definition
+		expect(rooProfileContent).toContain(
+			"path.resolve(__dirname, '../../assets/roocode')"
+		); // Verifies sourceDir definition
 
 		// Check for the loop that processes rooModes
 		expect(rooProfileContent).toContain('for (const mode of rooModes)');
-		
+
 		// Check for creation of mode-specific rule directories (e.g., .roo/rules-architect)
 		// This is the line: if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
-		expect(rooProfileContent).toContain("fs.mkdirSync(destDir, { recursive: true });");
-		expect(rooProfileContent).toContain("const destDir = path.dirname(dest);"); // part of the same logic block
-
+		expect(rooProfileContent).toContain(
+			'fs.mkdirSync(destDir, { recursive: true });'
+		);
+		expect(rooProfileContent).toContain('const destDir = path.dirname(dest);'); // part of the same logic block
 	});
 
 	test('roo.js profile copies .roomodes file via onAddBrandRules', () => {
 		expect(rooProfileContent).toContain('onAddBrandRules(targetDir)');
-		
+
 		// Check for the specific .roomodes copy logic
-		expect(rooProfileContent).toContain('fs.copyFileSync(roomodesSrc, roomodesDest);');
-		expect(rooProfileContent).toContain("const roomodesSrc = path.join(sourceDir, '.roomodes');");
-		expect(rooProfileContent).toContain("const roomodesDest = path.join(targetDir, '.roomodes');");
-		expect(rooProfileContent).toContain("path.resolve(__dirname, '../../assets/roocode')"); // sourceDir for roomodesSrc
+		expect(rooProfileContent).toContain(
+			'fs.copyFileSync(roomodesSrc, roomodesDest);'
+		);
+		expect(rooProfileContent).toContain(
+			"const roomodesSrc = path.join(sourceDir, '.roomodes');"
+		);
+		expect(rooProfileContent).toContain(
+			"const roomodesDest = path.join(targetDir, '.roomodes');"
+		);
+		expect(rooProfileContent).toContain(
+			"path.resolve(__dirname, '../../assets/roocode')"
+		); // sourceDir for roomodesSrc
 	});
 
 	test('roo.js profile copies mode-specific rule files via onAddBrandRules', () => {
@@ -47,11 +58,17 @@ describe('Roo Profile Initialization Functionality', () => {
 
 		// Check for the specific mode rule file copy logic
 		expect(rooProfileContent).toContain('fs.copyFileSync(src, dest);');
-		
+
 		// Check source path construction for mode rules
-		expect(rooProfileContent).toContain("const src = path.join(rooModesDir, `rules-${mode}`, `${mode}-rules`);");
+		expect(rooProfileContent).toContain(
+			'const src = path.join(rooModesDir, `rules-${mode}`, `${mode}-rules`);'
+		);
 		// Check destination path construction for mode rules
-		expect(rooProfileContent).toContain("const dest = path.join(targetDir, '.roo', `rules-${mode}`, `${mode}-rules`);");
-		expect(rooProfileContent).toContain("const rooModesDir = path.join(sourceDir, '.roo');"); // part of src path
+		expect(rooProfileContent).toContain(
+			"const dest = path.join(targetDir, '.roo', `rules-${mode}`, `${mode}-rules`);"
+		);
+		expect(rooProfileContent).toContain(
+			"const rooModesDir = path.join(sourceDir, '.roo');"
+		); // part of src path
 	});
 });

@@ -22,20 +22,34 @@ describe('Roo Files Inclusion in Package', () => {
 		const rooJsContent = fs.readFileSync(rooJsPath, 'utf8');
 
 		// Check for the main handler function
-		expect(rooJsContent.includes("onAddBrandRules(targetDir)")).toBe(true);
+		expect(rooJsContent.includes('onAddBrandRules(targetDir)')).toBe(true);
 
 		// Check for general recursive copy of assets/roocode
-		expect(rooJsContent.includes("copyRecursiveSync(sourceDir, targetDir)")).toBe(true);
-		
+		expect(
+			rooJsContent.includes('copyRecursiveSync(sourceDir, targetDir)')
+		).toBe(true);
+
 		// Check for .roomodes file copying logic (source and destination paths)
-		expect(rooJsContent.includes("path.join(sourceDir, '.roomodes')")).toBe(true);
-		expect(rooJsContent.includes("path.join(targetDir, '.roomodes')")).toBe(true);
+		expect(rooJsContent.includes("path.join(sourceDir, '.roomodes')")).toBe(
+			true
+		);
+		expect(rooJsContent.includes("path.join(targetDir, '.roomodes')")).toBe(
+			true
+		);
 
 		// Check for mode-specific rule file copying logic
-		expect(rooJsContent.includes("for (const mode of rooModes)")).toBe(true);
-		expect(rooJsContent.includes("path.join(rooModesDir, `rules-${mode}`, `${mode}-rules`)")).toBe(true);
-		expect(rooJsContent.includes("path.join(targetDir, '.roo', `rules-${mode}`, `${mode}-rules`)")).toBe(true);
-		
+		expect(rooJsContent.includes('for (const mode of rooModes)')).toBe(true);
+		expect(
+			rooJsContent.includes(
+				'path.join(rooModesDir, `rules-${mode}`, `${mode}-rules`)'
+			)
+		).toBe(true);
+		expect(
+			rooJsContent.includes(
+				"path.join(targetDir, '.roo', `rules-${mode}`, `${mode}-rules`)"
+			)
+		).toBe(true);
+
 		// Check for definition of rooModes array and all modes
 		const rooModesArrayRegex = /const rooModes\s*=\s*\[([^\]]+)\]\s*;?/;
 		const rooModesMatch = rooJsContent.match(rooModesArrayRegex);

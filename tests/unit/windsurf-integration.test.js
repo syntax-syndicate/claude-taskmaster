@@ -59,7 +59,14 @@ describe('Windsurf Integration', () => {
 		fs.mkdirSync(path.join(tempDir, '.windsurf', 'rules'), { recursive: true });
 
 		// Create mode-specific rule directories
-		const windsurfModes = ['architect', 'ask', 'boomerang', 'code', 'debug', 'test'];
+		const windsurfModes = [
+			'architect',
+			'ask',
+			'boomerang',
+			'code',
+			'debug',
+			'test'
+		];
 		for (const mode of windsurfModes) {
 			fs.mkdirSync(path.join(tempDir, '.windsurf', `rules-${mode}`), {
 				recursive: true
@@ -71,7 +78,10 @@ describe('Windsurf Integration', () => {
 		}
 
 		// Copy .windsurfmodes file
-		fs.writeFileSync(path.join(tempDir, '.windsurfmodes'), 'Windsurfmodes file content');
+		fs.writeFileSync(
+			path.join(tempDir, '.windsurfmodes'),
+			'Windsurfmodes file content'
+		);
 	}
 
 	test('creates all required .windsurf directories', () => {

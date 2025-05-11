@@ -2,7 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { convertRuleToBrandRule, convertAllRulesToBrandRules } from '../../scripts/modules/rule-transformer.js';
+import {
+	convertRuleToBrandRule,
+	convertAllRulesToBrandRules
+} from '../../scripts/modules/rule-transformer.js';
 import * as cursorProfile from '../../scripts/profiles/cursor.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -113,7 +116,4 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 		expect(convertedContent).not.toContain('(mdc:.roo/rules/');
 		expect(convertedContent).not.toContain('(mdc:.windsurf/rules/');
 	});
-
-
-
 });

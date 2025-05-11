@@ -2,7 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { convertRuleToBrandRule, convertAllRulesToBrandRules } from '../../scripts/modules/rule-transformer.js';
+import {
+	convertRuleToBrandRule,
+	convertAllRulesToBrandRules
+} from '../../scripts/modules/rule-transformer.js';
 import * as rooProfile from '../../scripts/profiles/roo.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -111,17 +114,17 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 		expect(convertedContent).not.toContain('(mdc:.cursor/rules/');
 	});
 
-  it('should run post-processing when converting all rules for Roo', () => {
-    // Simulate a rules directory with a .mdc file
-    const assetsRulesDir = path.join(testDir, 'assets', 'rules');
-    fs.mkdirSync(assetsRulesDir, { recursive: true });
-    const assetRule = path.join(assetsRulesDir, 'dev_workflow.mdc');
-    fs.writeFileSync(assetRule, 'dummy');
-    // Should create .roo/rules and call post-processing
-    convertAllRulesToBrandRules(testDir, rooProfile);
-    // Check for post-processing artifacts, e.g., rules-* folders or extra files
-    const rooDir = path.join(testDir, '.roo');
-    const found = fs.readdirSync(rooDir).some(f => f.startsWith('rules-'));
-    expect(found).toBe(true); // There should be at least one rules-* folder
-  });
+	it('should run post-processing when converting all rules for Roo', () => {
+		// Simulate a rules directory with a .mdc file
+		const assetsRulesDir = path.join(testDir, 'assets', 'rules');
+		fs.mkdirSync(assetsRulesDir, { recursive: true });
+		const assetRule = path.join(assetsRulesDir, 'dev_workflow.mdc');
+		fs.writeFileSync(assetRule, 'dummy');
+		// Should create .roo/rules and call post-processing
+		convertAllRulesToBrandRules(testDir, rooProfile);
+		// Check for post-processing artifacts, e.g., rules-* folders or extra files
+		const rooDir = path.join(testDir, '.roo');
+		const found = fs.readdirSync(rooDir).some((f) => f.startsWith('rules-'));
+		expect(found).toBe(true); // There should be at least one rules-* folder
+	});
 });

@@ -59,7 +59,14 @@ describe('Cursor Integration', () => {
 		fs.mkdirSync(path.join(tempDir, '.cursor', 'rules'), { recursive: true });
 
 		// Create mode-specific rule directories
-		const cursorModes = ['architect', 'ask', 'boomerang', 'code', 'debug', 'test'];
+		const cursorModes = [
+			'architect',
+			'ask',
+			'boomerang',
+			'code',
+			'debug',
+			'test'
+		];
 		for (const mode of cursorModes) {
 			fs.mkdirSync(path.join(tempDir, '.cursor', `rules-${mode}`), {
 				recursive: true
@@ -71,7 +78,10 @@ describe('Cursor Integration', () => {
 		}
 
 		// Copy .cursormodes file
-		fs.writeFileSync(path.join(tempDir, '.cursormodes'), 'Cursormodes file content');
+		fs.writeFileSync(
+			path.join(tempDir, '.cursormodes'),
+			'Cursormodes file content'
+		);
 	}
 
 	test('creates all required .cursor directories', () => {
