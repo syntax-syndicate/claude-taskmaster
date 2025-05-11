@@ -150,7 +150,7 @@ function convertRuleToBrandRule(sourcePath, targetPath, profile) {
 	const { conversionConfig, brandName, globalReplacements } = profile;
 	try {
 		log(
-			'info',
+			'debug',
 			`Converting Cursor rule ${path.basename(sourcePath)} to ${brandName} rule ${path.basename(targetPath)}`
 		);
 
@@ -173,7 +173,7 @@ function convertRuleToBrandRule(sourcePath, targetPath, profile) {
 		// Write transformed content
 		fs.writeFileSync(targetPath, transformedContent);
 		log(
-			'success',
+			'debug',
 			`Successfully converted ${path.basename(sourcePath)} to ${path.basename(targetPath)}`
 		);
 
@@ -204,7 +204,7 @@ function convertAllRulesToBrandRules(projectDir, profile) {
 	// Ensure brand rules directory exists
 	if (!fs.existsSync(brandRulesDir)) {
 		fs.mkdirSync(brandRulesDir, { recursive: true });
-		log('info', `Created ${brandName} rules directory: ${brandRulesDir}`);
+		log('debug', `Created ${brandName} rules directory: ${brandRulesDir}`);
 		// Also create MCP configuration in the brand directory
 		const brandDir = path.dirname(brandRulesDir);
 		setupMCPConfiguration(brandDir);
@@ -233,7 +233,7 @@ function convertAllRulesToBrandRules(projectDir, profile) {
 	});
 
 	log(
-		'info',
+		'debug',
 		`Rule conversion complete: ${success} successful, ${failed} failed`
 	);
 
@@ -274,43 +274,57 @@ function removeBrandRules(projectDir, profile) {
 		} catch (e) {
 			const errorMessage = `Failed to remove MCP configuration at ${mcpPath}: ${e.message}`;
 			log('warn', errorMessage);
-			result.error = result.error ? `${result.error}; ${errorMessage}` : errorMessage;
+			result.error = result.error
+				? `${result.error}; ${errorMessage}`
+				: errorMessage;
 		}
 	}
 
-	if (brandName.toLowerCase() === 'cursor') {
-		const skipMessage = 'Cannot remove default Cursor rules directory. Skipping.';
-		log('warn', skipMessage);
-		result.skipped = true;
-		result.error = skipMessage;
-		return result; // Early exit for cursor brand
-	}
-
+	// Remove rules directory
 	if (fs.existsSync(brandRulesDir)) {
 		try {
 			fs.rmSync(brandRulesDir, { recursive: true, force: true });
 			result.rulesDirRemoved = true;
-
-			if (
-				fs.existsSync(brandDir) &&
-				path.basename(brandDir) !== '.cursor' &&
-				fs.readdirSync(brandDir).length === 0
-			) {
-				fs.rmdirSync(brandDir);
-				result.brandFolderRemoved = true;
-			}
-			result.success = true; // Mark overall success if rules dir was removed
 		} catch (e) {
-			const errorMessage = `Failed to remove rules directory ${brandRulesDir} or brand folder ${brandDir}: ${e.message}`;
-			log('error', errorMessage); // Log as error since this is a primary operation failing
-			result.error = result.error ? `${result.error}; ${errorMessage}` : errorMessage;
+			const errorMessage = `Failed to remove rules directory at ${brandRulesDir}: ${e.message}`;
+			log('warn', errorMessage);
+			result.error = result.error
+				? `${result.error}; ${errorMessage}`
+				: errorMessage;
 		}
-	} else {
-		const warnMessage = `Rules directory not found: ${brandRulesDir}`;
-		log('warn', warnMessage);
-		result.error = result.error ? `${result.error}; ${warnMessage}` : warnMessage;
-		// success remains false as the primary target (rulesDir) was not found
 	}
+
+	// Remove brand folder if empty
+	if (fs.existsSync(brandDir) && fs.readdirSync(brandDir).length === 0) {
+		try {
+			fs.rmdirSync(brandDir);
+			result.brandFolderRemoved = true;
+		} catch (e) {
+			const errorMessage = `Failed to remove empty brand folder at ${brandDir}: ${e.message}`;
+			log('warn', errorMessage);
+			result.error = result.error
+				? `${result.error}; ${errorMessage}`
+				: errorMessage;
+		}
+	}
+
+	// Call onRemoveBrandRules hook if present
+	if (typeof profile.onRemoveBrandRules === 'function') {
+		try {
+			profile.onRemoveBrandRules(projectDir);
+		} catch (e) {
+			const errorMessage = `Error in onRemoveBrandRules for ${brandName}: ${e.message}`;
+			log('warn', errorMessage);
+			result.error = result.error
+				? `${result.error}; ${errorMessage}`
+				: errorMessage;
+		}
+	}
+
+	result.success =
+		result.mcpConfigRemoved ||
+		result.rulesDirRemoved ||
+		result.brandFolderRemoved;
 	return result;
 }
 

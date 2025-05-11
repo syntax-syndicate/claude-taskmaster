@@ -7,7 +7,15 @@ import {
 	enableSilentMode,
 	disableSilentMode
 } from '../../../../scripts/modules/utils.js';
-import { removeBrandRules, convertAllRulesToBrandRules, BRAND_NAMES, isValidBrand, getBrandProfile } from '../../../../scripts/modules/rule-transformer.js';
+import {
+	removeBrandRules,
+	convertAllRulesToBrandRules,
+	BRAND_NAMES,
+	isValidBrand,
+	getBrandProfile
+} from '../../../../scripts/modules/rule-transformer.js';
+import path from 'path';
+import fs from 'fs';
 
 /**
  * Direct function wrapper for adding or removing brand rules.
@@ -45,41 +53,104 @@ export async function rulesDirect(args, log, context = {}) {
 		if (action === 'remove') {
 			for (const brand of rules) {
 				if (!isValidBrand(brand)) {
-					removalResults.push({ brandName: brand, success: false, error: `Profile not found: static import missing for '${brand}'. Valid brands: ${BRAND_NAMES.join(', ')}` });
+					removalResults.push({
+						brandName: brand,
+						success: false,
+						error: `Profile not found: static import missing for '${brand}'. Valid brands: ${BRAND_NAMES.join(', ')}`
+					});
 					continue;
 				}
 				const profile = getBrandProfile(brand);
 				const result = removeBrandRules(projectRoot, profile);
 				removalResults.push(result);
 			}
-			const successes = removalResults.filter(r => r.success).map(r => r.brandName);
-			const skipped = removalResults.filter(r => r.skipped).map(r => r.brandName);
-			const errors = removalResults.filter(r => r.error && !r.success && !r.skipped);
+			const successes = removalResults
+				.filter((r) => r.success)
+				.map((r) => r.brandName);
+			const skipped = removalResults
+				.filter((r) => r.skipped)
+				.map((r) => r.brandName);
+			const errors = removalResults.filter(
+				(r) => r.error && !r.success && !r.skipped
+			);
 
 			let summary = '';
 			if (successes.length > 0) {
-				summary += `Successfully removed rules: ${successes.join(', ')}. `;
+				summary += `Successfully removed rules: ${successes.join(', ')}.`;
 			}
 			if (skipped.length > 0) {
-				summary += `Skipped (default or protected): ${skipped.join(', ')}. `;
+				summary += `Skipped (default or protected): ${skipped.join(', ')}.`;
 			}
 			if (errors.length > 0) {
-				summary += errors.map(r => `Error removing ${r.brandName}: ${r.error}`).join(' ');
+				summary += errors
+					.map((r) => `Error removing ${r.brandName}: ${r.error}`)
+					.join(' ');
 			}
 			disableSilentMode();
-			return { success: errors.length === 0, data: { summary, results: removalResults } };
+			return {
+				success: errors.length === 0,
+				data: { summary, results: removalResults }
+			};
 		} else if (action === 'add') {
 			for (const brand of rules) {
 				if (!isValidBrand(brand)) {
-					addResults.push({ brandName: brand, success: false, error: `Profile not found: static import missing for '${brand}'. Valid brands: ${BRAND_NAMES.join(', ')}` });
+					addResults.push({
+						brandName: brand,
+						success: false,
+						error: `Profile not found: static import missing for '${brand}'. Valid brands: ${BRAND_NAMES.join(', ')}`
+					});
 					continue;
 				}
 				const profile = getBrandProfile(brand);
-				const result = convertAllRulesToBrandRules(projectRoot, profile);
-				addResults.push({ brandName: brand, ...result });
+				const { success, failed } = convertAllRulesToBrandRules(
+					projectRoot,
+					profile
+				);
+
+				// Determine paths
+				const rulesDir = profile.rulesDir;
+				const brandRulesDir = path.join(projectRoot, rulesDir);
+				const brandDir = path.dirname(brandRulesDir);
+				const mcpPath = path.join(brandDir, 'mcp.json');
+
+				// Check what was created
+				const mcpConfigCreated = fs.existsSync(mcpPath);
+				const rulesDirCreated = fs.existsSync(brandRulesDir);
+				const brandFolderCreated = fs.existsSync(brandDir);
+
+				const error =
+					failed > 0 ? `${failed} rule files failed to convert.` : null;
+				const resultObj = {
+					brandName: brand,
+					mcpConfigCreated,
+					rulesDirCreated,
+					brandFolderCreated,
+					skipped: false,
+					error,
+					success: mcpConfigCreated && rulesDirCreated && success > 0 && !error
+				};
+				addResults.push(resultObj);
+			}
+
+			const successes = addResults
+				.filter((r) => r.success)
+				.map((r) => r.brandName);
+			const errors = addResults.filter((r) => r.error && !r.success);
+
+			let summary = '';
+			if (successes.length > 0) {
+				summary += `Successfully added rules: ${successes.join(', ')}.`;
+			}
+			if (errors.length > 0) {
+				summary += errors
+					.map((r) => ` Error adding ${r.brandName}: ${r.error}`)
+					.join(' ');
 			}
 			disableSilentMode();
-			return { success: true, data: { results: addResults } };
+			return {
+				success: errors.length === 0,
+				data: { summary, results: addResults }
+			};
 		} else {
 			disableSilentMode();
 			return {

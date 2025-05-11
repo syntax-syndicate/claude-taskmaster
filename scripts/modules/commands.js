@@ -73,7 +73,13 @@ import {
 	getApiKeyStatusReport
 } from './task-manager/models.js';
 import { findProjectRoot } from './utils.js';
-import { convertAllRulesToBrandRules, removeBrandRules, BRAND_NAMES, isValidBrand, getBrandProfile } from './rule-transformer.js';
+import {
+	convertAllRulesToBrandRules,
+	removeBrandRules,
+	BRAND_NAMES,
+	isValidBrand,
+	getBrandProfile
+} from './rule-transformer.js';
 
 /**
  * Runs the interactive setup process for model configuration.
@@ -517,22 +523,30 @@ function registerCommands(programInstance) {
 
 			for (const brand of expandedBrands) {
 				if (!isValidBrand(brand)) {
-					console.warn(`Rules profile for brand "${brand}" not found. Valid brands: ${BRAND_NAMES.join(', ')}. Skipping.`);
+					console.warn(
+						`Rules profile for brand "${brand}" not found. Valid brands: ${BRAND_NAMES.join(', ')}. Skipping.`
+					);
 					continue;
 				}
 				const profile = getBrandProfile(brand);
 
 				if (action === 'add') {
-					convertAllRulesToBrandRules(projectDir, profile);
+					console.log(chalk.blue(`Adding rules for brand: ${brand}...`));
+					const addResult = convertAllRulesToBrandRules(projectDir, profile);
 					if (typeof profile.onAddBrandRules === 'function') {
 						profile.onAddBrandRules(projectDir);
 					}
+					console.log(chalk.blue(`Completed adding rules for brand: ${brand}`));
+					console.log(
+						chalk.green(
+							`Summary for ${brand}: ${addResult.success} rules added, ${addResult.failed} failed.`
+						)
+					);
 				} else if (action === 'remove') {
+					console.log(chalk.blue(`Removing rules for brand: ${brand}...`));
 					const result = removeBrandRules(projectDir, profile);
 					removalResults.push(result);
-					if (typeof profile.onRemoveBrandRules === 'function') {
-						profile.onRemoveBrandRules(projectDir);
-					}
+					console.log(chalk.blue(`Completed removal for brand: ${brand}`));
 				} else {
 					console.error('Unknown action. Use "add" or "remove".');
 					process.exit(1);
@@ -541,18 +555,30 @@ function registerCommands(programInstance) {
 
 			// Print summary for removals
 			if (action === 'remove') {
-				const successes = removalResults.filter(r => r.success).map(r => r.brandName);
-				const skipped = removalResults.filter(r => r.skipped).map(r => r.brandName);
-				const errors = removalResults.filter(r => r.error && !r.success && !r.skipped);
+				const successes = removalResults
+					.filter((r) => r.success)
+					.map((r) => r.brandName);
+				const skipped = removalResults
+					.filter((r) => r.skipped)
+					.map((r) => r.brandName);
+				const errors = removalResults.filter(
+					(r) => r.error && !r.success && !r.skipped
+				);
 
 				if (successes.length > 0) {
-					console.log(chalk.green(`Successfully removed rules: ${successes.join(', ')}`));
+					console.log(
+						chalk.green(`Successfully removed rules: ${successes.join(', ')}`)
+					);
 				}
 				if (skipped.length > 0) {
-					console.log(chalk.yellow(`Skipped (default or protected): ${skipped.join(', ')}`));
+					console.log(
+						chalk.yellow(
+							`Skipped (default or protected): ${skipped.join(', ')}`
+						)
+					);
 				}
 				if (errors.length > 0) {
-					errors.forEach(r => {
+					errors.forEach((r) => {
 						console.log(chalk.red(`Error removing ${r.brandName}: ${r.error}`));
 					});
 				}

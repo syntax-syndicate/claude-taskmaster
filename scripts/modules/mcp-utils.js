@@ -96,5 +96,4 @@ export function setupMCPConfiguration(configDir) {
 		fs.writeFileSync(mcpPath, JSON.stringify(newMCPConfig, null, 4));
 		log('success', 'Created MCP configuration file');
 	}
-	log('info', 'MCP server will use the installed task-master-ai package');
 }

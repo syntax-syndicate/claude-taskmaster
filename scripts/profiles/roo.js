@@ -2,7 +2,7 @@
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
-import { isSilentMode } from '../modules/utils.js';
+import { isSilentMode, log } from '../modules/utils.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -127,7 +127,6 @@ export function onAddBrandRules(targetDir) {
 	const sourceDir = path.resolve(__dirname, '../../assets/roocode');
 	copyRecursiveSync(sourceDir, targetDir);
 
-	// Enhanced error checking and logging for .roomodes and rules-*mode* files
 	const rooModesDir = path.join(sourceDir, '.roo');
 	const rooModes = ['architect', 'ask', 'boomerang', 'code', 'debug', 'test'];
 
@@ -137,30 +136,28 @@ export function onAddBrandRules(targetDir) {
 	if (fs.existsSync(roomodesSrc)) {
 		try {
 			fs.copyFileSync(roomodesSrc, roomodesDest);
-			if (!isSilentMode()) console.log(`[Roo] Copied .roomodes to ${roomodesDest}`);
+			log('debug', `[Roo] Copied .roomodes to ${roomodesDest}`);
 		} catch (err) {
-			if (!isSilentMode()) console.warn(`[Roo] Failed to copy .roomodes: ${err.message}`);
+			log('debug', `[Roo] Failed to copy .roomodes: ${err.message}`);
 		}
 	} else {
-		if (!isSilentMode()) console.warn(`[Roo] .roomodes not found at ${roomodesSrc}`);
+		log('debug', `[Roo] .roomodes not found at ${roomodesSrc}`);
 	}
 
-	// Copy each <mode>-rules file into the corresponding .roo/rules-<mode>/ folder
 	for (const mode of rooModes) {
 		const src = path.join(rooModesDir, `rules-${mode}`, `${mode}-rules`);
 		const dest = path.join(targetDir, '.roo', `rules-${mode}`, `${mode}-rules`);
 		if (fs.existsSync(src)) {
 			try {
-				// Ensure destination directory exists
 				const destDir = path.dirname(dest);
 				if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
 				fs.copyFileSync(src, dest);
-				if (!isSilentMode()) console.log(`[Roo] Copied ${src} to ${dest}`);
+				log('debug', `[Roo] Copied ${src} to ${dest}`);
 			} catch (err) {
-				if (!isSilentMode()) console.warn(`[Roo] Failed to copy ${src} to ${dest}: ${err.message}`);
+				log('debug', `[Roo] Failed to copy ${src} to ${dest}: ${err.message}`);
 			}
 		} else {
-			if (!isSilentMode()) console.warn(`[Roo] Roo rule file not found for mode '${mode}': ${src}`);
+			log('debug', `[Roo] Roo rule file not found for mode '${mode}': ${src}`);
 		}
 	}
 }
@@ -183,35 +180,40 @@ function copyRecursiveSync(src, dest) {
 }
 
 export function onRemoveBrandRules(targetDir) {
-	const sourceDir = path.resolve(__dirname, '../../assets/roocode');
-	// Remove all files/folders that exist in assets/roocode from the project root
-	removeRecursiveSync(sourceDir, targetDir);
+	log('debug', `[Roo] onRemoveBrandRules called for ${targetDir}`);
+	const roomodesPath = path.join(targetDir, '.roomodes');
+	if (fs.existsSync(roomodesPath)) {
+		try {
+			fs.rmSync(roomodesPath, { force: true });
+			log('debug', `[Roo] Removed .roomodes from ${targetDir}`);
+		} catch (err) {
+			log('debug', `[Roo] Failed to remove .roomodes: ${err.message}`);
+		}
+	}
 
-	// After removing, check if .roo exists and is empty; if so, remove it
 	const rooDir = path.join(targetDir, '.roo');
-	if (fs.existsSync(rooDir) && isDirectoryEmpty(rooDir)) {
-		fs.rmSync(rooDir, { recursive: true, force: true });
-	}
-}
-
-function removeRecursiveSync(src, destRoot) {
-	if (!fs.existsSync(src)) return;
-	const stats = fs.statSync(src);
-	if (stats.isDirectory()) {
-		const destDir = path.join(destRoot, path.basename(src));
-		if (fs.existsSync(destDir)) {
-			fs.rmSync(destDir, { recursive: true, force: true });
-		}
-		// Also walk subfolders in src to remove nested structure
-		fs.readdirSync(src).forEach((child) => {
-			removeRecursiveSync(path.join(src, child), destRoot);
+	if (fs.existsSync(rooDir)) {
+		fs.readdirSync(rooDir).forEach((entry) => {
+			if (entry.startsWith('rules-')) {
+				const modeDir = path.join(rooDir, entry);
+				try {
+					fs.rmSync(modeDir, { recursive: true, force: true });
+					log('debug', `[Roo] Removed ${modeDir}`);
+				} catch (err) {
+					log('debug', `[Roo] Failed to remove ${modeDir}: ${err.message}`);
+				}
+			}
 		});
-	} else {
-		const destFile = path.join(destRoot, path.basename(src));
-		if (fs.existsSync(destFile)) {
-			fs.rmSync(destFile, { force: true });
+		if (fs.readdirSync(rooDir).length === 0) {
+			try {
+				fs.rmSync(rooDir, { recursive: true, force: true });
+				log('debug', `[Roo] Removed empty .roo directory`);
+			} catch (err) {
+				log('debug', `[Roo] Failed to remove .roo directory: ${err.message}`);
+			}
 		}
 	}
+	log('debug', `[Roo] onRemoveBrandRules completed for ${targetDir}`);
 }
 
 function isDirectoryEmpty(dirPath) {
