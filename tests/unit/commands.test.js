@@ -1117,8 +1117,10 @@ describe('rules command', () => {
 	});
 
 	test('should handle rules remove <brand> command', async () => {
-		// Simulate: task-master rules remove roo
-		await program.parseAsync(['rules', 'remove', 'roo'], { from: 'user' });
+		// Simulate: task-master rules remove roo --force
+		await program.parseAsync(['rules', 'remove', 'roo', '--force'], {
+			from: 'user'
+		});
 		// Expect some log output indicating removal
 		expect(mockConsoleLog).toHaveBeenCalledWith(
 			expect.stringMatching(/removing rules for brand: roo/i)
