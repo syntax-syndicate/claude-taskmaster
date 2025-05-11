@@ -122,8 +122,7 @@ const conversionConfig = {
 
 export function onAddBrandRules(targetDir) {
 	const sourceDir = path.resolve(__dirname, '../../assets/roocode');
-	const rulesDir = path.join(sourceDir, '.roo', 'rules');
-	copyRecursiveSync(sourceDir, targetDir, rulesDir, fileMap);
+	copyRecursiveSync(sourceDir, targetDir);
 
 	const rooModesDir = path.join(sourceDir, '.roo');
 	const rooModes = ['architect', 'ask', 'boomerang', 'code', 'debug', 'test'];
@@ -160,26 +159,17 @@ export function onAddBrandRules(targetDir) {
 	}
 }
 
-function copyRecursiveSync(src, dest, rulesDir = null, fileMap = {}) {
+function copyRecursiveSync(src, dest) {
 	const exists = fs.existsSync(src);
 	const stats = exists && fs.statSync(src);
 	const isDirectory = exists && stats.isDirectory();
 	if (isDirectory) {
 		if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
 		fs.readdirSync(src).forEach((childItemName) => {
-			const childSrc = path.join(src, childItemName);
-			let childDest = path.join(dest, childItemName);
-
-			// If we're under the rules directory, apply .mdc -> .md renaming
-			if (rulesDir && childSrc.includes(rulesDir)) {
-				const mapped = fileMap[childItemName];
-				if (mapped) {
-					childDest = path.join(dest, mapped);
-				} else if (childItemName.endsWith('.mdc')) {
-					childDest = path.join(dest, childItemName.replace(/\.mdc$/, '.md'));
-				}
-			}
-			copyRecursiveSync(childSrc, childDest, rulesDir, fileMap);
+			copyRecursiveSync(
+				path.join(src, childItemName),
+				path.join(dest, childItemName)
+			);
 		});
 	} else {
 		fs.copyFileSync(src, dest);
