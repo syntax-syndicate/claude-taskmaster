@@ -245,7 +245,7 @@ function convertAllRulesToBrandRules(projectDir, profile) {
 }
 
 /**
- * Remove a brand's rules directory and, if empty, the parent brand folder (except .cursor)
+ * Remove a brand's rules directory, its mcp.json, and the parent brand folder recursively.
  * @param {string} projectDir - The root directory of the project
  * @param {object} profile - The brand profile object
  * @returns {boolean} - True if removal succeeded, false otherwise
@@ -293,18 +293,16 @@ function removeBrandRules(projectDir, profile) {
 		}
 	}
 
-	// Remove brand folder if empty
-	if (fs.existsSync(brandDir) && fs.readdirSync(brandDir).length === 0) {
-		try {
-			fs.rmdirSync(brandDir);
-			result.brandFolderRemoved = true;
-		} catch (e) {
-			const errorMessage = `Failed to remove empty brand folder at ${brandDir}: ${e.message}`;
-			log('warn', errorMessage);
-			result.error = result.error
-				? `${result.error}; ${errorMessage}`
-				: errorMessage;
-		}
+	// Remove brand folder
+	try {
+		fs.rmSync(brandDir, { recursive: true, force: true });
+		result.brandFolderRemoved = true;
+	} catch (e) {
+		const errorMessage = `Failed to remove brand folder at ${brandDir}: ${e.message}`;
+		log('warn', errorMessage);
+		result.error = result.error
+			? `${result.error}; ${errorMessage}`
+			: errorMessage;
 	}
 
 	// Call onRemoveBrandRules hook if present
