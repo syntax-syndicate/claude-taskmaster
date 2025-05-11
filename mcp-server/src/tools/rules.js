@@ -34,12 +34,7 @@ export function registerRulesTool(server) {
 				.string()
 				.describe(
 					'The root directory of the project. Must be an absolute path.'
-				),
-			yes: z
-				.boolean()
-				.optional()
-				.default(true)
-				.describe('Run non-interactively (default: true).')
+				)
 		}),
 		execute: withNormalizedProjectRoot(async (args, { log, session }) => {
 			try {
