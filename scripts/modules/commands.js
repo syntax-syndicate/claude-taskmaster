@@ -519,6 +519,17 @@ function registerCommands(programInstance) {
 				.flatMap((b) => b.split(',').map((s) => s.trim()))
 				.filter(Boolean);
 
+			if (action === 'remove') {
+				const ui = await import('./ui.js');
+				const confirmed = await ui.confirmRulesRemove(expandedBrands);
+				if (!confirmed) {
+					console.log(chalk.yellow('Aborted: No rules were removed.'));
+					return;
+				}
+			}
+
+			// (removed duplicate projectDir, brands check, and expandedBrands parsing)
+
 			const removalResults = [];
 
 			for (const brand of expandedBrands) {
