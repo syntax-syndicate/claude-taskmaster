@@ -67,4 +67,15 @@ const conversionConfig = {
 	}
 };
 
-export { conversionConfig, fileMap, globalReplacements, brandName, rulesDir };
+function getTargetRuleFilename(sourceFilename) {
+	return fileMap[sourceFilename] || sourceFilename;
+}
+
+export {
+	conversionConfig,
+	fileMap,
+	globalReplacements,
+	brandName,
+	rulesDir,
+	getTargetRuleFilename
+};

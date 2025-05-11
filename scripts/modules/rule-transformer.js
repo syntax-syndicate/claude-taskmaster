@@ -215,22 +215,11 @@ function convertAllRulesToBrandRules(projectDir, profile) {
 	let failed = 0;
 
 	// Process each file in the Cursor rules directory
+	const getTargetRuleFilename = profile.getTargetRuleFilename || ((f) => f);
 	fs.readdirSync(cursorRulesDir).forEach((file) => {
 		if (file.endsWith('.mdc')) {
 			const sourcePath = path.join(cursorRulesDir, file);
-
-			// Determine target file name
-			let targetFilename;
-			if (fileMap[file]) {
-				// If an explicit mapping exists, use it
-				targetFilename = fileMap[file];
-			} else if (brandName === 'Roo' || brandName === 'Windsurf') {
-				// For Roo and Windsurf, change .mdc to .md if not in fileMap
-				targetFilename = file.replace(/\.mdc$/, '.md');
-			} else {
-				// For Cursor (and potentially others), keep original if not in fileMap
-				targetFilename = file;
-			}
+			const targetFilename = getTargetRuleFilename(file);
 			const targetPath = path.join(brandRulesDir, targetFilename);
 
 			// Convert the file

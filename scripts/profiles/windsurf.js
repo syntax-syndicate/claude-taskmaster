@@ -115,4 +115,18 @@ const conversionConfig = {
 	}
 };
 
-export { conversionConfig, fileMap, globalReplacements, brandName, rulesDir };
+function getTargetRuleFilename(sourceFilename) {
+	if (fileMap[sourceFilename]) {
+		return fileMap[sourceFilename];
+	}
+	return sourceFilename.replace(/\.mdc$/, '.md');
+}
+
+export {
+	conversionConfig,
+	fileMap,
+	globalReplacements,
+	brandName,
+	rulesDir,
+	getTargetRuleFilename
+};
