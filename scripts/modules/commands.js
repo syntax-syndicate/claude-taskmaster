@@ -73,6 +73,7 @@ import {
 	getApiKeyStatusReport
 } from './task-manager/models.js';
 import { findProjectRoot } from './utils.js';
+import { convertAllRulesToBrandRules, removeBrandRules, BRAND_NAMES, isValidBrand, getBrandProfile } from './rule-transformer.js';
 
 /**
  * Runs the interactive setup process for model configuration.
@@ -511,44 +512,49 @@ function registerCommands(programInstance) {
 			const expandedBrands = brands
 				.flatMap((b) => b.split(',').map((s) => s.trim()))
 				.filter(Boolean);
+
+			const removalResults = [];
+
 			for (const brand of expandedBrands) {
-				let profile;
-				try {
-					// Use pathToFileURL for correct ESM dynamic import
-					const { pathToFileURL } = await import('url');
-					const profilePath = path.resolve(
-						process.cwd(),
-						'scripts',
-						'profiles',
-						`${brand}.js`
-					);
-					const profileModule = await import(pathToFileURL(profilePath).href);
-					profile = profileModule.default || profileModule;
-				} catch (e) {
-					console.warn(
-						`Rules profile for brand "${brand}" not found. Skipping.`
-					);
-					console.warn(`Import error: ${e && e.message ? e.message : e}`);
+				if (!isValidBrand(brand)) {
+					console.warn(`Rules profile for brand "${brand}" not found. Valid brands: ${BRAND_NAMES.join(', ')}. Skipping.`);
 					continue;
 				}
+				const profile = getBrandProfile(brand);
 
 				if (action === 'add') {
-					const { convertAllRulesToBrandRules } = await import(
-						'./rule-transformer.js'
-					);
 					convertAllRulesToBrandRules(projectDir, profile);
 					if (typeof profile.onAddBrandRules === 'function') {
 						profile.onAddBrandRules(projectDir);
 					}
 				} else if (action === 'remove') {
-					const { removeBrandRules } = await import('./rule-transformer.js');
-					removeBrandRules(projectDir, profile);
+					const result = removeBrandRules(projectDir, profile);
+					removalResults.push(result);
 					if (typeof profile.onRemoveBrandRules === 'function') {
 						profile.onRemoveBrandRules(projectDir);
 					}
 				} else {
 					console.error('Unknown action. Use "add" or "remove".');
 					process.exit(1);
+				}
+			}
+
+			// Print summary for removals
+			if (action === 'remove') {
+				const successes = removalResults.filter(r => r.success).map(r => r.brandName);
+				const skipped = removalResults.filter(r => r.skipped).map(r => r.brandName);
+				const errors = removalResults.filter(r => r.error && !r.success && !r.skipped);
+
+				if (successes.length > 0) {
+					console.log(chalk.green(`Successfully removed rules: ${successes.join(', ')}`));
+				}
+				if (skipped.length > 0) {
+					console.log(chalk.yellow(`Skipped (default or protected): ${skipped.join(', ')}`));
+				}
+				if (errors.length > 0) {
+					errors.forEach(r => {
+						console.log(chalk.red(`Error removing ${r.brandName}: ${r.error}`));
+					});
 				}
 			}
 		});

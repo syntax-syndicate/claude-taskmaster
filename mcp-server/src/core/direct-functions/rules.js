@@ -3,11 +3,11 @@
  * Direct function implementation for adding or removing brand rules
  */
 
-import { execSync } from 'child_process';
 import {
 	enableSilentMode,
 	disableSilentMode
 } from '../../../../scripts/modules/utils.js';
+import { removeBrandRules, convertAllRulesToBrandRules, BRAND_NAMES, isValidBrand, getBrandProfile } from '../../../../scripts/modules/rule-transformer.js';
 
 /**
  * Direct function wrapper for adding or removing brand rules.
@@ -38,13 +38,58 @@ export async function rulesDirect(args, log, context = {}) {
 				}
 			};
 		}
-		const rulesList = rules.join(',');
-		const cmd = `npx task-master rules ${action} ${rulesList}`.trim();
-		log.info(`[rulesDirect] Running: ${cmd} in ${projectRoot}`);
-		const output = execSync(cmd, { cwd: projectRoot, encoding: 'utf8' });
-		log.info(`[rulesDirect] Output: ${output}`);
-		disableSilentMode();
-		return { success: true, data: { output } };
+
+		const removalResults = [];
+		const addResults = [];
+
+		if (action === 'remove') {
+			for (const brand of rules) {
+				if (!isValidBrand(brand)) {
+					removalResults.push({ brandName: brand, success: false, error: `Profile not found: static import missing for '${brand}'. Valid brands: ${BRAND_NAMES.join(', ')}` });
+					continue;
+				}
+				const profile = getBrandProfile(brand);
+				const result = removeBrandRules(projectRoot, profile);
+				removalResults.push(result);
+			}
+			const successes = removalResults.filter(r => r.success).map(r => r.brandName);
+			const skipped = removalResults.filter(r => r.skipped).map(r => r.brandName);
+			const errors = removalResults.filter(r => r.error && !r.success && !r.skipped);
+
+			let summary = '';
+			if (successes.length > 0) {
+				summary += `Successfully removed rules: ${successes.join(', ')}. `;
+			}
+			if (skipped.length > 0) {
+				summary += `Skipped (default or protected): ${skipped.join(', ')}. `;
+			}
+			if (errors.length > 0) {
+				summary += errors.map(r => `Error removing ${r.brandName}: ${r.error}`).join(' ');
+			}
+			disableSilentMode();
+			return { success: errors.length === 0, data: { summary, results: removalResults } };
+		} else if (action === 'add') {
+			for (const brand of rules) {
+				if (!isValidBrand(brand)) {
+					addResults.push({ brandName: brand, success: false, error: `Profile not found: static import missing for '${brand}'. Valid brands: ${BRAND_NAMES.join(', ')}` });
+					continue;
+				}
+				const profile = getBrandProfile(brand);
+				const result = convertAllRulesToBrandRules(projectRoot, profile);
+				addResults.push({ brandName: brand, ...result });
+			}
+			disableSilentMode();
+			return { success: true, data: { results: addResults } };
+		} else {
+			disableSilentMode();
+			return {
+				success: false,
+				error: {
+					code: 'INVALID_ACTION',
+					message: 'Unknown action. Use "add" or "remove".'
+				}
+			};
+		}
 	} catch (error) {
 		disableSilentMode();
 		log.error(`[rulesDirect] Error: ${error.message}`);

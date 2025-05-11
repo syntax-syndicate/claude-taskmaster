@@ -2,6 +2,7 @@
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
+import { isSilentMode } from '../modules/utils.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -136,12 +137,12 @@ export function onAddBrandRules(targetDir) {
 	if (fs.existsSync(roomodesSrc)) {
 		try {
 			fs.copyFileSync(roomodesSrc, roomodesDest);
-			console.log(`[Roo] Copied .roomodes to ${roomodesDest}`);
+			if (!isSilentMode()) console.log(`[Roo] Copied .roomodes to ${roomodesDest}`);
 		} catch (err) {
-			console.warn(`[Roo] Failed to copy .roomodes: ${err.message}`);
+			if (!isSilentMode()) console.warn(`[Roo] Failed to copy .roomodes: ${err.message}`);
 		}
 	} else {
-		console.warn(`[Roo] .roomodes not found at ${roomodesSrc}`);
+		if (!isSilentMode()) console.warn(`[Roo] .roomodes not found at ${roomodesSrc}`);
 	}
 
 	// Copy each <mode>-rules file into the corresponding .roo/rules-<mode>/ folder
@@ -154,12 +155,12 @@ export function onAddBrandRules(targetDir) {
 				const destDir = path.dirname(dest);
 				if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
 				fs.copyFileSync(src, dest);
-				console.log(`[Roo] Copied ${src} to ${dest}`);
+				if (!isSilentMode()) console.log(`[Roo] Copied ${src} to ${dest}`);
 			} catch (err) {
-				console.warn(`[Roo] Failed to copy ${src} to ${dest}: ${err.message}`);
+				if (!isSilentMode()) console.warn(`[Roo] Failed to copy ${src} to ${dest}: ${err.message}`);
 			}
 		} else {
-			console.warn(`[Roo] Roo rule file not found for mode '${mode}': ${src}`);
+			if (!isSilentMode()) console.warn(`[Roo] Roo rule file not found for mode '${mode}': ${src}`);
 		}
 	}
 }

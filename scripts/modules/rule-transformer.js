@@ -12,6 +12,27 @@ import { log } from './utils.js';
 // Import the shared MCP configuration helper
 import { setupMCPConfiguration } from './mcp-utils.js';
 
+// --- Centralized Brand Helpers ---
+export const BRAND_NAMES = ['cursor', 'roo', 'windsurf'];
+
+import * as cursorProfile from '../profiles/cursor.js';
+import * as rooProfile from '../profiles/roo.js';
+import * as windsurfProfile from '../profiles/windsurf.js';
+
+export const BRAND_PROFILES = {
+	cursor: cursorProfile,
+	roo: rooProfile,
+	windsurf: windsurfProfile
+};
+
+export function isValidBrand(brand) {
+	return BRAND_NAMES.includes(brand);
+}
+
+export function getBrandProfile(brand) {
+	return BRAND_PROFILES[brand];
+}
+
 /**
  * Replace basic Cursor terms with brand equivalents
  */
@@ -223,6 +244,7 @@ function convertAllRulesToBrandRules(projectDir, profile) {
 
 	return { success, failed };
 }
+
 /**
  * Remove a brand's rules directory and, if empty, the parent brand folder (except .cursor)
  * @param {string} projectDir - The root directory of the project
@@ -233,41 +255,63 @@ function removeBrandRules(projectDir, profile) {
 	const { brandName, rulesDir } = profile;
 	const brandRulesDir = path.join(projectDir, rulesDir);
 	const brandDir = path.dirname(brandRulesDir);
-	// Also remove the mcp.json file if it exists in the brand directory
 	const mcpPath = path.join(brandDir, 'mcp.json');
+
+	const result = {
+		brandName,
+		mcpConfigRemoved: false,
+		rulesDirRemoved: false,
+		brandFolderRemoved: false,
+		skipped: false,
+		error: null,
+		success: false // Overall success for this brand
+	};
+
 	if (fs.existsSync(mcpPath)) {
 		try {
 			fs.unlinkSync(mcpPath);
-			log('info', `Removed MCP configuration: ${mcpPath}`);
+			result.mcpConfigRemoved = true;
 		} catch (e) {
-			log(
-				'warn',
-				`Failed to remove MCP configuration at ${mcpPath}: ${e.message}`
-			);
+			const errorMessage = `Failed to remove MCP configuration at ${mcpPath}: ${e.message}`;
+			log('warn', errorMessage);
+			result.error = result.error ? `${result.error}; ${errorMessage}` : errorMessage;
 		}
 	}
-	// Do not allow removal of the default Cursor rules directory
+
 	if (brandName.toLowerCase() === 'cursor') {
-		log('warn', 'Cannot remove default Cursor rules directory. Skipping.');
-		return false;
+		const skipMessage = 'Cannot remove default Cursor rules directory. Skipping.';
+		log('warn', skipMessage);
+		result.skipped = true;
+		result.error = skipMessage;
+		return result; // Early exit for cursor brand
 	}
+
 	if (fs.existsSync(brandRulesDir)) {
-		fs.rmSync(brandRulesDir, { recursive: true, force: true });
-		log('info', `Removed rules directory: ${brandRulesDir}`);
-		// Check if parent brand folder is empty
-		if (
-			fs.existsSync(brandDir) &&
-			path.basename(brandDir) !== '.cursor' &&
-			fs.readdirSync(brandDir).length === 0
-		) {
-			fs.rmdirSync(brandDir);
-			log('info', `Removed empty brand folder: ${brandDir}`);
+		try {
+			fs.rmSync(brandRulesDir, { recursive: true, force: true });
+			result.rulesDirRemoved = true;
+
+			if (
+				fs.existsSync(brandDir) &&
+				path.basename(brandDir) !== '.cursor' &&
+				fs.readdirSync(brandDir).length === 0
+			) {
+				fs.rmdirSync(brandDir);
+				result.brandFolderRemoved = true;
+			}
+			result.success = true; // Mark overall success if rules dir was removed
+		} catch (e) {
+			const errorMessage = `Failed to remove rules directory ${brandRulesDir} or brand folder ${brandDir}: ${e.message}`;
+			log('error', errorMessage); // Log as error since this is a primary operation failing
+			result.error = result.error ? `${result.error}; ${errorMessage}` : errorMessage;
 		}
-		return true;
 	} else {
-		log('warn', `Rules directory not found: ${brandRulesDir}`);
-		return false;
+		const warnMessage = `Rules directory not found: ${brandRulesDir}`;
+		log('warn', warnMessage);
+		result.error = result.error ? `${result.error}; ${warnMessage}` : warnMessage;
+		// success remains false as the primary target (rulesDir) was not found
 	}
+	return result;
 }
 
 export {
