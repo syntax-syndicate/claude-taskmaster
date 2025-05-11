@@ -117,24 +117,35 @@ task-master rules remove windsurf
 
 # Removes the specified brand rule sets and their MCP config from your project.
 
-```
+````
 
 - Adding rules creates the brand rules directory (e.g., `.roo/rules`) and copies/initializes the brand's rules.
 - Removing rules deletes the brand rules directory and associated MCP config.
 - You can use multiple comma-separated brands in a single command.
+- Use the `--force` flag to bypass the confirmation prompt when removing rules (dangerous, irreversible):
+
+```bash
+task-master rules remove windsurf --force
+````
+
+:warning: **Warning:** The `--force` flag will immediately and permanently delete brand rules and configuration without asking for confirmation.
 
 task-master rules add windsurf,roo
-task-master rules remove windsurf
+task-master rules remove windsurf --force
 
 # List all tasks
+
 task-master list
 
 # Show the next task to work on
+
 task-master next
 
 # Generate task files
+
 task-master generate
-```
+
+````
 
 ## Documentation
 
@@ -154,7 +165,7 @@ Try running it with Node directly:
 
 ```bash
 node node_modules/claude-task-master/scripts/init.js
-```
+````
 
 Or clone the repository and run:
 

@@ -504,7 +504,11 @@ function registerCommands(programInstance) {
 		.description(
 			'Add or remove rules for one or more brands (e.g., task-master rules add windsurf roo)'
 		)
-		.action(async (action, brands) => {
+		.option(
+			'-f, --force',
+			'Skip confirmation prompt when removing rules (dangerous)'
+		)
+		.action(async (action, brands, options) => {
 			const projectDir = process.cwd();
 
 			if (!brands || brands.length === 0) {
@@ -520,8 +524,11 @@ function registerCommands(programInstance) {
 				.filter(Boolean);
 
 			if (action === 'remove') {
-				const ui = await import('./ui.js');
-				const confirmed = await ui.confirmRulesRemove(expandedBrands);
+				let confirmed = true;
+				if (!options.force) {
+					const ui = await import('./ui.js');
+					confirmed = await ui.confirmRulesRemove(expandedBrands);
+				}
 				if (!confirmed) {
 					console.log(chalk.yellow('Aborted: No rules were removed.'));
 					return;
