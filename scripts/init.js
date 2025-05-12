@@ -462,7 +462,7 @@ async function initializeProject(options = {}) {
 			}
 
 			for (const rule of selectedBrandRules) {
-				const profile = ruleProfiles[rule];
+				const profile = BRAND_PROFILES[rule];
 				if (profile) {
 					convertAllRulesToBrandRules(targetDir, profile);
 					// Ensure MCP config is set up under the correct brand folder
@@ -474,7 +474,7 @@ async function initializeProject(options = {}) {
 			}
 			// fallback for safety if selectedBrandRules is not an array
 			if (!Array.isArray(selectedBrandRules)) {
-				convertAllRulesToBrandRules(targetDir, cursorProfile);
+				convertAllRulesToBrandRules(targetDir, BRAND_PROFILES['cursor']);
 			}
 		} catch (error) {
 			rl.close();
@@ -583,7 +583,7 @@ function createProjectStructure(
 	log('info', 'Generating brand rules from assets/rules...');
 	if (Array.isArray(selectedBrandRules)) {
 		for (const rule of selectedBrandRules) {
-			const profile = ruleProfiles[rule];
+			const profile = BRAND_PROFILES[rule];
 			if (profile) {
 				convertAllRulesToBrandRules(targetDir, profile);
 				// Ensure MCP config is set up under the correct brand folder for any non-cursor rule
@@ -596,7 +596,7 @@ function createProjectStructure(
 		}
 	} else {
 		// fallback for safety
-		convertAllRulesToBrandRules(targetDir, cursorProfile);
+		convertAllRulesToBrandRules(targetDir, BRAND_PROFILES['cursor']);
 	}
 
 	// Run npm install automatically
@@ -765,22 +765,19 @@ function createProjectStructure(
 
 // Import DRY MCP configuration helper
 import { setupMCPConfiguration } from './modules/mcp-utils.js';
-// Statically import rule profiles
-import * as rooProfile from './profiles/roo.js';
-import * as windsurfProfile from './profiles/windsurf.js';
-import * as cursorProfile from './profiles/cursor.js';
+// Import centralized brand profile logic
+import { BRAND_PROFILES, BRAND_NAMES } from './modules/rule-transformer.js';
 
-const availableBrandRules = [
-	{ name: 'Cursor (default)', value: 'cursor' },
-	{ name: 'Roo', value: 'roo' },
-	{ name: 'Windsurf', value: 'windsurf' }
-];
-
-const ruleProfiles = {
-	roo: rooProfile,
-	windsurf: windsurfProfile,
-	cursor: cursorProfile
-};
+// Dynamically generate availableBrandRules from BRAND_NAMES and brand profiles
+const availableBrandRules = BRAND_NAMES.map((name) => {
+	const displayName =
+		BRAND_PROFILES[name]?.brandName ||
+		name.charAt(0).toUpperCase() + name.slice(1);
+	return {
+		name: name === 'cursor' ? `${displayName} (default)` : displayName,
+		value: name
+	};
+});
 
 // Ensure necessary functions are exported
 export { initializeProject, log }; // Only export what's needed by commands.js
