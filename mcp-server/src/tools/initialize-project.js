@@ -24,6 +24,13 @@ export function registerInitializeProjectTool(server) {
 				.optional()
 				.default(false)
 				.describe('Add shell aliases (tm, taskmaster) to shell config file.'),
+			yes: z
+				.boolean()
+				.optional()
+				.default(true)
+				.describe(
+					'Skip prompts and use default values. Always set to true for MCP tools.'
+				),
 			projectRoot: z
 				.string()
 				.describe(

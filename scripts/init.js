@@ -222,7 +222,7 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 			break;
 			// case 'README-task-master.md':
 			// 	sourcePath = path.join(__dirname, '..', 'README-task-master.md');
-			break;
+			// break;
 
 		default:
 			// For other files like env.example, gitignore, etc. that don't have direct equivalents
