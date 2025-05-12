@@ -80,6 +80,7 @@ import {
 	isValidBrand,
 	getBrandProfile
 } from './rule-transformer.js';
+import { runInteractiveRulesSetup } from './rules-setup.js';
 
 /**
  * Runs the interactive setup process for model configuration.
@@ -510,6 +511,43 @@ function registerCommands(programInstance) {
 		)
 		.action(async (action, brands, options) => {
 			const projectDir = process.cwd();
+
+			/**
+			 * 'task-master rules setup' action:
+			 *
+			 * Launches an interactive prompt to select which brand rules to apply to the current project.
+			 * This does NOT perform project initialization or ask about shell aliases—only rules selection.
+			 *
+			 * Example usage:
+			 *   $ task-master rules setup
+			 *
+			 * Useful for updating/enforcing rules after project creation, or switching brands.
+			 *
+			 * The list of brands is always up-to-date with the available profiles.
+			 */
+			if (action === 'setup') {
+				// Run interactive rules setup ONLY (no project init)
+				const selectedBrandRules = await runInteractiveRulesSetup();
+				for (const brand of selectedBrandRules) {
+					if (!isValidBrand(brand)) {
+						console.warn(
+							`Rules profile for brand "${brand}" not found. Valid brands: ${BRAND_NAMES.join(', ')}. Skipping.`
+						);
+						continue;
+					}
+					const profile = getBrandProfile(brand);
+					const addResult = convertAllRulesToBrandRules(projectDir, profile);
+					if (typeof profile.onAddBrandRules === 'function') {
+						profile.onAddBrandRules(projectDir);
+					}
+					console.log(
+						chalk.green(
+							`Summary for ${brand}: ${addResult.success} rules added, ${addResult.failed} failed.`
+						)
+					);
+				}
+				return;
+			}
 
 			if (!brands || brands.length === 0) {
 				console.error(

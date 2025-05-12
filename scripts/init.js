@@ -25,6 +25,7 @@ import boxen from 'boxen';
 import gradient from 'gradient-string';
 import { isSilentMode } from './modules/utils.js';
 import { convertAllRulesToBrandRules } from './modules/rule-transformer.js';
+import { runInteractiveRulesSetup } from './modules/rules-setup.js';
 import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -402,22 +403,8 @@ async function initializeProject(options = {}) {
 				return;
 			}
 
-			// === Brand Rules Selection (Inquirer) ===
-			console.log(
-				chalk.cyan(
-					'\nRules help enforce best practices and conventions for Task Master.'
-				)
-			);
-			const brandRulesQuestion = {
-				type: 'checkbox',
-				name: 'brandRules',
-				message: 'Which IDEs would you like rules included for?',
-				choices: availableBrandRules,
-				default: ['cursor'],
-				validate: (input) => input.length > 0 || 'You must select at least one.'
-			};
-			const { brandRules } = await inquirer.prompt([brandRulesQuestion]);
-			selectedBrandRules = brandRules;
+			// === Brand Rules Selection (via shared module) ===
+			const selectedBrandRules = await runInteractiveRulesSetup();
 
 			const dryRun = options.dryRun || false;
 

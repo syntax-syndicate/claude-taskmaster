@@ -101,7 +101,7 @@ task-master init --rules cursor,windsurf
 # Parse a PRD and generate tasks
 task-master parse-prd your-prd.txt
 
-# Add or remove brand rules after initialization
+# Add, remove, or set up brand rules after initialization
 
 You can add or remove brand rules at any time after project initialization:
 
@@ -116,6 +116,16 @@ task-master rules add windsurf,roo
 task-master rules remove windsurf
 
 # Removes the specified brand rule sets and their MCP config from your project.
+
+task-master rules setup
+
+# Launches an interactive prompt to select which brand rules to apply to your project.
+
+# This does NOT re-initialize the project or ask about shell aliases.
+
+# Useful for updating/enforcing rules or switching brands at any time.
+
+# The list of brands is always up-to-date with available profiles.
 
 ````
 
@@ -146,6 +156,19 @@ task-master next
 task-master generate
 
 ````
+
+### Interactive Rules Setup
+
+You can launch the interactive rules setup at any time with:
+
+```bash
+task-master rules setup
+```
+
+This command opens a prompt where you can select which brand rules (e.g., Cursor, Roo, Windsurf) you want to apply to your project. The list of brands is always current with the available profiles—no manual updates needed. This does **not** re-initialize your project or ask about shell aliases; it only manages rules.
+
+- Use this command to update, enforce, or switch brand rules interactively after project creation.
+- The same interactive prompt is also used during `init` if you don't specify brands with `--rules`.
 
 ## Documentation
 
