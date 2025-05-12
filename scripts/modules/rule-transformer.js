@@ -13,8 +13,6 @@ import { log } from './utils.js';
 import { setupMCPConfiguration } from './mcp-utils.js';
 
 // --- Centralized Brand Helpers ---
-export const BRAND_NAMES = ['cursor', 'roo', 'windsurf'];
-
 import * as cursorProfile from '../profiles/cursor.js';
 import * as rooProfile from '../profiles/roo.js';
 import * as windsurfProfile from '../profiles/windsurf.js';
@@ -24,6 +22,8 @@ export const BRAND_PROFILES = {
 	roo: rooProfile,
 	windsurf: windsurfProfile
 };
+
+export const BRAND_NAMES = Object.keys(BRAND_PROFILES);
 
 export function isValidBrand(brand) {
 	return BRAND_NAMES.includes(brand);
