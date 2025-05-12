@@ -763,7 +763,7 @@ function createProjectStructure(
 	}
 }
 
-// Import DRY MCP configuration helper
+// Import MCP configuration helper
 import { setupMCPConfiguration } from './modules/mcp-utils.js';
 // Import centralized brand profile logic
 import { BRAND_PROFILES, BRAND_NAMES } from './modules/rule-transformer.js';
