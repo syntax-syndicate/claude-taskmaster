@@ -214,7 +214,7 @@ function convertAllRulesToBrandRules(projectDir, profile) {
 	let success = 0;
 	let failed = 0;
 
-	// Only copy files listed in fileMap (main rules folder)
+	// Process each file from assets/rules listed in fileMap
 	const getTargetRuleFilename = profile.getTargetRuleFilename || ((f) => f);
 	Object.keys(profile.fileMap).forEach((file) => {
 		const sourcePath = path.join(cursorRulesDir, file);
