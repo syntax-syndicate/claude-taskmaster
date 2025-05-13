@@ -214,11 +214,11 @@ function convertAllRulesToBrandRules(projectDir, profile) {
 	let success = 0;
 	let failed = 0;
 
-	// Process each file in the Cursor rules directory
+	// Only copy files listed in fileMap (main rules folder)
 	const getTargetRuleFilename = profile.getTargetRuleFilename || ((f) => f);
-	fs.readdirSync(cursorRulesDir).forEach((file) => {
-		if (file.endsWith('.mdc')) {
-			const sourcePath = path.join(cursorRulesDir, file);
+	Object.keys(profile.fileMap).forEach((file) => {
+		const sourcePath = path.join(cursorRulesDir, file);
+		if (fs.existsSync(sourcePath)) {
 			const targetFilename = getTargetRuleFilename(file);
 			const targetPath = path.join(brandRulesDir, targetFilename);
 
@@ -228,6 +228,11 @@ function convertAllRulesToBrandRules(projectDir, profile) {
 			} else {
 				failed++;
 			}
+		} else {
+			log(
+				'warn',
+				`File listed in fileMap not found in rules dir: ${sourcePath}`
+			);
 		}
 	});
 

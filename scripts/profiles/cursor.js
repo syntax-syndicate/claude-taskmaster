@@ -6,7 +6,11 @@ const rulesDir = '.cursor/rules';
 
 // File name mapping (specific files with naming changes)
 const fileMap = {
-	// No explicit mappings; keep original .mdc filenames
+	'cursor_rules.mdc': 'cursor_rules.mdc',
+	'dev_workflow.mdc': 'dev_workflow.mdc',
+	'self_improve.mdc': 'self_improve.mdc',
+	'taskmaster.mdc': 'taskmaster.mdc'
+	// Add other mappings as needed
 };
 
 const globalReplacements = [
