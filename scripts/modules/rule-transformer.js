@@ -13,11 +13,13 @@ import { log } from './utils.js';
 import { setupMCPConfiguration } from './mcp-utils.js';
 
 // --- Centralized Brand Helpers ---
+import * as clineProfile from '../profiles/cline.js';
 import * as cursorProfile from '../profiles/cursor.js';
 import * as rooProfile from '../profiles/roo.js';
 import * as windsurfProfile from '../profiles/windsurf.js';
 
 export const BRAND_PROFILES = {
+	cline: clineProfile,
 	cursor: cursorProfile,
 	roo: rooProfile,
 	windsurf: windsurfProfile
