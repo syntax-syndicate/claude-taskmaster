@@ -2,6 +2,7 @@
 import path from 'path';
 
 const brandName = 'Cline';
+const brandDir = '.clinerules';
 const rulesDir = '.clinerules';
 
 // File name mapping (specific files with naming changes)
@@ -134,6 +135,7 @@ export {
 	fileMap,
 	globalReplacements,
 	brandName,
+	brandDir,
 	rulesDir,
 	getTargetRuleFilename
 }; 

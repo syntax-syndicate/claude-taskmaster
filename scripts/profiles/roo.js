@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const brandName = 'Roo';
+const brandDir = '.roo';
 const rulesDir = '.roo/rules';
 
 // File name mapping (specific files with naming changes)
@@ -236,6 +237,7 @@ export {
 	fileMap,
 	globalReplacements,
 	brandName,
+	brandDir,
 	rulesDir,
 	getTargetRuleFilename,
 	onPostConvertBrandRules

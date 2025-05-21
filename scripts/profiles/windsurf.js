@@ -2,6 +2,7 @@
 import path from 'path';
 
 const brandName = 'Windsurf';
+const brandDir = '.windsurf';
 const rulesDir = '.windsurf/rules';
 
 // File name mapping (specific files with naming changes)
@@ -130,6 +131,7 @@ export {
 	fileMap,
 	globalReplacements,
 	brandName,
+	brandDir,
 	rulesDir,
 	getTargetRuleFilename
 };

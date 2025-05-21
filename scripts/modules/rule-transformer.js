@@ -208,8 +208,8 @@ function convertAllRulesToBrandRules(projectDir, profile) {
 		fs.mkdirSync(brandRulesDir, { recursive: true });
 		log('debug', `Created ${brandName} rules directory: ${brandRulesDir}`);
 		// Also create MCP configuration in the brand directory
-		const brandDir = path.dirname(brandRulesDir);
-		setupMCPConfiguration(brandDir);
+		const brandDir = profile.brandDir;
+		setupMCPConfiguration(path.join(projectDir, brandDir));
 	}
 
 	// Count successful and failed conversions
@@ -259,9 +259,9 @@ function convertAllRulesToBrandRules(projectDir, profile) {
  */
 function removeBrandRules(projectDir, profile) {
 	const { brandName, rulesDir } = profile;
+	const brandDir = profile.brandDir;
 	const brandRulesDir = path.join(projectDir, rulesDir);
-	const brandDir = path.dirname(brandRulesDir);
-	const mcpPath = path.join(brandDir, 'mcp.json');
+	const mcpPath = path.join(projectDir, brandDir, 'mcp.json');
 
 	const result = {
 		brandName,

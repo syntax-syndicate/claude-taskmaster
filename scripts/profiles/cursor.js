@@ -2,6 +2,7 @@
 import path from 'path';
 
 const brandName = 'Cursor';
+const brandDir = '.cursor';
 const rulesDir = '.cursor/rules';
 
 // File name mapping (specific files with naming changes)
@@ -80,6 +81,7 @@ export {
 	fileMap,
 	globalReplacements,
 	brandName,
+	brandDir,
 	rulesDir,
 	getTargetRuleFilename
 };

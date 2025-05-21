@@ -110,8 +110,8 @@ export async function rulesDirect(args, log, context = {}) {
 				// Determine paths
 				const rulesDir = profile.rulesDir;
 				const brandRulesDir = path.join(projectRoot, rulesDir);
-				const brandDir = path.dirname(brandRulesDir);
-				const mcpPath = path.join(brandDir, 'mcp.json');
+				const brandDir = profile.brandDir;
+				const mcpPath = path.join(projectRoot, brandDir, 'mcp.json');
 
 				// Check what was created
 				const mcpConfigCreated = fs.existsSync(mcpPath);
