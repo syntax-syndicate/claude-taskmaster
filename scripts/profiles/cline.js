@@ -5,7 +5,7 @@ const brandName = 'Cline';
 const brandDir = '.clinerules';
 const rulesDir = '.clinerules';
 const mcpConfig = false;
-const mcpConfigName = undefined;
+const mcpConfigName = 'cline_mcp_settings.json';
 
 // File name mapping (specific files with naming changes)
 const fileMap = {
@@ -142,4 +142,4 @@ export {
 	getTargetRuleFilename,
 	mcpConfig,
 	mcpConfigName
-}; 
+};
