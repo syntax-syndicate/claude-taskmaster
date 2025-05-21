@@ -118,7 +118,9 @@ export async function rulesDirect(args, log, context = {}) {
 				// Check what was created
 				const mcpConfigCreated = mcpConfig ? fs.existsSync(mcpPath) : undefined;
 				const rulesDirCreated = fs.existsSync(brandRulesDir);
-				const brandFolderCreated = fs.existsSync(path.join(projectRoot, brandDir));
+				const brandFolderCreated = fs.existsSync(
+					path.join(projectRoot, brandDir)
+				);
 
 				const error =
 					failed > 0 ? `${failed} rule files failed to convert.` : null;
@@ -129,7 +131,11 @@ export async function rulesDirect(args, log, context = {}) {
 					brandFolderCreated,
 					skipped: false,
 					error,
-					success: (mcpConfig ? mcpConfigCreated : true) && rulesDirCreated && success > 0 && !error
+					success:
+						(mcpConfig ? mcpConfigCreated : true) &&
+						rulesDirCreated &&
+						success > 0 &&
+						!error
 				};
 				addResults.push(resultObj);
 			}
