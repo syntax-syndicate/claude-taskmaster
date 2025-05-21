@@ -4,6 +4,8 @@ import path from 'path';
 const brandName = 'Windsurf';
 const brandDir = '.windsurf';
 const rulesDir = '.windsurf/rules';
+const mcpConfig = true;
+const mcpConfigName = 'mcp.json';
 
 // File name mapping (specific files with naming changes)
 const fileMap = {
@@ -133,5 +135,7 @@ export {
 	brandName,
 	brandDir,
 	rulesDir,
-	getTargetRuleFilename
+	getTargetRuleFilename,
+	mcpConfig,
+	mcpConfigName
 };

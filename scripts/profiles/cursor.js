@@ -4,6 +4,8 @@ import path from 'path';
 const brandName = 'Cursor';
 const brandDir = '.cursor';
 const rulesDir = '.cursor/rules';
+const mcpConfig = true;
+const mcpConfigName = 'mcp.json';
 
 // File name mapping (specific files with naming changes)
 const fileMap = {
@@ -83,5 +85,7 @@ export {
 	brandName,
 	brandDir,
 	rulesDir,
-	getTargetRuleFilename
+	getTargetRuleFilename,
+	mcpConfig,
+	mcpConfigName
 };

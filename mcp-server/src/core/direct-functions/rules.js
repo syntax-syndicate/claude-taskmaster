@@ -111,12 +111,14 @@ export async function rulesDirect(args, log, context = {}) {
 				const rulesDir = profile.rulesDir;
 				const brandRulesDir = path.join(projectRoot, rulesDir);
 				const brandDir = profile.brandDir;
-				const mcpPath = path.join(projectRoot, brandDir, 'mcp.json');
+				const mcpConfig = profile.mcpConfig !== false;
+				const mcpConfigName = profile.mcpConfigName || 'mcp.json';
+				const mcpPath = path.join(projectRoot, brandDir, mcpConfigName);
 
 				// Check what was created
-				const mcpConfigCreated = fs.existsSync(mcpPath);
+				const mcpConfigCreated = mcpConfig ? fs.existsSync(mcpPath) : undefined;
 				const rulesDirCreated = fs.existsSync(brandRulesDir);
-				const brandFolderCreated = fs.existsSync(brandDir);
+				const brandFolderCreated = fs.existsSync(path.join(projectRoot, brandDir));
 
 				const error =
 					failed > 0 ? `${failed} rule files failed to convert.` : null;
@@ -127,7 +129,7 @@ export async function rulesDirect(args, log, context = {}) {
 					brandFolderCreated,
 					skipped: false,
 					error,
-					success: mcpConfigCreated && rulesDirCreated && success > 0 && !error
+					success: (mcpConfig ? mcpConfigCreated : true) && rulesDirCreated && success > 0 && !error
 				};
 				addResults.push(resultObj);
 			}

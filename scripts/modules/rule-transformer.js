@@ -193,7 +193,7 @@ function convertRuleToBrandRule(sourcePath, targetPath, profile) {
  * Process all Cursor rules and convert to brand rules
  */
 function convertAllRulesToBrandRules(projectDir, profile) {
-	const { fileMap, brandName, rulesDir } = profile;
+	const { fileMap, brandName, rulesDir, mcpConfig, mcpConfigName } = profile;
 	// Use assets/rules as the source of rules instead of .cursor/rules
 	const cursorRulesDir = path.join(projectDir, 'assets', 'rules');
 	const brandRulesDir = path.join(projectDir, rulesDir);
@@ -207,9 +207,11 @@ function convertAllRulesToBrandRules(projectDir, profile) {
 	if (!fs.existsSync(brandRulesDir)) {
 		fs.mkdirSync(brandRulesDir, { recursive: true });
 		log('debug', `Created ${brandName} rules directory: ${brandRulesDir}`);
-		// Also create MCP configuration in the brand directory
-		const brandDir = profile.brandDir;
-		setupMCPConfiguration(path.join(projectDir, brandDir));
+		// Also create MCP configuration in the brand directory if enabled
+		if (mcpConfig !== false) {
+			const brandDir = profile.brandDir;
+			setupMCPConfiguration(path.join(projectDir, brandDir), mcpConfigName);
+		}
 	}
 
 	// Count successful and failed conversions
@@ -258,10 +260,10 @@ function convertAllRulesToBrandRules(projectDir, profile) {
  * @returns {boolean} - True if removal succeeded, false otherwise
  */
 function removeBrandRules(projectDir, profile) {
-	const { brandName, rulesDir } = profile;
+	const { brandName, rulesDir, mcpConfig, mcpConfigName } = profile;
 	const brandDir = profile.brandDir;
 	const brandRulesDir = path.join(projectDir, rulesDir);
-	const mcpPath = path.join(projectDir, brandDir, 'mcp.json');
+	const mcpPath = path.join(projectDir, brandDir, mcpConfigName);
 
 	const result = {
 		brandName,
@@ -273,7 +275,7 @@ function removeBrandRules(projectDir, profile) {
 		success: false // Overall success for this brand
 	};
 
-	if (fs.existsSync(mcpPath)) {
+	if (mcpConfig !== false && fs.existsSync(mcpPath)) {
 		try {
 			fs.unlinkSync(mcpPath);
 			result.mcpConfigRemoved = true;

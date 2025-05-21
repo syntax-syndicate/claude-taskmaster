@@ -10,6 +10,8 @@ const __dirname = path.dirname(__filename);
 const brandName = 'Roo';
 const brandDir = '.roo';
 const rulesDir = '.roo/rules';
+const mcpConfig = true;
+const mcpConfigName = 'mcp.json';
 
 // File name mapping (specific files with naming changes)
 const fileMap = {
@@ -240,5 +242,7 @@ export {
 	brandDir,
 	rulesDir,
 	getTargetRuleFilename,
+	mcpConfig,
+	mcpConfigName,
 	onPostConvertBrandRules
 };

@@ -4,6 +4,8 @@ import path from 'path';
 const brandName = 'Cline';
 const brandDir = '.clinerules';
 const rulesDir = '.clinerules';
+const mcpConfig = false;
+const mcpConfigName = undefined;
 
 // File name mapping (specific files with naming changes)
 const fileMap = {
@@ -137,5 +139,7 @@ export {
 	brandName,
 	brandDir,
 	rulesDir,
-	getTargetRuleFilename
+	getTargetRuleFilename,
+	mcpConfig,
+	mcpConfigName
 }; 
