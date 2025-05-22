@@ -56,7 +56,7 @@ export async function rulesDirect(args, log, context = {}) {
 					removalResults.push({
 						brandName: brand,
 						success: false,
-						error: `Profile not found: static import missing for '${brand}'. Valid brands: ${BRAND_NAMES.join(', ')}`
+						error: `The requested rules for '${brand}' are unavailable. Supported rules are: ${BRAND_NAMES.join(', ')}.`
 					});
 					continue;
 				}
