@@ -221,9 +221,6 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 				'self_improve.mdc'
 			);
 			break;
-		// case 'README-task-master.md':
-		// 	sourcePath = path.join(__dirname, '..', 'README-task-master.md');
-		// break;
 
 		default:
 			// For other files like env.example, gitignore, etc. that don't have direct equivalents
