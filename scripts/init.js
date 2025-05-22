@@ -330,8 +330,6 @@ async function initializeProject(options = {}) {
 	// }
 
 	if (skipPrompts) {
-		// Use selectedBrandRules from options or default
-
 		if (!isSilentMode()) {
 			console.log('SKIPPING PROMPTS - Using defaults or provided values');
 		}
