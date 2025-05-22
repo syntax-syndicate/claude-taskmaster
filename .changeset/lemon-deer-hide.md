@@ -1,5 +1,5 @@
 ---
-'task-master-ai': patch
+'task-master-ai': minor
 ---
 
 Added flexible rules management:
