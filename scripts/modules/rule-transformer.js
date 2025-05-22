@@ -10,7 +10,7 @@ import path from 'path';
 import { log } from './utils.js';
 
 // Import the shared MCP configuration helper
-import { setupMCPConfiguration } from './mcp-utils.js';
+import { setupMCPConfiguration } from '../../src/utils/mcp-utils.js';
 
 // --- Centralized Brand Helpers ---
 import * as clineProfile from '../profiles/cline.js';

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { log } from './utils.js';
+import { log } from '../../scripts/modules/utils.js';
 
 // Structure matches project conventions (see scripts/init.js)
 export function setupMCPConfiguration(configDir) {
@@ -96,4 +96,4 @@ export function setupMCPConfiguration(configDir) {
 		fs.writeFileSync(mcpPath, JSON.stringify(newMCPConfig, null, 4));
 		log('success', 'Created MCP configuration file');
 	}
-}
+} 
