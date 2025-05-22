@@ -25,7 +25,7 @@ import boxen from 'boxen';
 import gradient from 'gradient-string';
 import { isSilentMode } from './modules/utils.js';
 import { convertAllRulesToBrandRules } from './modules/rule-transformer.js';
-import { runInteractiveRulesSetup } from './modules/rules-setup.js';
+import { runInteractiveRulesSetup } from '../src/utils/rules-setup.js';
 import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);

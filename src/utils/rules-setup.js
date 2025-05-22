@@ -1,7 +1,7 @@
 import readline from 'readline';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
-import { BRAND_PROFILES, BRAND_NAMES } from './rule-transformer.js';
+import { BRAND_PROFILES, BRAND_NAMES } from '../../scripts/modules/rule-transformer.js';
 
 // Dynamically generate availableBrandRules from BRAND_NAMES and brand profiles
 const availableBrandRules = BRAND_NAMES.map((name) => {
@@ -44,4 +44,4 @@ export async function runInteractiveRulesSetup() {
 	};
 	const { brandRules } = await inquirer.prompt([brandRulesQuestion]);
 	return brandRules;
-}
+} 

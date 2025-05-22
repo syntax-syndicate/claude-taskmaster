@@ -86,7 +86,7 @@ import {
 	isValidBrand,
 	getBrandProfile
 } from './rule-transformer.js';
-import { runInteractiveRulesSetup } from './rules-setup.js';
+import { runInteractiveRulesSetup } from '../../src/utils/rules-setup.js';
 
 /**
  * Runs the interactive setup process for model configuration.
