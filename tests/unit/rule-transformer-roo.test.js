@@ -5,7 +5,7 @@ import { dirname } from 'path';
 import {
 	convertRuleToBrandRule,
 	convertAllRulesToBrandRules
-} from '../../scripts/modules/rule-transformer.js';
+} from '../../src/utils/rule-transformer.js';
 import * as rooProfile from '../../scripts/profiles/roo.js';
 
 const __filename = fileURLToPath(import.meta.url);

@@ -24,7 +24,7 @@ import figlet from 'figlet';
 import boxen from 'boxen';
 import gradient from 'gradient-string';
 import { isSilentMode } from './modules/utils.js';
-import { convertAllRulesToBrandRules } from './modules/rule-transformer.js';
+import { convertAllRulesToBrandRules } from '../src/utils/rule-transformer.js';
 import { runInteractiveRulesSetup } from '../src/utils/rules-setup.js';
 import { execSync } from 'child_process';
 
@@ -748,7 +748,7 @@ function createProjectStructure(
 // Import MCP configuration helper
 import { setupMCPConfiguration } from '../src/utils/mcp-utils.js';
 // Import centralized brand profile logic
-import { BRAND_PROFILES, BRAND_NAMES } from './modules/rule-transformer.js';
+import { BRAND_PROFILES, BRAND_NAMES } from '../src/utils/rule-transformer.js';
 
 // Dynamically generate availableBrandRules from BRAND_NAMES and brand profiles
 const availableBrandRules = BRAND_NAMES.map((name) => {

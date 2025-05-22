@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { convertRuleToBrandRule } from '../../scripts/modules/rule-transformer.js';
+import { convertRuleToBrandRule } from '../../src/utils/rule-transformer.js';
 import * as windsurfProfile from '../../scripts/profiles/windsurf.js';
 
 const __filename = fileURLToPath(import.meta.url);

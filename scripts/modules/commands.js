@@ -85,7 +85,7 @@ import {
 	BRAND_NAMES,
 	isValidBrand,
 	getBrandProfile
-} from './rule-transformer.js';
+} from '../../src/utils/rule-transformer.js';
 import { runInteractiveRulesSetup } from '../../src/utils/rules-setup.js';
 
 /**

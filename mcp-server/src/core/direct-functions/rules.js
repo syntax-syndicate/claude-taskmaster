@@ -13,7 +13,7 @@ import {
 	BRAND_NAMES,
 	isValidBrand,
 	getBrandProfile
-} from '../../../../scripts/modules/rule-transformer.js';
+} from '../../../../src/utils/rule-transformer.js';
 import path from 'path';
 import fs from 'fs';
 

@@ -7,13 +7,13 @@
  */
 import fs from 'fs';
 import path from 'path';
-import { log } from './utils.js';
+import { log } from '../../scripts/modules/utils.js';
 
 // Import the shared MCP configuration helper
-import { setupMCPConfiguration } from '../../src/utils/mcp-utils.js';
+import { setupMCPConfiguration } from './mcp-utils.js';
 
 // --- Centralized Brand Helpers ---
-import { clineProfile, cursorProfile, rooProfile, windsurfProfile } from '../profiles/index.js';
+import { clineProfile, cursorProfile, rooProfile, windsurfProfile } from '../../scripts/profiles/index.js';
 
 export const BRAND_PROFILES = {
 	cline: clineProfile,
@@ -335,4 +335,4 @@ export {
 	convertAllRulesToBrandRules,
 	convertRuleToBrandRule,
 	removeBrandRules
-};
+}; 
