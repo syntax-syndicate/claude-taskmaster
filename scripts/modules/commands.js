@@ -65,6 +65,7 @@ import {
 	displayApiKeyStatus,
 	displayAiUsageSummary
 } from './ui.js';
+import { confirmRulesRemove } from '../../src/ui/confirm.js';
 
 import { initializeProject } from '../init.js';
 import {
@@ -2438,7 +2439,7 @@ Examples:
 				let confirmed = true;
 				if (!options.force) {
 					const ui = await import('./ui.js');
-					confirmed = await ui.confirmRulesRemove(expandedBrands);
+					confirmed = await confirmRulesRemove(expandedBrands);
 				}
 				if (!confirmed) {
 					console.log(chalk.yellow('Aborted: No rules were removed.'));
