@@ -17,12 +17,12 @@ This document provides a detailed reference for interacting with Taskmaster, cov
 
 ### 1. Initialize Project (`init`)
 
-*   **Brand Rules Option:**
-    *   `--rules <brands>` or `-r <brands>`: Comma-separated list of brand rule sets to apply at initialization (e.g., `cursor,windsurf,roo`).
+*   **Rules Option:**
+    *   `--rules <rules>` or `-r <rules>`: Comma-separated list of rule sets to apply at initialization (e.g., `cursor,windsurf,roo`).
     *   Example: `task-master init --rules cursor,windsurf`
     *   Example: `task-master init -r roo`
 *   **What happens:**
-    *   For each brand, creates the appropriate rules directory (e.g., `.roo/rules`) and MCP config (e.g., `.roo/mcp.json`).
+    *   For each, creates the appropriate rules directory (e.g., `.roo/rules`) and MCP config (e.g., `.roo/mcp.json`).
     *   If not specified, only Cursor rules are initialized by default.
 
 
@@ -93,15 +93,15 @@ This document provides a detailed reference for interacting with Taskmaster, cov
 
 ---
 
-### Add or Remove Brand Rules After Initialization
+### Add or Remove Rules After Initialization
 
 *   **CLI Command:**
-    *   `task-master rules add <brands>`: Add one or more brand rule sets to your project (e.g., `task-master rules add windsurf,roo`).
-    *   `task-master rules remove <brands>`: Remove one or more brand rule sets (e.g., `task-master rules remove windsurf`).
+    *   `task-master rules add <rules>`: Add one or more rule sets to your project (e.g., `task-master rules add windsurf,roo`).
+    *   `task-master rules remove <rules>`: Remove one or more rule sets (e.g., `task-master rules remove windsurf`).
 *   **What happens:**
-    *   Adding rules creates the brand rules directory (e.g., `.roo/rules`) and MCP config.
-    *   Removing rules deletes the brand rules directory and associated MCP config.
-    *   You can use multiple comma-separated brands in a single command.
+    *   Adding rules creates the rules directory (e.g., `.roo/rules`) and MCP config (if appropriate).
+    *   Removing rules deletes the rules directory and associated MCP config.
+    *   You can use multiple comma-separated rules in a single command.
 
 ---
 

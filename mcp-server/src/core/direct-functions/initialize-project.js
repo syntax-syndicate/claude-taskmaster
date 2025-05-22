@@ -72,7 +72,7 @@ export async function initializeProjectDirect(args, log, context = {}) {
 		// Handle rules option just like CLI
 		if (Array.isArray(args.rules) && args.rules.length > 0) {
 			options.rules = args.rules;
-			log.info(`Including brand rules: ${args.rules.join(', ')}`);
+			log.info(`Including rules: ${args.rules.join(', ')}`);
 		} else {
 			options.rules = ['cursor'];
 			log.info(`No rules specified, defaulting to: cursor`);

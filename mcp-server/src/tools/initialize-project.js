@@ -40,7 +40,7 @@ export function registerInitializeProjectTool(server) {
 				.array(z.string())
 				.optional()
 				.describe(
-					'List of brand rules to include at initialization (e.g., ["cursor", "roo"]). If omitted, defaults to ["cursor"].'
+					'List of rules to include at initialization (e.g., ["cursor", "roo"]). If omitted, defaults to ["cursor"].'
 				)
 		}),
 		execute: withNormalizedProjectRoot(async (args, context) => {

@@ -1,6 +1,6 @@
 /**
  * rules.js
- * Direct function implementation for adding or removing brand rules
+ * Direct function implementation for adding or removing rules
  */
 
 import {
@@ -18,10 +18,10 @@ import path from 'path';
 import fs from 'fs';
 
 /**
- * Direct function wrapper for adding or removing brand rules.
+ * Direct function wrapper for adding or removing rules.
  * @param {Object} args - Command arguments
  * @param {"add"|"remove"} args.action - Action to perform: add or remove rules
- * @param {string[]} args.rules - List of brand rules to add or remove
+ * @param {string[]} args.rules - List of rules to add or remove
  * @param {string} args.projectRoot - Absolute path to the project root
  * @param {boolean} [args.yes=true] - Run non-interactively
  * @param {Object} log - Logger object

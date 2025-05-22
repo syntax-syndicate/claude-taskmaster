@@ -93,14 +93,12 @@ task-master init
 
 # If installed locally
 npx task-master init
+
+# Initialize project with specific rules
+task-master init --rules cursor,windsurf
 ```
 
 This will prompt you for project details and set up a new project with the necessary files and structure.
-You can also specify brand rules to apply during initialization:
-
-```bash
-task-master init --rules cursor,windsurf
-```
 
 #### Common Commands
 
@@ -108,80 +106,21 @@ task-master init --rules cursor,windsurf
 # Initialize a new project
 task-master init
 
-# Initialize a new project applying specific brand rules
-task-master init --rules cursor,windsurf
-
 # Parse a PRD and generate tasks
 task-master parse-prd your-prd.txt
 
-# Add, remove, or set up brand rules after initialization
-
-You can add or remove brand rules at any time after project initialization:
-
-```
-
-task-master rules add windsurf,roo
-
-# Adds the specified brand rule sets (e.g., .windsurf/rules, .roo/rules) to your project.
-
-# Also sets up the corresponding MCP configuration in the brand directory.
-
-task-master rules remove windsurf
-
-# Removes the specified brand rule sets and their MCP config from your project.
-
-task-master rules setup
-
-# Launches an interactive prompt to select which brand rules to apply to your project.
-
-# This does NOT re-initialize the project or ask about shell aliases.
-
-# Useful for updating/enforcing rules or switching brands at any time.
-
-# The list of brands is always up-to-date with available profiles.
-
-````
-
-- Adding rules creates the brand rules directory (e.g., `.roo/rules`) and copies/initializes the brand's rules.
-- Removing rules deletes the brand rules directory and associated MCP config.
-- You can use multiple comma-separated brands in a single command.
-- Use the `--force` flag to bypass the confirmation prompt when removing rules (dangerous, irreversible):
-
-```bash
-task-master rules remove windsurf --force
-````
-
-:warning: **Warning:** The `--force` flag will immediately and permanently delete brand rules and configuration without asking for confirmation.
-
-task-master rules add windsurf,roo
-task-master rules remove windsurf --force
-
 # List all tasks
-
 task-master list
 
 # Show the next task to work on
-
 task-master next
 
 # Generate task files
-
 task-master generate
 
-````
-
-### Interactive Rules Setup
-
-You can launch the interactive rules setup at any time with:
-
-```bash
-task-master rules setup
+# Add rules after initialization
+task-master rules add windsurf,roo
 ```
-
-This command opens a prompt where you can select which brand rules (e.g., Cursor, Roo, Windsurf) you want to apply to your project. The list of brands is always current with the available profiles—no manual updates needed. This does **not** re-initialize your project or ask about shell aliases; it only manages rules.
-
-- Use this command to update, enforce, or switch brand rules interactively after project creation.
-- The same interactive prompt is also used during `init` if you don't specify brands with `--rules`.
 
 ## Documentation
 

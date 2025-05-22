@@ -1,6 +1,6 @@
 /**
  * tools/rules.js
- * Tool to add or remove brand rules from a project (MCP server)
+ * Tool to add or remove rules from a project (MCP server)
  */
 
 import { z } from 'zod';
@@ -19,16 +19,16 @@ export function registerRulesTool(server) {
 	server.addTool({
 		name: 'rules',
 		description:
-			'Add or remove brand rules and MCP config from the project (mirrors CLI rules add/remove).',
+			'Add or remove rules and MCP config from the project (mirrors CLI rules add/remove).',
 		parameters: z.object({
 			action: z
 				.enum(['add', 'remove'])
-				.describe('Whether to add or remove brand rules.'),
+				.describe('Whether to add or remove rules.'),
 			rules: z
 				.array(z.string())
 				.min(1)
 				.describe(
-					'List of brand rules to add or remove (e.g., ["roo", "windsurf"]).'
+					'List of rules to add or remove (e.g., ["roo", "windsurf"]).'
 				),
 			projectRoot: z
 				.string()
