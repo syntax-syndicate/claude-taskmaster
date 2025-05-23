@@ -398,8 +398,7 @@ async function initializeProject(options = {}) {
 				return;
 			}
 
-			// === Brand Rules Selection (via shared module) ===
-			// Only run interactive rules setup if rules weren't explicitly provided via command line
+			// Only run interactive rules if rules flag not provided via command line
 			if (options.rulesExplicitlyProvided) {
 				log('info', `Using rules provided via command line: ${selectedBrandRules.join(', ')}`);
 			} else {
