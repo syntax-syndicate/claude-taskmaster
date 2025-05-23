@@ -543,10 +543,6 @@ function createProjectStructure(
 			const profile = BRAND_PROFILES[rule];
 			if (profile) {
 				convertAllRulesToBrandRules(targetDir, profile);
-				// Ensure MCP config is set up under the correct brand folder for any non-cursor rule
-				if (rule !== 'cursor') {
-					setupMCPConfiguration(path.join(targetDir, `.${rule}`));
-				}
 			} else {
 				log('warn', `Unknown rules profile: ${rule}`);
 			}
