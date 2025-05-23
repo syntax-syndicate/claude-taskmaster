@@ -10,6 +10,7 @@ import {
 	withNormalizedProjectRoot
 } from './utils.js';
 import { rulesDirect } from '../core/direct-functions/rules.js';
+import { BRAND_RULE_OPTIONS } from '../../../src/constants/rules.js';
 
 /**
  * Register the rules tool with the MCP server
@@ -25,10 +26,10 @@ export function registerRulesTool(server) {
 				.enum(['add', 'remove'])
 				.describe('Whether to add or remove rules.'),
 			rules: z
-				.array(z.string())
+				.array(z.enum(BRAND_RULE_OPTIONS))
 				.min(1)
 				.describe(
-					'List of rules to add or remove (e.g., ["roo", "windsurf"]).'
+					`List of rules to add or remove. Available options: ${BRAND_RULE_OPTIONS.join(', ')}`
 				),
 			projectRoot: z
 				.string()
