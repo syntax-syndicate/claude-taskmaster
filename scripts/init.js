@@ -182,9 +182,6 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 
 	// Map template names to their actual source paths
 	switch (templateName) {
-		// case 'scripts_README.md':
-		// 	sourcePath = path.join(__dirname, '..', 'assets', 'scripts_README.md');
-		// 	break;
 		case 'dev_workflow.mdc':
 			sourcePath = path.join(
 				__dirname,
@@ -300,21 +297,12 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 	log('info', `Created file: ${targetPath}`);
 }
 
-// Main function to initialize a new project (No longer needs isInteractive logic)
+// Main function to initialize a new project
 async function initializeProject(options = {}) {
-	// Receives options as argument
 	// Only display banner if not in silent mode
 	if (!isSilentMode()) {
 		displayBanner();
 	}
-
-	// Debug logging only if not in silent mode
-	// if (!isSilentMode()) {
-	// 	console.log('===== DEBUG: INITIALIZE PROJECT OPTIONS RECEIVED =====');
-	// 	console.log('Full options object:', JSON.stringify(options));
-	// 	console.log('options.yes:', options.yes);
-	// 	console.log('==================================================');
-	// }
 
 	const skipPrompts = options.yes || (options.name && options.description);
 	let selectedBrandRules =
@@ -322,21 +310,11 @@ async function initializeProject(options = {}) {
 			? options.rules
 			: BRAND_NAMES; // Default to all rules
 
-	// if (!isSilentMode()) {
-	// 	console.log('Skip prompts determined:', skipPrompts);
-	// }
-
 	if (skipPrompts) {
 		if (!isSilentMode()) {
 			console.log('SKIPPING PROMPTS - Using defaults or provided values');
 		}
 
-		// Use provided options or defaults
-		const projectName = options.name || 'task-master-project';
-		const projectDescription =
-			options.description || 'A project managed with Task Master AI';
-		const projectVersion = options.version || '0.1.0';
-		const authorName = options.author || 'Vibe coder';
 		const dryRun = options.dryRun || false;
 		const addAliases = options.aliases || false;
 
@@ -458,6 +436,20 @@ function createProjectStructure(
 		year: new Date().getFullYear()
 	};
 
+	// Helper function to process a single brand rule
+	function _processSingleBrandRule(ruleName) {
+		const profile = BRAND_PROFILES[ruleName];
+		if (profile) {
+			convertAllRulesToBrandRules(targetDir, profile);
+			// Ensure MCP config is set up under the correct brand folder for any non-cursor rule
+			if (ruleName !== 'cursor') {
+				setupMCPConfiguration(path.join(targetDir, `.${ruleName}`));
+			}
+		} else {
+			log('warn', `Unknown rules profile: ${ruleName}`);
+		}
+	}
+
 	// Copy .env.example
 	copyTemplateFile(
 		'env.example',
@@ -507,13 +499,6 @@ function createProjectStructure(
 		path.join(targetDir, 'scripts', 'example_prd.txt')
 	);
 
-	// // Create main README.md
-	// copyTemplateFile(
-	// 	'README-task-master.md',
-	// 	path.join(targetDir, 'README-task-master.md'),
-	// 	replacements
-	// );
-
 	// Initialize git repository if git is available
 	try {
 		if (!fs.existsSync(path.join(targetDir, '.git'))) {
@@ -527,24 +512,13 @@ function createProjectStructure(
 
 	// === Generate Brand Rules from assets/rules ===
 	log('info', 'Generating brand rules from assets/rules...');
-	if (Array.isArray(selectedBrandRules)) {
-		for (const rule of selectedBrandRules) {
-			const profile = BRAND_PROFILES[rule];
-			if (profile) {
-				convertAllRulesToBrandRules(targetDir, profile);
-			} else {
-				log('warn', `Unknown rules profile: ${rule}`);
-			}
-		}
-	} else {
-		// fallback for safety - use all available brand rules
-		log('warn', 'selectedBrandRules is not an array, using all available brand rules as fallback');
-		for (const rule of BRAND_NAMES) {
-			const profile = BRAND_PROFILES[rule];
-			if (profile) {
-				convertAllRulesToBrandRules(targetDir, profile);
-			}
-		}
+	for (const rule of selectedBrandRules) {
+		_processSingleBrandRule(rule);
+	}
+
+	// Add shell aliases if requested
+	if (addAliases) {
+		addShellAliases();
 	}
 
 	// Run npm install automatically
@@ -716,16 +690,5 @@ import { setupMCPConfiguration } from '../src/utils/mcp-utils.js';
 // Import centralized brand profile logic
 import { BRAND_PROFILES, BRAND_NAMES } from '../src/utils/rule-transformer.js';
 
-// Dynamically generate availableBrandRules from BRAND_NAMES and brand profiles
-const availableBrandRules = BRAND_NAMES.map((name) => {
-	const displayName =
-		BRAND_PROFILES[name]?.brandName ||
-		name.charAt(0).toUpperCase() + name.slice(1);
-	return {
-		name: name === 'cursor' ? `${displayName} (default)` : displayName,
-		value: name
-	};
-});
-
 // Ensure necessary functions are exported
-export { initializeProject, log }; // Only export what's needed by commands.js
+export { initializeProject, log };
