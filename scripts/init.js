@@ -537,8 +537,14 @@ function createProjectStructure(
 			}
 		}
 	} else {
-		// fallback for safety
-		convertAllRulesToBrandRules(targetDir, BRAND_PROFILES['cursor']);
+		// fallback for safety - use all available brand rules
+		log('warn', 'selectedBrandRules is not an array, using all available brand rules as fallback');
+		for (const rule of BRAND_NAMES) {
+			const profile = BRAND_PROFILES[rule];
+			if (profile) {
+				convertAllRulesToBrandRules(targetDir, profile);
+			}
+		}
 	}
 
 	// Run npm install automatically
