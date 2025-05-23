@@ -320,7 +320,7 @@ async function initializeProject(options = {}) {
 	let selectedBrandRules =
 		options.rules && Array.isArray(options.rules) && options.rules.length > 0
 			? options.rules
-			: ['cursor'];
+			: BRAND_NAMES; // Default to all rules
 
 	// if (!isSilentMode()) {
 	// 	console.log('Skip prompts determined:', skipPrompts);
@@ -418,31 +418,6 @@ async function initializeProject(options = {}) {
 			// Create structure using only necessary values
 			createProjectStructure(addAliasesPrompted, dryRun, selectedBrandRules);
 
-			// If in MCP mode, call MCP server for rules (without 'yes' param)
-			if (options.mcpMode && options.mcpServer) {
-				const mcpArgs = {
-					action: 'add',
-					rules: selectedBrandRules,
-					projectRoot: targetDir
-				};
-				try {
-					const mcpResult = await options.mcpServer.call('rules', mcpArgs);
-					if (mcpResult && mcpResult.success) {
-						log(
-							'success',
-							`Brand rules added via MCP: ${selectedBrandRules.join(', ')}`
-						);
-					} else {
-						log(
-							'error',
-							`MCP rules add failed: ${mcpResult?.error?.message || 'Unknown error'}`
-						);
-					}
-				} catch (err) {
-					log('error', `MCP server error: ${err.message}`);
-				}
-			}
-
 			for (const rule of selectedBrandRules) {
 				const profile = BRAND_PROFILES[rule];
 				if (profile) {
@@ -479,7 +454,7 @@ function promptQuestion(rl, question) {
 function createProjectStructure(
 	addAliases,
 	dryRun,
-	selectedBrandRules = ['cursor']
+	selectedBrandRules = BRAND_NAMES // Default to all rules
 ) {
 	const targetDir = process.cwd();
 	log('info', `Initializing project in ${targetDir}`);

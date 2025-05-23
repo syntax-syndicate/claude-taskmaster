@@ -213,8 +213,8 @@ task-master init
 task-master init --rules cursor,windsurf
 ```
 
-- The `--rules` flag allows you to specify one or more rule sets (e.g., `cursor`, `roo`, `windsurf`) to apply during initialization.
-- If omitted, the default is `cursor`.
+- The `--rules` flag allows you to specify one or more rule sets (e.g., `cursor`, `roo`, `windsurf`, `cline`) to apply during initialization.
+- If omitted, all available rule sets are installed by default (cursor, windsurf, roo, cline).
 - You can use multiple comma-separated rules in a single command.
 
 **Example:**

@@ -2123,17 +2123,23 @@ function registerCommands(programInstance) {
 		.option('--dry-run', 'Show what would be done without making changes')
 		.option('--aliases', 'Add shell aliases (tm, taskmaster)')
 		.action(async (cmdOptions) => {
-			// Parse rules: accept space or comma separated, default to ['cursor']
-			let rules = ['cursor'];
+			// cmdOptions contains parsed arguments
+			// Parse rules: accept space or comma separated, default to all available rules
+			let selectedBrands = BRAND_NAMES;
+			
 			if (cmdOptions.rules && Array.isArray(cmdOptions.rules)) {
-				rules = cmdOptions.rules
+				const userSpecifiedBrands = cmdOptions.rules
 					.flatMap((r) => r.split(','))
 					.map((r) => r.trim())
 					.filter(Boolean);
-				if (rules.length === 0) rules = ['cursor'];
+				// Only override defaults if user specified valid rules
+				if (userSpecifiedBrands.length > 0) {
+					selectedBrands = userSpecifiedBrands;
+				}
 			}
-			// cmdOptions contains parsed arguments
-			cmdOptions.rules = rules;
+			
+			cmdOptions.rules = selectedBrands;
+			
 			try {
 				console.log('DEBUG: Running init command action in commands.js');
 				console.log(
