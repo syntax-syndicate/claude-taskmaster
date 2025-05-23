@@ -2126,6 +2126,7 @@ function registerCommands(programInstance) {
 			// cmdOptions contains parsed arguments
 			// Parse rules: accept space or comma separated, default to all available rules
 			let selectedBrands = BRAND_NAMES;
+			let rulesExplicitlyProvided = false;
 			
 			if (cmdOptions.rules && Array.isArray(cmdOptions.rules)) {
 				const userSpecifiedBrands = cmdOptions.rules
@@ -2135,17 +2136,14 @@ function registerCommands(programInstance) {
 				// Only override defaults if user specified valid rules
 				if (userSpecifiedBrands.length > 0) {
 					selectedBrands = userSpecifiedBrands;
+					rulesExplicitlyProvided = true;
 				}
 			}
 			
 			cmdOptions.rules = selectedBrands;
+			cmdOptions.rulesExplicitlyProvided = rulesExplicitlyProvided;
 			
 			try {
-				console.log('DEBUG: Running init command action in commands.js');
-				console.log(
-					'DEBUG: Options received by action:',
-					JSON.stringify(cmdOptions)
-				);
 				// Directly call the initializeProject function, passing the parsed options
 				await initializeProject(cmdOptions);
 				// initializeProject handles its own flow, including potential process.exit()

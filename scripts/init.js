@@ -399,7 +399,12 @@ async function initializeProject(options = {}) {
 			}
 
 			// === Brand Rules Selection (via shared module) ===
-			const selectedBrandRules = await runInteractiveRulesSetup();
+			// Only run interactive rules setup if rules weren't explicitly provided via command line
+			if (options.rulesExplicitlyProvided) {
+				log('info', `Using rules provided via command line: ${selectedBrandRules.join(', ')}`);
+			} else {
+				selectedBrandRules = await runInteractiveRulesSetup();
+			}
 
 			const dryRun = options.dryRun || false;
 
@@ -418,21 +423,6 @@ async function initializeProject(options = {}) {
 			// Create structure using only necessary values
 			createProjectStructure(addAliasesPrompted, dryRun, selectedBrandRules);
 
-			for (const rule of selectedBrandRules) {
-				const profile = BRAND_PROFILES[rule];
-				if (profile) {
-					convertAllRulesToBrandRules(targetDir, profile);
-					// Ensure MCP config is set up under the correct brand folder
-					if (rule === 'windsurf' || rule === 'roo') {
-					}
-				} else {
-					log('warn', `Unknown rules profile: ${rule}`);
-				}
-			}
-			// fallback for safety if selectedBrandRules is not an array
-			if (!Array.isArray(selectedBrandRules)) {
-				convertAllRulesToBrandRules(targetDir, BRAND_PROFILES['cursor']);
-			}
 		} catch (error) {
 			rl.close();
 			log('error', `Error during initialization process: ${error.message}`);
