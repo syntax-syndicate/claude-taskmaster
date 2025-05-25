@@ -140,7 +140,7 @@ Try running it with Node directly:
 
 ```bash
 node node_modules/claude-task-master/scripts/init.js
-````
+```
 
 Or clone the repository and run:
 
