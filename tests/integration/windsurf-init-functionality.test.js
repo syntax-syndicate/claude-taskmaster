@@ -14,8 +14,8 @@ describe('Windsurf Profile Initialization Functionality', () => {
 		windsurfProfileContent = fs.readFileSync(windsurfJsPath, 'utf8');
 	});
 
-	test('windsurf.js exports correct brandName and rulesDir', () => {
-		expect(windsurfProfileContent).toContain("const brandName = 'Windsurf'");
+	test('windsurf.js exports correct profileName and rulesDir', () => {
+		expect(windsurfProfileContent).toContain("const profileName = 'Windsurf'");
 		expect(windsurfProfileContent).toContain(
 			"const rulesDir = '.windsurf/rules'"
 		);

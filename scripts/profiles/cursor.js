@@ -1,11 +1,12 @@
 // Cursor conversion profile for rule-transformer
 import path from 'path';
 
-const brandName = 'Cursor';
-const brandDir = '.cursor';
+const profileName = 'Cursor';
+const profileDir = '.cursor';
 const rulesDir = '.cursor/rules';
 const mcpConfig = true;
 const mcpConfigName = 'mcp.json';
+const mcpConfigPath = `${profileDir}/${mcpConfigName}`;
 
 // File name mapping (specific files with naming changes)
 const fileMap = {
@@ -39,8 +40,8 @@ const globalReplacements = [
 ];
 
 const conversionConfig = {
-	// Product and brand name replacements
-	brandTerms: [
+	// Profile name replacements
+	profileTerms: [
 		{ from: /cursor\.so/g, to: 'cursor.so' },
 		{ from: /\[cursor\.so\]/g, to: '[cursor.so]' },
 		{ from: /href="https:\/\/cursor\.so/g, to: 'href="https://cursor.so' },
@@ -82,10 +83,11 @@ export {
 	conversionConfig,
 	fileMap,
 	globalReplacements,
-	brandName,
-	brandDir,
+	profileName,
+	profileDir,
 	rulesDir,
-	getTargetRuleFilename,
 	mcpConfig,
-	mcpConfigName
+	mcpConfigName,
+	mcpConfigPath,
+	getTargetRuleFilename
 };

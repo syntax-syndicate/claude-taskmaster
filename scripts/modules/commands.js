@@ -65,7 +65,7 @@ import {
 	displayApiKeyStatus,
 	displayAiUsageSummary
 } from './ui.js';
-import { confirmRulesRemove } from '../../src/ui/confirm.js';
+import { confirmProfilesRemove } from '../../src/ui/confirm.js';
 
 import { initializeProject } from '../init.js';
 import {
@@ -80,12 +80,12 @@ import {
 	TASK_STATUS_OPTIONS
 } from '../../src/constants/task-status.js';
 import { getTaskMasterVersion } from '../../src/utils/getVersion.js';
+import { RULES_PROFILES } from '../../src/constants/profiles.js';
 import {
-	convertAllRulesToBrandRules,
-	removeBrandRules,
-	BRAND_NAMES,
-	isValidBrand,
-	getBrandProfile
+	convertAllRulesToProfileRules,
+	removeProfileRules,
+	isValidProfile,
+	getRulesProfile
 } from '../../src/utils/rule-transformer.js';
 import { runInteractiveRulesSetup } from '../../src/utils/rules-setup.js';
 
@@ -2125,24 +2125,24 @@ function registerCommands(programInstance) {
 		.action(async (cmdOptions) => {
 			// cmdOptions contains parsed arguments
 			// Parse rules: accept space or comma separated, default to all available rules
-			let selectedBrands = BRAND_NAMES;
+			let selectedProfiles = RULES_PROFILES;
 			let rulesExplicitlyProvided = false;
-			
+
 			if (cmdOptions.rules && Array.isArray(cmdOptions.rules)) {
-				const userSpecifiedBrands = cmdOptions.rules
+				const userSpecifiedProfiles = cmdOptions.rules
 					.flatMap((r) => r.split(','))
 					.map((r) => r.trim())
 					.filter(Boolean);
 				// Only override defaults if user specified valid rules
-				if (userSpecifiedBrands.length > 0) {
-					selectedBrands = userSpecifiedBrands;
+				if (userSpecifiedProfiles.length > 0) {
+					selectedProfiles = userSpecifiedProfiles;
 					rulesExplicitlyProvided = true;
 				}
 			}
-			
-			cmdOptions.rules = selectedBrands;
+
+			cmdOptions.rules = selectedProfiles;
 			cmdOptions.rulesExplicitlyProvided = rulesExplicitlyProvided;
-			
+
 			try {
 				// Directly call the initializeProject function, passing the parsed options
 				await initializeProject(cmdOptions);
@@ -2377,65 +2377,68 @@ Examples:
 			return; // Stop execution here
 		});
 
-	// Add/remove brand rules command
+	// Add/remove profile rules command
 	programInstance
-		.command('rules <action> [brands...]')
+		.command('rules <action> [profiles...]')
 		.description(
-			'Add or remove rules for one or more brands (e.g., task-master rules add windsurf roo)'
+			'Add or remove rules for one or more profiles (e.g., task-master rules add windsurf roo)'
 		)
 		.option(
 			'-f, --force',
 			'Skip confirmation prompt when removing rules (dangerous)'
 		)
-		.action(async (action, brands, options) => {
+		.action(async (action, profiles, options) => {
 			const projectDir = process.cwd();
 
 			/**
 			 * 'task-master rules setup' action:
 			 *
-			 * Launches an interactive prompt to select which brand rules to apply to the current project.
+			 * Launches an interactive prompt to select which rules profiles to add to the current project.
 			 * This does NOT perform project initialization or ask about shell aliases—only rules selection.
 			 *
 			 * Example usage:
 			 *   $ task-master rules setup
 			 *
-			 * Useful for updating/enforcing rules after project creation, or switching brands.
+			 * Useful for adding rules after project creation.
 			 *
-			 * The list of brands is always up-to-date with the available profiles.
+			 * The list of profiles is always up-to-date with the available profiles.
 			 */
 			if (action === 'setup') {
 				// Run interactive rules setup ONLY (no project init)
-				const selectedBrandRules = await runInteractiveRulesSetup();
-				for (const brand of selectedBrandRules) {
-					if (!isValidBrand(brand)) {
+				const selectedRulesProfiles = await runInteractiveRulesSetup();
+				for (const profile of selectedRulesProfiles) {
+					if (!isValidProfile(profile)) {
 						console.warn(
-							`Rules profile for brand "${brand}" not found. Valid brands: ${BRAND_NAMES.join(', ')}. Skipping.`
+							`Rules profile for "${profile}" not found. Valid profiles: ${RULES_PROFILES.join(', ')}. Skipping.`
 						);
 						continue;
 					}
-					const profile = getBrandProfile(brand);
-					const addResult = convertAllRulesToBrandRules(projectDir, profile);
-					if (typeof profile.onAddBrandRules === 'function') {
-						profile.onAddBrandRules(projectDir);
+					const profileConfig = getRulesProfile(profile);
+					const addResult = convertAllRulesToProfileRules(
+						projectDir,
+						profileConfig
+					);
+					if (typeof profileConfig.onAddRulesProfile === 'function') {
+						profileConfig.onAddRulesProfile(projectDir);
 					}
 					console.log(
 						chalk.green(
-							`Summary for ${brand}: ${addResult.success} rules added, ${addResult.failed} failed.`
+							`Summary for ${profile}: ${addResult.success} rules added, ${addResult.failed} failed.`
 						)
 					);
 				}
 				return;
 			}
 
-			if (!brands || brands.length === 0) {
+			if (!profiles || profiles.length === 0) {
 				console.error(
-					'Please specify at least one brand (e.g., windsurf, roo).'
+					'Please specify at least one rules profile (e.g., windsurf, roo).'
 				);
 				process.exit(1);
 			}
 
-			// Support both space- and comma-separated brand lists
-			const expandedBrands = brands
+			// Support both space- and comma-separated profile lists
+			const expandedProfiles = profiles
 				.flatMap((b) => b.split(',').map((s) => s.trim()))
 				.filter(Boolean);
 
@@ -2443,7 +2446,7 @@ Examples:
 				let confirmed = true;
 				if (!options.force) {
 					const ui = await import('./ui.js');
-					confirmed = await confirmRulesRemove(expandedBrands);
+					confirmed = await confirmProfilesRemove(expandedProfiles);
 				}
 				if (!confirmed) {
 					console.log(chalk.yellow('Aborted: No rules were removed.'));
@@ -2451,36 +2454,39 @@ Examples:
 				}
 			}
 
-			// (removed duplicate projectDir, brands check, and expandedBrands parsing)
-
 			const removalResults = [];
 
-			for (const brand of expandedBrands) {
-				if (!isValidBrand(brand)) {
+			for (const profile of expandedProfiles) {
+				if (!isValidProfile(profile)) {
 					console.warn(
-						`Rules profile for brand "${brand}" not found. Valid brands: ${BRAND_NAMES.join(', ')}. Skipping.`
+						`Rules profile for "${profile}" not found. Valid profiles: ${RULES_PROFILES.join(', ')}. Skipping.`
 					);
 					continue;
 				}
-				const profile = getBrandProfile(brand);
+				const profileConfig = getRulesProfile(profile);
 
 				if (action === 'add') {
-					console.log(chalk.blue(`Adding rules for brand: ${brand}...`));
-					const addResult = convertAllRulesToBrandRules(projectDir, profile);
-					if (typeof profile.onAddBrandRules === 'function') {
-						profile.onAddBrandRules(projectDir);
+					console.log(chalk.blue(`Adding rules for profile: ${profile}...`));
+					const addResult = convertAllRulesToProfileRules(
+						projectDir,
+						profileConfig
+					);
+					if (typeof profileConfig.onAddRulesProfile === 'function') {
+						profileConfig.onAddRulesProfile(projectDir);
 					}
-					console.log(chalk.blue(`Completed adding rules for brand: ${brand}`));
+					console.log(
+						chalk.blue(`Completed adding rules for profile: ${profile}`)
+					);
 					console.log(
 						chalk.green(
-							`Summary for ${brand}: ${addResult.success} rules added, ${addResult.failed} failed.`
+							`Summary for ${profile}: ${addResult.success} rules added, ${addResult.failed} failed.`
 						)
 					);
 				} else if (action === 'remove') {
-					console.log(chalk.blue(`Removing rules for brand: ${brand}...`));
-					const result = removeBrandRules(projectDir, profile);
+					console.log(chalk.blue(`Removing rules for profile: ${profile}...`));
+					const result = removeProfileRules(projectDir, profileConfig);
 					removalResults.push(result);
-					console.log(chalk.blue(`Completed removal for brand: ${brand}`));
+					console.log(chalk.blue(`Completed removal for profile: ${profile}`));
 				} else {
 					console.error('Unknown action. Use "add" or "remove".');
 					process.exit(1);
@@ -2491,10 +2497,10 @@ Examples:
 			if (action === 'remove') {
 				const successes = removalResults
 					.filter((r) => r.success)
-					.map((r) => r.brandName);
+					.map((r) => r.profileName);
 				const skipped = removalResults
 					.filter((r) => r.skipped)
-					.map((r) => r.brandName);
+					.map((r) => r.profileName);
 				const errors = removalResults.filter(
 					(r) => r.error && !r.success && !r.skipped
 				);
@@ -2513,7 +2519,9 @@ Examples:
 				}
 				if (errors.length > 0) {
 					errors.forEach((r) => {
-						console.log(chalk.red(`Error removing ${r.brandName}: ${r.error}`));
+						console.log(
+							chalk.red(`Error removing ${r.profileName}: ${r.error}`)
+						);
 					});
 				}
 			}

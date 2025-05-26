@@ -8,12 +8,12 @@ import {
 	disableSilentMode
 } from '../../../../scripts/modules/utils.js';
 import {
-	removeBrandRules,
-	convertAllRulesToBrandRules,
-	BRAND_NAMES,
-	isValidBrand,
-	getBrandProfile
+	convertAllRulesToProfileRules,
+	removeProfileRules,
+	getRulesProfile,
+	isValidProfile
 } from '../../../../src/utils/rule-transformer.js';
+import { RULES_PROFILES } from '../../../../src/constants/profiles.js';
 import path from 'path';
 import fs from 'fs';
 
@@ -21,7 +21,7 @@ import fs from 'fs';
  * Direct function wrapper for adding or removing rules.
  * @param {Object} args - Command arguments
  * @param {"add"|"remove"} args.action - Action to perform: add or remove rules
- * @param {string[]} args.rules - List of rules to add or remove
+ * @param {string[]} args.profiles - List of profiles to add or remove
  * @param {string} args.projectRoot - Absolute path to the project root
  * @param {boolean} [args.yes=true] - Run non-interactively
  * @param {Object} log - Logger object
@@ -31,18 +31,18 @@ import fs from 'fs';
 export async function rulesDirect(args, log, context = {}) {
 	enableSilentMode();
 	try {
-		const { action, rules, projectRoot, yes } = args;
+		const { action, profiles, projectRoot, yes } = args;
 		if (
 			!action ||
-			!Array.isArray(rules) ||
-			rules.length === 0 ||
+			!Array.isArray(profiles) ||
+			profiles.length === 0 ||
 			!projectRoot
 		) {
 			return {
 				success: false,
 				error: {
 					code: 'MISSING_ARGUMENT',
-					message: 'action, rules, and projectRoot are required.'
+					message: 'action, profiles, and projectRoot are required.'
 				}
 			};
 		}
@@ -51,25 +51,25 @@ export async function rulesDirect(args, log, context = {}) {
 		const addResults = [];
 
 		if (action === 'remove') {
-			for (const brand of rules) {
-				if (!isValidBrand(brand)) {
+			for (const profile of profiles) {
+				if (!isValidProfile(profile)) {
 					removalResults.push({
-						brandName: brand,
+						profileName: profile,
 						success: false,
-						error: `The requested rules for '${brand}' are unavailable. Supported rules are: ${BRAND_NAMES.join(', ')}.`
+						error: `The requested rules profile for '${profile}' is unavailable. Supported profiles are: ${RULES_PROFILES.join(', ')}.`
 					});
 					continue;
 				}
-				const profile = getBrandProfile(brand);
-				const result = removeBrandRules(projectRoot, profile);
+				const profileConfig = getRulesProfile(profile);
+				const result = removeProfileRules(projectRoot, profileConfig);
 				removalResults.push(result);
 			}
 			const successes = removalResults
 				.filter((r) => r.success)
-				.map((r) => r.brandName);
+				.map((r) => r.profileName);
 			const skipped = removalResults
 				.filter((r) => r.skipped)
-				.map((r) => r.brandName);
+				.map((r) => r.profileName);
 			const errors = removalResults.filter(
 				(r) => r.error && !r.success && !r.skipped
 			);
@@ -83,7 +83,7 @@ export async function rulesDirect(args, log, context = {}) {
 			}
 			if (errors.length > 0) {
 				summary += errors
-					.map((r) => `Error removing ${r.brandName}: ${r.error}`)
+					.map((r) => `Error removing ${r.profileName}: ${r.error}`)
 					.join(' ');
 			}
 			disableSilentMode();
@@ -92,43 +92,42 @@ export async function rulesDirect(args, log, context = {}) {
 				data: { summary, results: removalResults }
 			};
 		} else if (action === 'add') {
-			for (const brand of rules) {
-				if (!isValidBrand(brand)) {
+			for (const profile of profiles) {
+				if (!isValidProfile(profile)) {
 					addResults.push({
-						brandName: brand,
+						profileName: profile,
 						success: false,
-						error: `Profile not found: static import missing for '${brand}'. Valid brands: ${BRAND_NAMES.join(', ')}`
+						error: `Profile not found: static import missing for '${profile}'. Valid profiles: ${RULES_PROFILES.join(', ')}`
 					});
 					continue;
 				}
-				const profile = getBrandProfile(brand);
-				const { success, failed } = convertAllRulesToBrandRules(
+				const profileConfig = getRulesProfile(profile);
+				const { success, failed } = convertAllRulesToProfileRules(
 					projectRoot,
-					profile
+					profileConfig
 				);
 
 				// Determine paths
-				const rulesDir = profile.rulesDir;
-				const brandRulesDir = path.join(projectRoot, rulesDir);
-				const brandDir = profile.brandDir;
-				const mcpConfig = profile.mcpConfig !== false;
-				const mcpConfigName = profile.mcpConfigName || 'mcp.json';
-				const mcpPath = path.join(projectRoot, brandDir, mcpConfigName);
+				const rulesDir = profileConfig.rulesDir;
+				const profileRulesDir = path.join(projectRoot, rulesDir);
+				const profileDir = profileConfig.profileDir;
+				const mcpConfig = profileConfig.mcpConfig !== false;
+				const mcpPath = path.join(projectRoot, profileConfig.mcpConfigPath);
 
 				// Check what was created
 				const mcpConfigCreated = mcpConfig ? fs.existsSync(mcpPath) : undefined;
-				const rulesDirCreated = fs.existsSync(brandRulesDir);
-				const brandFolderCreated = fs.existsSync(
-					path.join(projectRoot, brandDir)
+				const rulesDirCreated = fs.existsSync(profileRulesDir);
+				const profileFolderCreated = fs.existsSync(
+					path.join(projectRoot, profileDir)
 				);
 
 				const error =
 					failed > 0 ? `${failed} rule files failed to convert.` : null;
 				const resultObj = {
-					brandName: brand,
+					profileName: profile,
 					mcpConfigCreated,
 					rulesDirCreated,
-					brandFolderCreated,
+					profileFolderCreated,
 					skipped: false,
 					error,
 					success:
@@ -142,7 +141,7 @@ export async function rulesDirect(args, log, context = {}) {
 
 			const successes = addResults
 				.filter((r) => r.success)
-				.map((r) => r.brandName);
+				.map((r) => r.profileName);
 			const errors = addResults.filter((r) => r.error && !r.success);
 
 			let summary = '';
@@ -151,7 +150,7 @@ export async function rulesDirect(args, log, context = {}) {
 			}
 			if (errors.length > 0) {
 				summary += errors
-					.map((r) => ` Error adding ${r.brandName}: ${r.error}`)
+					.map((r) => ` Error adding ${r.profileName}: ${r.error}`)
 					.join(' ');
 			}
 			disableSilentMode();

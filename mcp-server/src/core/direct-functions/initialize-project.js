@@ -5,7 +5,8 @@ import {
 	// isSilentMode // Not used directly here
 } from '../../../../scripts/modules/utils.js';
 import os from 'os'; // Import os module for home directory check
-import { BRAND_NAMES } from '../../../../src/utils/rule-transformer.js';
+import { RULES_PROFILES } from '../../../../src/constants/profiles.js';
+import { convertAllRulesToProfileRules } from '../../../../src/utils/rule-transformer.js';
 
 /**
  * Direct function wrapper for initializing a project.
@@ -75,8 +76,10 @@ export async function initializeProjectDirect(args, log, context = {}) {
 			options.rules = args.rules;
 			log.info(`Including rules: ${args.rules.join(', ')}`);
 		} else {
-			options.rules = BRAND_NAMES;
-			log.info(`No rules specified, defaulting to: ${BRAND_NAMES.join(', ')}`);
+			options.rules = RULES_PROFILES;
+			log.info(
+				`No rules profiles specified, defaulting to: ${RULES_PROFILES.join(', ')}`
+			);
 		}
 
 		log.info(`Initializing project with options: ${JSON.stringify(options)}`);

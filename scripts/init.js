@@ -24,7 +24,11 @@ import figlet from 'figlet';
 import boxen from 'boxen';
 import gradient from 'gradient-string';
 import { isSilentMode } from './modules/utils.js';
-import { convertAllRulesToBrandRules } from '../src/utils/rule-transformer.js';
+import { RULES_PROFILES } from '../src/constants/profiles.js';
+import {
+	convertAllRulesToProfileRules,
+	getRulesProfile
+} from '../src/utils/rule-transformer.js';
 import { runInteractiveRulesSetup } from '../src/utils/rules-setup.js';
 import { execSync } from 'child_process';
 
@@ -305,10 +309,10 @@ async function initializeProject(options = {}) {
 	}
 
 	const skipPrompts = options.yes || (options.name && options.description);
-	let selectedBrandRules =
+	let selectedRulesProfiles =
 		options.rules && Array.isArray(options.rules) && options.rules.length > 0
 			? options.rules
-			: BRAND_NAMES; // Default to all rules
+			: RULES_PROFILES; // Default to all profiles
 
 	if (skipPrompts) {
 		if (!isSilentMode()) {
@@ -331,7 +335,7 @@ async function initializeProject(options = {}) {
 		}
 
 		try {
-			createProjectStructure(addAliases, dryRun, selectedBrandRules);
+			createProjectStructure(addAliases, dryRun, selectedRulesProfiles);
 		} catch (error) {
 			log('error', `Error during initialization process: ${error.message}`);
 			process.exit(1);
@@ -378,9 +382,12 @@ async function initializeProject(options = {}) {
 
 			// Only run interactive rules if rules flag not provided via command line
 			if (options.rulesExplicitlyProvided) {
-				log('info', `Using rules provided via command line: ${selectedBrandRules.join(', ')}`);
+				log(
+					'info',
+					`Using rules profiles provided via command line: ${selectedRulesProfiles.join(', ')}`
+				);
 			} else {
-				selectedBrandRules = await runInteractiveRulesSetup();
+				selectedRulesProfiles = await runInteractiveRulesSetup();
 			}
 
 			const dryRun = options.dryRun || false;
@@ -398,8 +405,7 @@ async function initializeProject(options = {}) {
 			}
 
 			// Create structure using only necessary values
-			createProjectStructure(addAliasesPrompted, dryRun, selectedBrandRules);
-
+			createProjectStructure(addAliasesPrompted, dryRun, selectedRulesProfiles);
 		} catch (error) {
 			rl.close();
 			log('error', `Error during initialization process: ${error.message}`);
@@ -421,13 +427,12 @@ function promptQuestion(rl, question) {
 function createProjectStructure(
 	addAliases,
 	dryRun,
-	selectedBrandRules = BRAND_NAMES // Default to all rules
+	selectedRulesProfiles = RULES_PROFILES // Default to all rules profiles
 ) {
 	const targetDir = process.cwd();
 	log('info', `Initializing project in ${targetDir}`);
 
 	// Create directories
-	ensureDirectoryExists(path.join(targetDir, '.cursor', 'rules'));
 	ensureDirectoryExists(path.join(targetDir, 'scripts'));
 	ensureDirectoryExists(path.join(targetDir, 'tasks'));
 
@@ -436,17 +441,14 @@ function createProjectStructure(
 		year: new Date().getFullYear()
 	};
 
-	// Helper function to process a single brand rule
-	function _processSingleBrandRule(ruleName) {
-		const profile = BRAND_PROFILES[ruleName];
+	// Helper function to process a single profile rule
+	function _processSingleProfileRule(profileName) {
+		const profile = getRulesProfile(profileName);
 		if (profile) {
-			convertAllRulesToBrandRules(targetDir, profile);
-			// Ensure MCP config is set up under the correct brand folder for any non-cursor rule
-			if (ruleName !== 'cursor') {
-				setupMCPConfiguration(path.join(targetDir, `.${ruleName}`));
-			}
+			convertAllRulesToProfileRules(targetDir, profile);
+			// The convertAllRulesToProfileRules function also triggers MCP config setup (if needed).
 		} else {
-			log('warn', `Unknown rules profile: ${ruleName}`);
+			log('warn', `Unknown rules profile: ${profileName}`);
 		}
 	}
 
@@ -510,10 +512,10 @@ function createProjectStructure(
 		log('warn', 'Git not available, skipping repository initialization');
 	}
 
-	// === Generate Brand Rules from assets/rules ===
-	log('info', 'Generating brand rules from assets/rules...');
-	for (const rule of selectedBrandRules) {
-		_processSingleBrandRule(rule);
+	// Generate profile rules from assets/rules
+	log('info', 'Generating profile rules from assets/rules...');
+	for (const profileName of selectedRulesProfiles) {
+		_processSingleProfileRule(profileName);
 	}
 
 	// Add shell aliases if requested
@@ -684,11 +686,6 @@ function createProjectStructure(
 		);
 	}
 }
-
-// Import MCP configuration helper
-import { setupMCPConfiguration } from '../src/utils/mcp-utils.js';
-// Import centralized brand profile logic
-import { BRAND_PROFILES, BRAND_NAMES } from '../src/utils/rule-transformer.js';
 
 // Ensure necessary functions are exported
 export { initializeProject, log };

@@ -3,10 +3,12 @@ import path from 'path';
 import { log } from '../../scripts/modules/utils.js';
 
 // Structure matches project conventions (see scripts/init.js)
-export function setupMCPConfiguration(configDir) {
-	const mcpPath = path.join(configDir, 'mcp.json');
+export function setupMCPConfiguration(projectDir, mcpConfigPath) {
+	// Build the full path to the MCP config file
+	const mcpPath = path.join(projectDir, mcpConfigPath);
+	const configDir = path.dirname(mcpPath);
 
-	log('info', 'Setting up MCP configuration for brand integration...');
+	log('info', `Setting up MCP configuration at ${mcpPath}...`);
 
 	// New MCP config to be added - references the installed package
 	const newMCPServer = {
@@ -26,10 +28,12 @@ export function setupMCPConfiguration(configDir) {
 			}
 		}
 	};
+	
 	// Create config directory if it doesn't exist
 	if (!fs.existsSync(configDir)) {
 		fs.mkdirSync(configDir, { recursive: true });
 	}
+	
 	if (fs.existsSync(mcpPath)) {
 		log(
 			'info',
@@ -94,6 +98,6 @@ export function setupMCPConfiguration(configDir) {
 			mcpServers: newMCPServer
 		};
 		fs.writeFileSync(mcpPath, JSON.stringify(newMCPConfig, null, 4));
-		log('success', 'Created MCP configuration file');
+		log('success', `Created MCP configuration file at ${mcpPath}`);
 	}
-} 
+}

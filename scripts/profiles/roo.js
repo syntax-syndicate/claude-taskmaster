@@ -7,11 +7,12 @@ import { isSilentMode, log } from '../modules/utils.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const brandName = 'Roo';
-const brandDir = '.roo';
+const profileName = 'Roo';
+const profileDir = '.roo';
 const rulesDir = '.roo/rules';
 const mcpConfig = true;
 const mcpConfigName = 'mcp.json';
+const mcpConfigPath = `${profileDir}/${mcpConfigName}`;
 
 // File name mapping (specific files with naming changes)
 const fileMap = {
@@ -48,8 +49,8 @@ const globalReplacements = [
 ];
 
 const conversionConfig = {
-	// Product and brand name replacements
-	brandTerms: [
+	// Profile name replacements
+	profileTerms: [
 		{ from: /cursor\.so/g, to: 'roocode.com' },
 		{ from: /\[cursor\.so\]/g, to: '[roocode.com]' },
 		{ from: /href="https:\/\/cursor\.so/g, to: 'href="https://roocode.com' },
@@ -126,7 +127,7 @@ const conversionConfig = {
 
 // Recursively copy everything from assets/roocode to the project root
 
-export function onAddBrandRules(targetDir) {
+export function onAddRulesProfile(targetDir) {
 	const sourceDir = path.resolve(__dirname, '../../assets/roocode');
 	copyRecursiveSync(sourceDir, targetDir);
 
@@ -182,8 +183,8 @@ function copyRecursiveSync(src, dest) {
 	}
 }
 
-export function onRemoveBrandRules(targetDir) {
-	log('debug', `[Roo] onRemoveBrandRules called for ${targetDir}`);
+export function onRemoveRulesProfile(targetDir) {
+	log('debug', `[Roo] onRemoveRulesProfile called for ${targetDir}`);
 	const roomodesPath = path.join(targetDir, '.roomodes');
 	if (fs.existsSync(roomodesPath)) {
 		try {
@@ -216,15 +217,15 @@ export function onRemoveBrandRules(targetDir) {
 			}
 		}
 	}
-	log('debug', `[Roo] onRemoveBrandRules completed for ${targetDir}`);
+	log('debug', `[Roo] onRemoveRulesProfile completed for ${targetDir}`);
 }
 
 function isDirectoryEmpty(dirPath) {
 	return fs.readdirSync(dirPath).length === 0;
 }
 
-function onPostConvertBrandRules(targetDir) {
-	onAddBrandRules(targetDir);
+function onPostConvertRulesProfile(targetDir) {
+	onAddRulesProfile(targetDir);
 }
 
 function getTargetRuleFilename(sourceFilename) {
@@ -238,11 +239,12 @@ export {
 	conversionConfig,
 	fileMap,
 	globalReplacements,
-	brandName,
-	brandDir,
+	profileName,
+	profileDir,
 	rulesDir,
-	getTargetRuleFilename,
 	mcpConfig,
 	mcpConfigName,
-	onPostConvertBrandRules
+	mcpConfigPath,
+	getTargetRuleFilename,
+	onPostConvertRulesProfile
 };

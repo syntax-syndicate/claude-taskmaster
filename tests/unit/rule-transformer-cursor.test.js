@@ -3,8 +3,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import {
-	convertRuleToBrandRule,
-	convertAllRulesToBrandRules
+	convertAllRulesToProfileRules,
+	convertRuleToProfileRule,
+	getRulesProfile
 } from '../../src/utils/rule-transformer.js';
 import * as cursorProfile from '../../scripts/profiles/cursor.js';
 
@@ -44,7 +45,7 @@ Also has references to .mdc files.`;
 
 		// Convert it
 		const testCursorOut = path.join(testDir, 'basic-terms.mdc');
-		convertRuleToBrandRule(testCursorRule, testCursorOut, cursorProfile);
+		convertRuleToProfileRule(testCursorRule, testCursorOut, cursorProfile);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testCursorOut, 'utf8');
@@ -75,7 +76,7 @@ alwaysApply: true
 
 		// Convert it
 		const testCursorOut = path.join(testDir, 'tool-refs.mdc');
-		convertRuleToBrandRule(testCursorRule, testCursorOut, cursorProfile);
+		convertRuleToProfileRule(testCursorRule, testCursorOut, cursorProfile);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testCursorOut, 'utf8');
@@ -105,7 +106,7 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 
 		// Convert it
 		const testCursorOut = path.join(testDir, 'file-refs.mdc');
-		convertRuleToBrandRule(testCursorRule, testCursorOut, cursorProfile);
+		convertRuleToProfileRule(testCursorRule, testCursorOut, cursorProfile);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testCursorOut, 'utf8');

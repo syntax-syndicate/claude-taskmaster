@@ -22,7 +22,7 @@ describe('Roo Files Inclusion in Package', () => {
 		const rooJsContent = fs.readFileSync(rooJsPath, 'utf8');
 
 		// Check for the main handler function
-		expect(rooJsContent.includes('onAddBrandRules(targetDir)')).toBe(true);
+		expect(rooJsContent.includes('onAddRulesProfile(targetDir)')).toBe(true);
 
 		// Check for general recursive copy of assets/roocode
 		expect(

@@ -1,45 +1,59 @@
 /**
  * Rule Transformer Module
- * Handles conversion of Cursor rules to brand rules
+ * Handles conversion of Cursor rules to profile rules
  *
- * This module procedurally generates .{brand}/rules files from assets/rules files,
+ * This module procedurally generates .{profile}/rules files from assets/rules files,
  * eliminating the need to maintain both sets of files manually.
  */
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { log } from '../../scripts/modules/utils.js';
 
 // Import the shared MCP configuration helper
 import { setupMCPConfiguration } from './mcp-utils.js';
 
-// --- Centralized Brand Helpers ---
-import { clineProfile, cursorProfile, rooProfile, windsurfProfile } from '../../scripts/profiles/index.js';
+// Import profile constants (single source of truth)
+import { RULES_PROFILES } from '../constants/profiles.js';
 
-export const BRAND_PROFILES = {
-	cline: clineProfile,
-	cursor: cursorProfile,
-	roo: rooProfile,
-	windsurf: windsurfProfile
-};
+// --- Profile Imports ---
+import * as profilesModule from '../../scripts/profiles/index.js';
 
-export const BRAND_NAMES = Object.keys(BRAND_PROFILES);
-
-export function isValidBrand(brand) {
-	return BRAND_NAMES.includes(brand);
-}
-
-export function getBrandProfile(brand) {
-	return BRAND_PROFILES[brand];
+export function isValidProfile(profile) {
+	return RULES_PROFILES.includes(profile);
 }
 
 /**
- * Replace basic Cursor terms with brand equivalents
+ * Get rules profile by name
+ * @param {string} name - Profile name
+ * @returns {Object|null} Profile object or null if not found
+ */
+export function getRulesProfile(name) {
+	if (!isValidProfile(name)) {
+		return null;
+	}
+
+	// Get the profile from the imported profiles module
+	const profileKey = `${name}Profile`;
+	const profile = profilesModule[profileKey];
+
+	if (!profile) {
+		throw new Error(
+			`Profile not found: static import missing for '${name}'. Valid profiles: ${RULES_PROFILES.join(', ')}`
+		);
+	}
+
+	return profile;
+}
+
+/**
+ * Replace basic Cursor terms with profile equivalents
  */
 function replaceBasicTerms(content, conversionConfig) {
 	let result = content;
 
-	// Apply brand term replacements
-	conversionConfig.brandTerms.forEach((pattern) => {
+	// Apply profile term replacements
+	conversionConfig.profileTerms.forEach((pattern) => {
 		if (typeof pattern.to === 'function') {
 			result = result.replace(pattern.from, pattern.to);
 		} else {
@@ -56,7 +70,7 @@ function replaceBasicTerms(content, conversionConfig) {
 }
 
 /**
- * Replace Cursor tool references with brand tool equivalents
+ * Replace Cursor tool references with profile tool equivalents
  */
 function replaceToolReferences(content, conversionConfig) {
 	let result = content;
@@ -87,7 +101,7 @@ function replaceToolReferences(content, conversionConfig) {
 }
 
 /**
- * Update documentation URLs to point to brand documentation
+ * Update documentation URLs to point to profile documentation
  */
 function updateDocReferences(content, conversionConfig) {
 	let result = content;
@@ -115,8 +129,7 @@ function updateFileReferences(content, conversionConfig) {
 /**
  * Main transformation function that applies all conversions
  */
-// Main transformation function that applies all conversions, now brand-generic
-function transformCursorToBrandRules(
+function transformCursorToProfileRules(
 	content,
 	conversionConfig,
 	globalReplacements = []
@@ -128,7 +141,7 @@ function transformCursorToBrandRules(
 	result = updateDocReferences(result, conversionConfig);
 	result = updateFileReferences(result, conversionConfig);
 
-	// Apply any global/catch-all replacements from the brand profile
+	// Apply any global/catch-all replacements from the profile
 	// Super aggressive failsafe pass to catch any variations we might have missed
 	// This ensures critical transformations are applied even in contexts we didn't anticipate
 	globalReplacements.forEach((pattern) => {
@@ -143,21 +156,21 @@ function transformCursorToBrandRules(
 }
 
 /**
- * Convert a single Cursor rule file to brand rule format
+ * Convert a single Cursor rule file to profile rule format
  */
-function convertRuleToBrandRule(sourcePath, targetPath, profile) {
-	const { conversionConfig, brandName, globalReplacements } = profile;
+export function convertRuleToProfileRule(sourcePath, targetPath, profile) {
+	const { conversionConfig, globalReplacements } = profile;
 	try {
 		log(
 			'debug',
-			`Converting Cursor rule ${path.basename(sourcePath)} to ${brandName} rule ${path.basename(targetPath)}`
+			`Converting Cursor rule ${path.basename(sourcePath)} to ${profile.profileName} rule ${path.basename(targetPath)}`
 		);
 
 		// Read source content
 		const content = fs.readFileSync(sourcePath, 'utf8');
 
 		// Transform content
-		const transformedContent = transformCursorToBrandRules(
+		const transformedContent = transformCursorToProfileRules(
 			content,
 			conversionConfig,
 			globalReplacements
@@ -187,152 +200,141 @@ function convertRuleToBrandRule(sourcePath, targetPath, profile) {
 }
 
 /**
- * Process all Cursor rules and convert to brand rules
+ * Convert all Cursor rules to profile rules for a specific profile
  */
-function convertAllRulesToBrandRules(projectDir, profile) {
-	const { fileMap, brandName, rulesDir, mcpConfig, mcpConfigName } = profile;
-	// Use assets/rules as the source of rules instead of .cursor/rules
-	const cursorRulesDir = path.join(projectDir, 'assets', 'rules');
-	const brandRulesDir = path.join(projectDir, rulesDir);
+export function convertAllRulesToProfileRules(projectDir, profile) {
+	const sourceDir = fileURLToPath(new URL('../../assets/rules', import.meta.url));
+	const targetDir = path.join(projectDir, profile.rulesDir);
 
-	if (!fs.existsSync(cursorRulesDir)) {
-		log('warn', `Cursor rules directory not found: ${cursorRulesDir}`);
-		return { success: 0, failed: 0 };
+	// Ensure target directory exists
+	if (!fs.existsSync(targetDir)) {
+		fs.mkdirSync(targetDir, { recursive: true });
 	}
 
-	// Ensure brand rules directory exists
-	if (!fs.existsSync(brandRulesDir)) {
-		fs.mkdirSync(brandRulesDir, { recursive: true });
-		log('debug', `Created ${brandName} rules directory: ${brandRulesDir}`);
-		// Also create MCP configuration in the brand directory if enabled
-		if (mcpConfig !== false) {
-			const brandDir = profile.brandDir;
-			setupMCPConfiguration(path.join(projectDir, brandDir), mcpConfigName);
-		}
+	// Setup MCP configuration if enabled
+	if (profile.mcpConfig !== false) {
+		setupMCPConfiguration(
+			projectDir,
+			profile.mcpConfigPath
+		);
 	}
 
-	// Count successful and failed conversions
 	let success = 0;
 	let failed = 0;
 
-	// Process each file from assets/rules listed in fileMap
-	const getTargetRuleFilename = profile.getTargetRuleFilename || ((f) => f);
-	Object.keys(profile.fileMap).forEach((file) => {
-		const sourcePath = path.join(cursorRulesDir, file);
-		if (fs.existsSync(sourcePath)) {
-			const targetFilename = getTargetRuleFilename(file);
-			const targetPath = path.join(brandRulesDir, targetFilename);
+	// Use fileMap to determine which files to copy
+	const sourceFiles = Object.keys(profile.fileMap);
 
-			// Convert the file
-			if (convertRuleToBrandRule(sourcePath, targetPath, profile)) {
-				success++;
-			} else {
-				failed++;
+	for (const sourceFile of sourceFiles) {
+		try {
+			const sourcePath = path.join(sourceDir, sourceFile);
+			
+			// Check if source file exists
+			if (!fs.existsSync(sourcePath)) {
+				log('warn', `[Rule Transformer] Source file not found: ${sourceFile}, skipping`);
+				continue;
 			}
-		} else {
+
+			const targetFilename = profile.getTargetRuleFilename
+				? profile.getTargetRuleFilename(sourceFile)
+				: sourceFile;
+			const targetPath = path.join(targetDir, targetFilename);
+
+			// Read source content
+			let content = fs.readFileSync(sourcePath, 'utf8');
+
+			// Apply transformations
+			content = transformCursorToProfileRules(
+				content,
+				profile.conversionConfig,
+				profile.globalReplacements
+			);
+
+			// Write to target
+			fs.writeFileSync(targetPath, content, 'utf8');
+			success++;
+
 			log(
-				'warn',
-				`File listed in fileMap not found in rules dir: ${sourcePath}`
+				'debug',
+				`[Rule Transformer] Converted ${sourceFile} -> ${targetFilename} for ${profile.profileName}`
+			);
+		} catch (error) {
+			failed++;
+			log(
+				'error',
+				`[Rule Transformer] Failed to convert ${sourceFile} for ${profile.profileName}: ${error.message}`
 			);
 		}
-	});
-
-	log(
-		'debug',
-		`Rule conversion complete: ${success} successful, ${failed} failed`
-	);
+	}
 
 	// Call post-processing hook if defined (e.g., for Roo's rules-*mode* folders)
-	if (typeof profile.onPostConvertBrandRules === 'function') {
-		profile.onPostConvertBrandRules(projectDir);
+	if (typeof profile.onPostConvertRulesProfile === 'function') {
+		profile.onPostConvertRulesProfile(projectDir);
 	}
 
 	return { success, failed };
 }
 
 /**
- * Remove a brand's rules directory, its mcp.json, and the parent brand folder recursively.
- * @param {string} projectDir - The root directory of the project
- * @param {object} profile - The brand profile object
- * @returns {boolean} - True if removal succeeded, false otherwise
+ * Remove profile rules for a specific profile
+ * @param {string} projectDir - Target project directory
+ * @param {Object} profile - Profile configuration
+ * @returns {Object} Result object
  */
-function removeBrandRules(projectDir, profile) {
-	const { brandName, rulesDir, mcpConfig, mcpConfigName } = profile;
-	const brandDir = profile.brandDir;
-	const brandRulesDir = path.join(projectDir, rulesDir);
-	const mcpPath = path.join(projectDir, brandDir, mcpConfigName);
+export function removeProfileRules(projectDir, profile) {
+	const targetDir = path.join(projectDir, profile.rulesDir);
+	const profileDir = path.join(projectDir, profile.profileDir);
+	const mcpConfigPath = path.join(projectDir, profile.mcpConfigPath);
 
-	const result = {
-		brandName,
-		mcpConfigRemoved: false,
-		rulesDirRemoved: false,
-		brandFolderRemoved: false,
+	let result = {
+		profileName: profile.profileName,
+		success: false,
 		skipped: false,
-		error: null,
-		success: false // Overall success for this brand
+		error: null
 	};
 
-	if (mcpConfig !== false && fs.existsSync(mcpPath)) {
-		try {
-			fs.unlinkSync(mcpPath);
-			result.mcpConfigRemoved = true;
-		} catch (e) {
-			const errorMessage = `Failed to remove MCP configuration at ${mcpPath}: ${e.message}`;
-			log('warn', errorMessage);
-			result.error = result.error
-				? `${result.error}; ${errorMessage}`
-				: errorMessage;
-		}
-	}
-
-	// Remove rules directory
-	if (fs.existsSync(brandRulesDir)) {
-		try {
-			fs.rmSync(brandRulesDir, { recursive: true, force: true });
-			result.rulesDirRemoved = true;
-		} catch (e) {
-			const errorMessage = `Failed to remove rules directory at ${brandRulesDir}: ${e.message}`;
-			log('warn', errorMessage);
-			result.error = result.error
-				? `${result.error}; ${errorMessage}`
-				: errorMessage;
-		}
-	}
-
-	// Remove brand folder
 	try {
-		fs.rmSync(brandDir, { recursive: true, force: true });
-		result.brandFolderRemoved = true;
-	} catch (e) {
-		const errorMessage = `Failed to remove brand folder at ${brandDir}: ${e.message}`;
-		log('warn', errorMessage);
-		result.error = result.error
-			? `${result.error}; ${errorMessage}`
-			: errorMessage;
-	}
-
-	// Call onRemoveBrandRules hook if present
-	if (typeof profile.onRemoveBrandRules === 'function') {
-		try {
-			profile.onRemoveBrandRules(projectDir);
-		} catch (e) {
-			const errorMessage = `Error in onRemoveBrandRules for ${brandName}: ${e.message}`;
-			log('warn', errorMessage);
-			result.error = result.error
-				? `${result.error}; ${errorMessage}`
-				: errorMessage;
+		// Remove rules directory
+		if (fs.existsSync(targetDir)) {
+			fs.rmSync(targetDir, { recursive: true, force: true });
+			log('debug', `[Rule Transformer] Removed rules directory: ${targetDir}`);
 		}
+
+		// Remove MCP config if it exists
+		if (fs.existsSync(mcpConfigPath)) {
+			fs.rmSync(mcpConfigPath, { force: true });
+			log('debug', `[Rule Transformer] Removed MCP config: ${mcpConfigPath}`);
+		}
+
+		// Call removal hook if defined
+		if (typeof profile.onRemoveRulesProfile === 'function') {
+			profile.onRemoveRulesProfile(projectDir);
+		}
+
+		// Remove profile directory if empty
+		if (fs.existsSync(profileDir)) {
+			const remaining = fs.readdirSync(profileDir);
+			if (remaining.length === 0) {
+				fs.rmSync(profileDir, { recursive: true, force: true });
+				log(
+					'debug',
+					`[Rule Transformer] Removed empty profile directory: ${profileDir}`
+				);
+			}
+		}
+
+		result.success = true;
+		log(
+			'debug',
+			`[Rule Transformer] Successfully removed ${profile.profileName} rules from ${projectDir}`
+		);
+	} catch (error) {
+		result.error = error.message;
+		log(
+			'error',
+			`[Rule Transformer] Failed to remove ${profile.profileName} rules: ${error.message}`
+		);
 	}
 
-	result.success =
-		result.mcpConfigRemoved ||
-		result.rulesDirRemoved ||
-		result.brandFolderRemoved;
 	return result;
 }
-
-export {
-	convertAllRulesToBrandRules,
-	convertRuleToBrandRule,
-	removeBrandRules
-}; 

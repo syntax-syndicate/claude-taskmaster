@@ -1,11 +1,12 @@
 // Windsurf conversion profile for rule-transformer
 import path from 'path';
 
-const brandName = 'Windsurf';
-const brandDir = '.windsurf';
+const profileName = 'Windsurf';
+const profileDir = '.windsurf';
 const rulesDir = '.windsurf/rules';
 const mcpConfig = true;
 const mcpConfigName = 'mcp.json';
+const mcpConfigPath = `${profileDir}/${mcpConfigName}`;
 
 // File name mapping (specific files with naming changes)
 const fileMap = {
@@ -42,8 +43,8 @@ const globalReplacements = [
 ];
 
 const conversionConfig = {
-	// Product and brand name replacements
-	brandTerms: [
+	// Profile name replacements
+	profileTerms: [
 		{ from: /cursor\.so/g, to: 'windsurf.com' },
 		{ from: /\[cursor\.so\]/g, to: '[windsurf.com]' },
 		{ from: /href="https:\/\/cursor\.so/g, to: 'href="https://windsurf.com' },
@@ -132,10 +133,11 @@ export {
 	conversionConfig,
 	fileMap,
 	globalReplacements,
-	brandName,
-	brandDir,
+	profileName,
+	profileDir,
 	rulesDir,
-	getTargetRuleFilename,
 	mcpConfig,
-	mcpConfigName
+	mcpConfigName,
+	mcpConfigPath,
+	getTargetRuleFilename
 };

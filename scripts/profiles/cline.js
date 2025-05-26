@@ -1,11 +1,12 @@
 // Cline conversion profile for rule-transformer
 import path from 'path';
 
-const brandName = 'Cline';
-const brandDir = '.clinerules';
+const profileName = 'Cline';
+const profileDir = '.clinerules';
 const rulesDir = '.clinerules';
 const mcpConfig = false;
 const mcpConfigName = 'cline_mcp_settings.json';
+const mcpConfigPath = `${profileDir}/${mcpConfigName}`;
 
 // File name mapping (specific files with naming changes)
 const fileMap = {
@@ -43,8 +44,8 @@ const globalReplacements = [
 ];
 
 const conversionConfig = {
-	// Product and brand name replacements
-	brandTerms: [
+	// Profile name replacements
+	profileTerms: [
 		{ from: /cursor\.so/g, to: 'cline.bot' },
 		{ from: /\[cursor\.so\]/g, to: '[cline.bot]' },
 		{ from: /href="https:\/\/cursor\.so/g, to: 'href="https://cline.bot' },
@@ -136,10 +137,11 @@ export {
 	conversionConfig,
 	fileMap,
 	globalReplacements,
-	brandName,
-	brandDir,
+	profileName,
+	profileDir,
 	rulesDir,
-	getTargetRuleFilename,
 	mcpConfig,
-	mcpConfigName
+	mcpConfigName,
+	mcpConfigPath,
+	getTargetRuleFilename
 };

@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { convertRuleToBrandRule } from '../../src/utils/rule-transformer.js';
+import { convertRuleToProfileRule } from '../../src/utils/rule-transformer.js';
 import * as windsurfProfile from '../../scripts/profiles/windsurf.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -41,7 +41,7 @@ Also has references to .mdc files.`;
 
 		// Convert it
 		const testWindsurfRule = path.join(testDir, 'basic-terms.md');
-		convertRuleToBrandRule(testCursorRule, testWindsurfRule, windsurfProfile);
+		convertRuleToProfileRule(testCursorRule, testWindsurfRule, windsurfProfile);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testWindsurfRule, 'utf8');
@@ -72,7 +72,7 @@ alwaysApply: true
 
 		// Convert it
 		const testWindsurfRule = path.join(testDir, 'tool-refs.md');
-		convertRuleToBrandRule(testCursorRule, testWindsurfRule, windsurfProfile);
+		convertRuleToProfileRule(testCursorRule, testWindsurfRule, windsurfProfile);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testWindsurfRule, 'utf8');
@@ -100,7 +100,7 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 
 		// Convert it
 		const testWindsurfRule = path.join(testDir, 'file-refs.md');
-		convertRuleToBrandRule(testCursorRule, testWindsurfRule, windsurfProfile);
+		convertRuleToProfileRule(testCursorRule, testWindsurfRule, windsurfProfile);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testWindsurfRule, 'utf8');

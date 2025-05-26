@@ -14,8 +14,8 @@ describe('Cursor Profile Initialization Functionality', () => {
 		cursorProfileContent = fs.readFileSync(cursorJsPath, 'utf8');
 	});
 
-	test('cursor.js exports correct brandName and rulesDir', () => {
-		expect(cursorProfileContent).toContain("const brandName = 'Cursor'");
+	test('cursor.js exports correct profileName and rulesDir', () => {
+		expect(cursorProfileContent).toContain("const profileName = 'Cursor'");
 		expect(cursorProfileContent).toContain("const rulesDir = '.cursor/rules'");
 	});
 

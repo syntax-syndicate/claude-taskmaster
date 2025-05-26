@@ -1769,8 +1769,6 @@ IMPORTANT: Make sure to include an analysis for EVERY task listed above, with th
 `;
 }
 
-
-
 /**
  * Confirm overwriting existing tasks.json file
  * @param {string} tasksPath - Path to the tasks.json file

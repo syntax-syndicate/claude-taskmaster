@@ -5,7 +5,7 @@ import {
 	withNormalizedProjectRoot
 } from './utils.js';
 import { initializeProjectDirect } from '../core/task-master-core.js';
-import { BRAND_RULE_OPTIONS } from '../../../src/constants/rules.js';
+import { RULES_PROFILES } from '../../../src/constants/profiles.js';
 
 export function registerInitializeProjectTool(server) {
 	server.addTool({
@@ -38,10 +38,10 @@ export function registerInitializeProjectTool(server) {
 					'The root directory for the project. ALWAYS SET THIS TO THE PROJECT ROOT DIRECTORY. IF NOT SET, THE TOOL WILL NOT WORK.'
 				),
 			rules: z
-				.array(z.enum(BRAND_RULE_OPTIONS))
+				.array(z.enum(RULES_PROFILES))
 				.optional()
 				.describe(
-					`List of rules to include at initialization. If omitted, defaults to all available brand rules. Available options: ${BRAND_RULE_OPTIONS.join(', ')}`
+					`List of rules profiles to include at initialization. If omitted, defaults to all available profiles. Available options: ${RULES_PROFILES.join(', ')}`
 				)
 		}),
 		execute: withNormalizedProjectRoot(async (args, context) => {

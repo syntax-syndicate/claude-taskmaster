@@ -2,19 +2,19 @@ import chalk from 'chalk';
 import boxen from 'boxen';
 
 /**
- * Confirm removing brand rules (destructive operation)
- * @param {string[]} brands - Array of brand names to remove
+ * Confirm removing profile rules (destructive operation)
+ * @param {string[]} profiles - Array of profile names to remove
  * @returns {Promise<boolean>} - Promise resolving to true if user confirms, false otherwise
  */
-async function confirmRulesRemove(brands) {
-	const brandList = brands
+async function confirmProfilesRemove(profiles) {
+	const profileList = profiles
 		.map((b) => b.charAt(0).toUpperCase() + b.slice(1))
 		.join(', ');
 	console.log(
 		boxen(
 			chalk.yellow(
-				`WARNING: This will permanently delete all rules and configuration for: ${brandList}.
-This will remove the entire .[brand] directory for each selected brand.\n\nAre you sure you want to proceed?`
+				`WARNING: This will permanently delete all rules and configuration for: ${profileList}.
+This will remove the entire .[profile] directory for each selected profile.\n\nAre you sure you want to proceed?`
 			),
 			{ padding: 1, borderColor: 'yellow', borderStyle: 'round' }
 		)
@@ -31,4 +31,4 @@ This will remove the entire .[brand] directory for each selected brand.\n\nAre y
 	return confirm;
 }
 
-export { confirmRulesRemove }; 
+export { confirmProfilesRemove };

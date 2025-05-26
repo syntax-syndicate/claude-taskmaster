@@ -10,7 +10,7 @@ import {
 	withNormalizedProjectRoot
 } from './utils.js';
 import { rulesDirect } from '../core/direct-functions/rules.js';
-import { BRAND_RULE_OPTIONS } from '../../../src/constants/rules.js';
+import { RULES_PROFILES } from '../../../src/constants/profiles.js';
 
 /**
  * Register the rules tool with the MCP server
@@ -20,16 +20,16 @@ export function registerRulesTool(server) {
 	server.addTool({
 		name: 'rules',
 		description:
-			'Add or remove rules and MCP config from the project (mirrors CLI rules add/remove).',
+			'Add or remove rules profiles from the project.',
 		parameters: z.object({
 			action: z
 				.enum(['add', 'remove'])
-				.describe('Whether to add or remove rules.'),
-			rules: z
-				.array(z.enum(BRAND_RULE_OPTIONS))
+				.describe('Whether to add or remove rules profiles.'),
+			profiles: z
+				.array(z.enum(RULES_PROFILES))
 				.min(1)
 				.describe(
-					`List of rules to add or remove. Available options: ${BRAND_RULE_OPTIONS.join(', ')}`
+					`List of rules profiles to add or remove (e.g., [\"cursor\", \"roo\"]). Available options: ${RULES_PROFILES.join(', ')}`
 				),
 			projectRoot: z
 				.string()
@@ -40,7 +40,7 @@ export function registerRulesTool(server) {
 		execute: withNormalizedProjectRoot(async (args, { log, session }) => {
 			try {
 				log.info(
-					`[rules tool] Executing action: ${args.action} for rules: ${args.rules.join(', ')} in ${args.projectRoot}`
+					`[rules tool] Executing action: ${args.action} for profiles: ${args.profiles.join(', ')} in ${args.projectRoot}`
 				);
 				const result = await rulesDirect(args, log, { session });
 				return handleApiResult(result, log);
