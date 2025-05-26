@@ -203,7 +203,9 @@ export function convertRuleToProfileRule(sourcePath, targetPath, profile) {
  * Convert all Cursor rules to profile rules for a specific profile
  */
 export function convertAllRulesToProfileRules(projectDir, profile) {
-	const sourceDir = fileURLToPath(new URL('../../assets/rules', import.meta.url));
+	const sourceDir = fileURLToPath(
+		new URL('../../assets/rules', import.meta.url)
+	);
 	const targetDir = path.join(projectDir, profile.rulesDir);
 
 	// Ensure target directory exists
@@ -213,10 +215,7 @@ export function convertAllRulesToProfileRules(projectDir, profile) {
 
 	// Setup MCP configuration if enabled
 	if (profile.mcpConfig !== false) {
-		setupMCPConfiguration(
-			projectDir,
-			profile.mcpConfigPath
-		);
+		setupMCPConfiguration(projectDir, profile.mcpConfigPath);
 	}
 
 	let success = 0;
@@ -228,10 +227,13 @@ export function convertAllRulesToProfileRules(projectDir, profile) {
 	for (const sourceFile of sourceFiles) {
 		try {
 			const sourcePath = path.join(sourceDir, sourceFile);
-			
+
 			// Check if source file exists
 			if (!fs.existsSync(sourcePath)) {
-				log('warn', `[Rule Transformer] Source file not found: ${sourceFile}, skipping`);
+				log(
+					'warn',
+					`[Rule Transformer] Source file not found: ${sourceFile}, skipping`
+				);
 				continue;
 			}
 

@@ -19,8 +19,7 @@ import { RULES_PROFILES } from '../../../src/constants/profiles.js';
 export function registerRulesTool(server) {
 	server.addTool({
 		name: 'rules',
-		description:
-			'Add or remove rules profiles from the project.',
+		description: 'Add or remove rules profiles from the project.',
 		parameters: z.object({
 			action: z
 				.enum(['add', 'remove'])

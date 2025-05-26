@@ -10,10 +10,10 @@ describe('Rule Transformer - General', () => {
 			// Ensure RULES_PROFILES is properly defined and contains expected profiles
 			expect(Array.isArray(RULES_PROFILES)).toBe(true);
 			expect(RULES_PROFILES.length).toBeGreaterThan(0);
-			
+
 			// Verify expected profiles are present
 			const expectedProfiles = ['cline', 'cursor', 'roo', 'windsurf'];
-			expectedProfiles.forEach(profile => {
+			expectedProfiles.forEach((profile) => {
 				expect(RULES_PROFILES).toContain(profile);
 			});
 		});
@@ -82,8 +82,13 @@ describe('Rule Transformer - General', () => {
 		});
 
 		it('should have valid fileMap with required files for each profile', () => {
-			const expectedFiles = ['cursor_rules.mdc', 'dev_workflow.mdc', 'self_improve.mdc', 'taskmaster.mdc'];
-			
+			const expectedFiles = [
+				'cursor_rules.mdc',
+				'dev_workflow.mdc',
+				'self_improve.mdc',
+				'taskmaster.mdc'
+			];
+
 			RULES_PROFILES.forEach((profile) => {
 				const profileConfig = getRulesProfile(profile);
 
@@ -97,7 +102,7 @@ describe('Rule Transformer - General', () => {
 				expect(fileMapKeys.length).toBeGreaterThan(0);
 
 				// Check that all expected source files are defined in fileMap
-				expectedFiles.forEach(expectedFile => {
+				expectedFiles.forEach((expectedFile) => {
 					expect(fileMapKeys).toContain(expectedFile);
 					expect(typeof profileConfig.fileMap[expectedFile]).toBe('string');
 					expect(profileConfig.fileMap[expectedFile].length).toBeGreaterThan(0);
@@ -171,12 +176,16 @@ describe('Rule Transformer - General', () => {
 
 				// The mcpConfigPath should start with the profileDir
 				expect(profileConfig.mcpConfigPath).toMatch(
-					new RegExp(`^${profileConfig.profileDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/`)
+					new RegExp(
+						`^${profileConfig.profileDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/`
+					)
 				);
 
 				// The mcpConfigPath should end with the mcpConfigName
 				expect(profileConfig.mcpConfigPath).toMatch(
-					new RegExp(`${profileConfig.mcpConfigName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`)
+					new RegExp(
+						`${profileConfig.mcpConfigName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`
+					)
 				);
 			});
 		});

@@ -28,12 +28,12 @@ export function setupMCPConfiguration(projectDir, mcpConfigPath) {
 			}
 		}
 	};
-	
+
 	// Create config directory if it doesn't exist
 	if (!fs.existsSync(configDir)) {
 		fs.mkdirSync(configDir, { recursive: true });
 	}
-	
+
 	if (fs.existsSync(mcpPath)) {
 		log(
 			'info',
