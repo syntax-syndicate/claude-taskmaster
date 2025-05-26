@@ -28,6 +28,7 @@ import { registerAddDependencyTool } from './add-dependency.js';
 import { registerRemoveTaskTool } from './remove-task.js';
 import { registerInitializeProjectTool } from './initialize-project.js';
 import { registerModelsTool } from './models.js';
+import { registerMoveTaskTool } from './move-task.js';
 import { registerRulesTool } from './rules.js';
 
 /**
@@ -63,6 +64,7 @@ export function registerTaskMasterTools(server) {
 		registerRemoveTaskTool(server);
 		registerRemoveSubtaskTool(server);
 		registerClearSubtasksTool(server);
+		registerMoveTaskTool(server);
 
 		// Group 5: Task Analysis & Expansion
 		registerAnalyzeProjectComplexityTool(server);
