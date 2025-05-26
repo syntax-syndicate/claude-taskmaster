@@ -2648,8 +2648,8 @@ Examples:
 			}
 		});
 
-		// Add/remove profile rules command
-		programInstance
+	// Add/remove profile rules command
+	programInstance
 		.command('rules <action> [profiles...]')
 		.description(
 			'Add or remove rules for one or more profiles (e.g., task-master rules add windsurf roo)'
