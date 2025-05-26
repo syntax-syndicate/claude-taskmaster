@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 import { log } from '../../scripts/modules/utils.js';
 
 // Import the shared MCP configuration helper
-import { setupMCPConfiguration } from './mcp-utils.js';
+import { setupMCPConfiguration } from './mcp-config-setup.js';
 
 // Import profile constants (single source of truth)
 import { RULES_PROFILES } from '../constants/profiles.js';
