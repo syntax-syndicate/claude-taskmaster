@@ -441,12 +441,12 @@ function createProjectStructure(
 		year: new Date().getFullYear()
 	};
 
-	// Helper function to process a single profile rule
-	function _processSingleProfileRule(profileName) {
+	// Helper function to create rules profiles
+	function _processSingleProfile(profileName) {
 		const profile = getRulesProfile(profileName);
 		if (profile) {
 			convertAllRulesToProfileRules(targetDir, profile);
-			// The convertAllRulesToProfileRules function also triggers MCP config setup (if needed).
+			// convertAllRulesToProfileRules also triggers MCP config setup (if applicable)
 		} else {
 			log('warn', `Unknown rules profile: ${profileName}`);
 		}
@@ -471,30 +471,6 @@ function createProjectStructure(
 	// Copy .gitignore
 	copyTemplateFile('gitignore', path.join(targetDir, '.gitignore'));
 
-	// Copy dev_workflow.mdc
-	copyTemplateFile(
-		'dev_workflow.mdc',
-		path.join(targetDir, '.cursor', 'rules', 'dev_workflow.mdc')
-	);
-
-	// Copy taskmaster.mdc
-	copyTemplateFile(
-		'taskmaster.mdc',
-		path.join(targetDir, '.cursor', 'rules', 'taskmaster.mdc')
-	);
-
-	// Copy cursor_rules.mdc
-	copyTemplateFile(
-		'cursor_rules.mdc',
-		path.join(targetDir, '.cursor', 'rules', 'cursor_rules.mdc')
-	);
-
-	// Copy self_improve.mdc
-	copyTemplateFile(
-		'self_improve.mdc',
-		path.join(targetDir, '.cursor', 'rules', 'self_improve.mdc')
-	);
-
 	// Copy example_prd.txt
 	copyTemplateFile(
 		'example_prd.txt',
@@ -515,7 +491,7 @@ function createProjectStructure(
 	// Generate profile rules from assets/rules
 	log('info', 'Generating profile rules from assets/rules...');
 	for (const profileName of selectedRulesProfiles) {
-		_processSingleProfileRule(profileName);
+		_processSingleProfile(profileName);
 	}
 
 	// Add shell aliases if requested
