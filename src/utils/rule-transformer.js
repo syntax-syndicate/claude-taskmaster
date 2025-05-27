@@ -135,11 +135,7 @@ function updateFileReferences(content, conversionConfig) {
  * @param {Object} globalReplacements - Global text replacements
  * @returns {string} - The transformed content
  */
-function transformRuleContent(
-	content,
-	conversionConfig,
-	globalReplacements
-) {
+function transformRuleContent(content, conversionConfig, globalReplacements) {
 	let result = content;
 
 	// Apply all transformations in appropriate order
