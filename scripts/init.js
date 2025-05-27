@@ -24,7 +24,7 @@ import figlet from 'figlet';
 import boxen from 'boxen';
 import gradient from 'gradient-string';
 import { isSilentMode } from './modules/utils.js';
-import { RULES_PROFILES } from '../src/constants/profiles.js';
+import { RULE_PROFILES } from '../src/constants/profiles.js';
 import {
 	convertAllRulesToProfileRules,
 	getRulesProfile
@@ -312,7 +312,7 @@ async function initializeProject(options = {}) {
 	let selectedRulesProfiles =
 		options.rules && Array.isArray(options.rules) && options.rules.length > 0
 			? options.rules
-			: RULES_PROFILES; // Default to all profiles
+			: RULE_PROFILES; // Default to all profiles
 
 	if (skipPrompts) {
 		if (!isSilentMode()) {
@@ -384,7 +384,7 @@ async function initializeProject(options = {}) {
 			if (options.rulesExplicitlyProvided) {
 				log(
 					'info',
-					`Using rules profiles provided via command line: ${selectedRulesProfiles.join(', ')}`
+					`Using rule profiles provided via command line: ${selectedRulesProfiles.join(', ')}`
 				);
 			} else {
 				selectedRulesProfiles = await runInteractiveRulesSetup();
@@ -427,7 +427,7 @@ function promptQuestion(rl, question) {
 function createProjectStructure(
 	addAliases,
 	dryRun,
-	selectedRulesProfiles = RULES_PROFILES // Default to all rules profiles
+	selectedRulesProfiles = RULE_PROFILES // Default to all rule profiles
 ) {
 	const targetDir = process.cwd();
 	log('info', `Initializing project in ${targetDir}`);
@@ -441,7 +441,7 @@ function createProjectStructure(
 		year: new Date().getFullYear()
 	};
 
-	// Helper function to create rules profiles
+	// Helper function to create rule profiles
 	function _processSingleProfile(profileName) {
 		const profile = getRulesProfile(profileName);
 		if (profile) {

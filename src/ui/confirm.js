@@ -60,9 +60,9 @@ async function confirmRemoveAllRemainingProfiles(profiles, remainingProfiles) {
 	console.log(
 		boxen(
 			chalk.red.bold(
-				`⚠️  CRITICAL WARNING: REMOVING ALL TASK MASTER RULES PROFILES ⚠️\n\n` +
+				`⚠️  CRITICAL WARNING: REMOVING ALL TASK MASTER RULE PROFILES ⚠️\n\n` +
 					`You are about to remove Task Master components for: ${profileList}\n` +
-					`This will leave your project with NO Task Master rules profiles remaining!\n\n` +
+					`This will leave your project with NO Task Master rule profiles remaining!\n\n` +
 					`What will be removed:\n` +
 					`• All Task Master specific rule files\n` +
 					`• Task Master MCP server configurations\n` +
@@ -90,7 +90,7 @@ async function confirmRemoveAllRemainingProfiles(profiles, remainingProfiles) {
 			type: 'confirm',
 			name: 'confirm',
 			message:
-				'Type y to confirm removing ALL Task Master profiles, or n to abort:',
+				'Type y to confirm removing ALL Task Master rule profiles, or n to abort:',
 			default: false
 		}
 	]);

@@ -4,7 +4,7 @@
  */
 import fs from 'fs';
 import path from 'path';
-import { RULES_PROFILES } from '../constants/profiles.js';
+import { RULE_PROFILES } from '../constants/profiles.js';
 import { getRulesProfile } from './rule-transformer.js';
 
 /**
@@ -15,7 +15,7 @@ import { getRulesProfile } from './rule-transformer.js';
 export function getInstalledProfiles(projectRoot) {
 	const installedProfiles = [];
 
-	for (const profileName of RULES_PROFILES) {
+	for (const profileName of RULE_PROFILES) {
 		const profileConfig = getRulesProfile(profileName);
 		if (!profileConfig) continue;
 

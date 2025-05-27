@@ -16,13 +16,13 @@ import {
 } from './mcp-config-setup.js';
 
 // Import profile constants (single source of truth)
-import { RULES_PROFILES } from '../constants/profiles.js';
+import { RULE_PROFILES } from '../constants/profiles.js';
 
 // --- Profile Imports ---
 import * as profilesModule from '../../scripts/profiles/index.js';
 
 export function isValidProfile(profile) {
-	return RULES_PROFILES.includes(profile);
+	return RULE_PROFILES.includes(profile);
 }
 
 /**
@@ -41,7 +41,7 @@ export function getRulesProfile(name) {
 
 	if (!profile) {
 		throw new Error(
-			`Profile not found: static import missing for '${name}'. Valid profiles: ${RULES_PROFILES.join(', ')}`
+			`Profile not found: static import missing for '${name}'. Valid profiles: ${RULE_PROFILES.join(', ')}`
 		);
 	}
 

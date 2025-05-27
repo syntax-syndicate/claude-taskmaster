@@ -1,4 +1,4 @@
-import { RULES_PROFILES } from '../../src/constants/profiles.js';
+import { RULE_PROFILES } from '../../src/constants/profiles.js';
 import { getRulesProfile } from '../../src/utils/rule-transformer.js';
 import path from 'path';
 
@@ -47,7 +47,7 @@ describe('MCP Configuration Validation', () => {
 
 	describe('MCP Configuration Path Consistency', () => {
 		test('should ensure all profiles have consistent mcpConfigPath construction', () => {
-			RULES_PROFILES.forEach((profileName) => {
+			RULE_PROFILES.forEach((profileName) => {
 				const profile = getRulesProfile(profileName);
 				if (profile.mcpConfig !== false) {
 					const expectedPath = path.join(
@@ -61,7 +61,7 @@ describe('MCP Configuration Validation', () => {
 
 		test('should ensure no two profiles have the same MCP config path', () => {
 			const mcpPaths = new Set();
-			RULES_PROFILES.forEach((profileName) => {
+			RULE_PROFILES.forEach((profileName) => {
 				const profile = getRulesProfile(profileName);
 				if (profile.mcpConfig !== false) {
 					expect(mcpPaths.has(profile.mcpConfigPath)).toBe(false);
@@ -71,7 +71,7 @@ describe('MCP Configuration Validation', () => {
 		});
 
 		test('should ensure all MCP-enabled profiles use proper directory structure', () => {
-			RULES_PROFILES.forEach((profileName) => {
+			RULE_PROFILES.forEach((profileName) => {
 				const profile = getRulesProfile(profileName);
 				if (profile.mcpConfig !== false) {
 					expect(profile.mcpConfigPath).toMatch(/^\.[\w-]+\/[\w_.]+$/);
@@ -80,7 +80,7 @@ describe('MCP Configuration Validation', () => {
 		});
 
 		test('should ensure all profiles have required MCP properties', () => {
-			RULES_PROFILES.forEach((profileName) => {
+			RULE_PROFILES.forEach((profileName) => {
 				const profile = getRulesProfile(profileName);
 				expect(profile).toHaveProperty('mcpConfig');
 				expect(profile).toHaveProperty('profileDir');
@@ -108,7 +108,7 @@ describe('MCP Configuration Validation', () => {
 	describe('Profile Directory Structure', () => {
 		test('should ensure each profile has a unique directory', () => {
 			const profileDirs = new Set();
-			RULES_PROFILES.forEach((profileName) => {
+			RULE_PROFILES.forEach((profileName) => {
 				const profile = getRulesProfile(profileName);
 				expect(profileDirs.has(profile.profileDir)).toBe(false);
 				profileDirs.add(profile.profileDir);
@@ -116,7 +116,7 @@ describe('MCP Configuration Validation', () => {
 		});
 
 		test('should ensure profile directories follow expected naming convention', () => {
-			RULES_PROFILES.forEach((profileName) => {
+			RULE_PROFILES.forEach((profileName) => {
 				const profile = getRulesProfile(profileName);
 				expect(profile.profileDir).toMatch(/^\.[\w-]+$/);
 			});
@@ -125,7 +125,7 @@ describe('MCP Configuration Validation', () => {
 
 	describe('MCP Configuration Creation Logic', () => {
 		test('should indicate which profiles require MCP configuration creation', () => {
-			const mcpEnabledProfiles = RULES_PROFILES.filter((profileName) => {
+			const mcpEnabledProfiles = RULE_PROFILES.filter((profileName) => {
 				const profile = getRulesProfile(profileName);
 				return profile.mcpConfig !== false;
 			});
@@ -137,7 +137,7 @@ describe('MCP Configuration Validation', () => {
 		});
 
 		test('should provide all necessary information for MCP config creation', () => {
-			RULES_PROFILES.forEach((profileName) => {
+			RULE_PROFILES.forEach((profileName) => {
 				const profile = getRulesProfile(profileName);
 				if (profile.mcpConfig !== false) {
 					expect(profile.mcpConfigPath).toBeDefined();
@@ -152,7 +152,7 @@ describe('MCP Configuration Validation', () => {
 		test('should verify that rule transformer functions use mcpConfigPath correctly', () => {
 			// This test verifies that the mcpConfigPath property exists and is properly formatted
 			// for use with the setupMCPConfiguration function
-			RULES_PROFILES.forEach((profileName) => {
+			RULE_PROFILES.forEach((profileName) => {
 				const profile = getRulesProfile(profileName);
 				if (profile.mcpConfig !== false) {
 					// Verify the path is properly formatted for path.join usage
@@ -167,7 +167,7 @@ describe('MCP Configuration Validation', () => {
 		});
 
 		test('should verify that mcpConfigPath is properly constructed for path.join usage', () => {
-			RULES_PROFILES.forEach((profileName) => {
+			RULE_PROFILES.forEach((profileName) => {
 				const profile = getRulesProfile(profileName);
 				if (profile.mcpConfig !== false) {
 					// Test that path.join works correctly with the mcpConfigPath
@@ -186,7 +186,7 @@ describe('MCP Configuration Validation', () => {
 	describe('MCP Configuration Function Integration', () => {
 		test('should verify that setupMCPConfiguration receives the correct mcpConfigPath parameter', () => {
 			// This test verifies the integration between rule transformer and mcp-utils
-			RULES_PROFILES.forEach((profileName) => {
+			RULE_PROFILES.forEach((profileName) => {
 				const profile = getRulesProfile(profileName);
 				if (profile.mcpConfig !== false) {
 					// Verify that the mcpConfigPath can be used directly with setupMCPConfiguration

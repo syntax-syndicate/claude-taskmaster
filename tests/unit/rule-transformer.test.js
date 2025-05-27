@@ -2,25 +2,25 @@ import {
 	isValidProfile,
 	getRulesProfile
 } from '../../src/utils/rule-transformer.js';
-import { RULES_PROFILES } from '../../src/constants/profiles.js';
+import { RULE_PROFILES } from '../../src/constants/profiles.js';
 
 describe('Rule Transformer - General', () => {
 	describe('Profile Configuration Validation', () => {
-		it('should use RULES_PROFILES as the single source of truth', () => {
-			// Ensure RULES_PROFILES is properly defined and contains expected profiles
-			expect(Array.isArray(RULES_PROFILES)).toBe(true);
-			expect(RULES_PROFILES.length).toBeGreaterThan(0);
+		it('should use RULE_PROFILES as the single source of truth', () => {
+			// Ensure RULE_PROFILES is properly defined and contains expected profiles
+			expect(Array.isArray(RULE_PROFILES)).toBe(true);
+			expect(RULE_PROFILES.length).toBeGreaterThan(0);
 
 			// Verify expected profiles are present
 			const expectedProfiles = ['cline', 'cursor', 'roo', 'windsurf'];
 			expectedProfiles.forEach((profile) => {
-				expect(RULES_PROFILES).toContain(profile);
+				expect(RULE_PROFILES).toContain(profile);
 			});
 		});
 
 		it('should validate profiles correctly with isValidProfile', () => {
 			// Test valid profiles
-			RULES_PROFILES.forEach((profile) => {
+			RULE_PROFILES.forEach((profile) => {
 				expect(isValidProfile(profile)).toBe(true);
 			});
 
@@ -33,7 +33,7 @@ describe('Rule Transformer - General', () => {
 
 		it('should return correct rules profile with getRulesProfile', () => {
 			// Test valid profiles
-			RULES_PROFILES.forEach((profile) => {
+			RULE_PROFILES.forEach((profile) => {
 				const profileConfig = getRulesProfile(profile);
 				expect(profileConfig).toBeDefined();
 				expect(profileConfig.profileName.toLowerCase()).toBe(profile);
@@ -46,7 +46,7 @@ describe('Rule Transformer - General', () => {
 
 	describe('Profile Structure', () => {
 		it('should have all required properties for each profile', () => {
-			RULES_PROFILES.forEach((profile) => {
+			RULE_PROFILES.forEach((profile) => {
 				const profileConfig = getRulesProfile(profile);
 
 				// Check required properties
@@ -89,7 +89,7 @@ describe('Rule Transformer - General', () => {
 				'taskmaster.mdc'
 			];
 
-			RULES_PROFILES.forEach((profile) => {
+			RULE_PROFILES.forEach((profile) => {
 				const profileConfig = getRulesProfile(profile);
 
 				// Check that fileMap exists and is an object
@@ -116,7 +116,7 @@ describe('Rule Transformer - General', () => {
 
 	describe('MCP Configuration Properties', () => {
 		it('should have all required MCP properties for each profile', () => {
-			RULES_PROFILES.forEach((profile) => {
+			RULE_PROFILES.forEach((profile) => {
 				const profileConfig = getRulesProfile(profile);
 
 				// Check MCP-related properties exist
@@ -160,7 +160,7 @@ describe('Rule Transformer - General', () => {
 				}
 			};
 
-			RULES_PROFILES.forEach((profile) => {
+			RULE_PROFILES.forEach((profile) => {
 				const profileConfig = getRulesProfile(profile);
 				const expected = expectedConfigs[profile];
 
@@ -171,7 +171,7 @@ describe('Rule Transformer - General', () => {
 		});
 
 		it('should have consistent profileDir and mcpConfigPath relationship', () => {
-			RULES_PROFILES.forEach((profile) => {
+			RULE_PROFILES.forEach((profile) => {
 				const profileConfig = getRulesProfile(profile);
 
 				// The mcpConfigPath should start with the profileDir
@@ -191,7 +191,7 @@ describe('Rule Transformer - General', () => {
 		});
 
 		it('should have unique profile directories', () => {
-			const profileDirs = RULES_PROFILES.map((profile) => {
+			const profileDirs = RULE_PROFILES.map((profile) => {
 				const profileConfig = getRulesProfile(profile);
 				return profileConfig.profileDir;
 			});
@@ -201,7 +201,7 @@ describe('Rule Transformer - General', () => {
 		});
 
 		it('should have unique MCP config paths', () => {
-			const mcpConfigPaths = RULES_PROFILES.map((profile) => {
+			const mcpConfigPaths = RULE_PROFILES.map((profile) => {
 				const profileConfig = getRulesProfile(profile);
 				return profileConfig.mcpConfigPath;
 			});

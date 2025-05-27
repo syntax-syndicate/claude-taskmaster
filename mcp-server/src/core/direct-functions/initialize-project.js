@@ -5,7 +5,7 @@ import {
 	// isSilentMode // Not used directly here
 } from '../../../../scripts/modules/utils.js';
 import os from 'os'; // Import os module for home directory check
-import { RULES_PROFILES } from '../../../../src/constants/profiles.js';
+import { RULE_PROFILES } from '../../../../src/constants/profiles.js';
 import { convertAllRulesToProfileRules } from '../../../../src/utils/rule-transformer.js';
 
 /**
@@ -76,9 +76,9 @@ export async function initializeProjectDirect(args, log, context = {}) {
 			options.rules = args.rules;
 			log.info(`Including rules: ${args.rules.join(', ')}`);
 		} else {
-			options.rules = RULES_PROFILES;
+			options.rules = RULE_PROFILES;
 			log.info(
-				`No rules profiles specified, defaulting to: ${RULES_PROFILES.join(', ')}`
+				`No rule profiles specified, defaulting to: ${RULE_PROFILES.join(', ')}`
 			);
 		}
 

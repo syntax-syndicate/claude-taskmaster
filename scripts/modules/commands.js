@@ -95,7 +95,7 @@ import {
 	RULES_SETUP_ACTION
 } from '../../src/constants/rules-actions.js';
 import { getTaskMasterVersion } from '../../src/utils/getVersion.js';
-import { RULES_PROFILES } from '../../src/constants/profiles.js';
+import { RULE_PROFILES } from '../../src/constants/profiles.js';
 import {
 	convertAllRulesToProfileRules,
 	removeProfileRules,
@@ -2279,7 +2279,7 @@ function registerCommands(programInstance) {
 		.action(async (cmdOptions) => {
 			// cmdOptions contains parsed arguments
 			// Parse rules: accept space or comma separated, default to all available rules
-			let selectedProfiles = RULES_PROFILES;
+			let selectedProfiles = RULE_PROFILES;
 			let rulesExplicitlyProvided = false;
 
 			if (cmdOptions.rules && Array.isArray(cmdOptions.rules)) {
@@ -2685,7 +2685,7 @@ Examples:
 			/**
 			 * 'task-master rules setup' action:
 			 *
-			 * Launches an interactive prompt to select which rules profiles to add to the current project.
+			 * Launches an interactive prompt to select which rule profiles to add to the current project.
 			 * This does NOT perform project initialization or ask about shell aliases—only rules selection.
 			 *
 			 * Example usage:
@@ -2701,7 +2701,7 @@ Examples:
 				for (const profile of selectedRulesProfiles) {
 					if (!isValidProfile(profile)) {
 						console.warn(
-							`Rules profile for "${profile}" not found. Valid profiles: ${RULES_PROFILES.join(', ')}. Skipping.`
+							`Rules profile for "${profile}" not found. Valid profiles: ${RULE_PROFILES.join(', ')}. Skipping.`
 						);
 						continue;
 					}
@@ -2760,7 +2760,7 @@ Examples:
 			for (const profile of expandedProfiles) {
 				if (!isValidProfile(profile)) {
 					console.warn(
-						`Rules profile for "${profile}" not found. Valid profiles: ${RULES_PROFILES.join(', ')}. Skipping.`
+						`Rules profile for "${profile}" not found. Valid profiles: ${RULE_PROFILES.join(', ')}. Skipping.`
 					);
 					continue;
 				}

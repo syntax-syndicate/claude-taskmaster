@@ -10,7 +10,7 @@ import {
 	withNormalizedProjectRoot
 } from './utils.js';
 import { rulesDirect } from '../core/direct-functions/rules.js';
-import { RULES_PROFILES } from '../../../src/constants/profiles.js';
+import { RULE_PROFILES } from '../../../src/constants/profiles.js';
 
 /**
  * Register the rules tool with the MCP server
@@ -19,16 +19,16 @@ import { RULES_PROFILES } from '../../../src/constants/profiles.js';
 export function registerRulesTool(server) {
 	server.addTool({
 		name: 'rules',
-		description: 'Add or remove rules profiles from the project.',
+		description: 'Add or remove rule profiles from the project.',
 		parameters: z.object({
 			action: z
 				.enum(['add', 'remove'])
-				.describe('Whether to add or remove rules profiles.'),
+				.describe('Whether to add or remove rule profiles.'),
 			profiles: z
-				.array(z.enum(RULES_PROFILES))
+				.array(z.enum(RULE_PROFILES))
 				.min(1)
 				.describe(
-					`List of rules profiles to add or remove (e.g., [\"cursor\", \"roo\"]). Available options: ${RULES_PROFILES.join(', ')}`
+					`List of rule profiles to add or remove (e.g., [\"cursor\", \"roo\"]). Available options: ${RULE_PROFILES.join(', ')}`
 				),
 			projectRoot: z
 				.string()
@@ -40,7 +40,7 @@ export function registerRulesTool(server) {
 				.optional()
 				.default(false)
 				.describe(
-					'DANGEROUS: Force removal even if it would leave no rules profiles. Only use if you are absolutely certain.'
+					'DANGEROUS: Force removal even if it would leave no rule profiles. Only use if you are absolutely certain.'
 				)
 		}),
 		execute: withNormalizedProjectRoot(async (args, { log, session }) => {

@@ -3,10 +3,10 @@ import inquirer from 'inquirer';
 import chalk from 'chalk';
 import { log } from '../../scripts/modules/utils.js';
 import { getRulesProfile } from './rule-transformer.js';
-import { RULES_PROFILES } from '../constants/profiles.js';
+import { RULE_PROFILES } from '../constants/profiles.js';
 
-// Dynamically generate availableRulesProfiles from RULES_PROFILES
-const availableRulesProfiles = RULES_PROFILES.map((name) => {
+// Dynamically generate availableRulesProfiles from RULE_PROFILES
+const availableRulesProfiles = RULE_PROFILES.map((name) => {
 	const displayName = getProfileDisplayName(name);
 	return {
 		name: displayName,
@@ -29,7 +29,7 @@ function getProfileDisplayName(name) {
 /**
  * Launches an interactive prompt for selecting which profile rules to include in your project.
  *
- * This function dynamically lists all available profiles (from RULES_PROFILES) and presents them as checkboxes.
+ * This function dynamically lists all available profiles (from RULE_PROFILES) and presents them as checkboxes.
  * The user must select at least one profile (no defaults are pre-selected). The result is an array of selected profile names.
  *
  * Used by both project initialization (init) and the CLI 'task-master rules setup' command to ensure DRY, consistent UX.

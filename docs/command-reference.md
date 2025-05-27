@@ -239,20 +239,14 @@ task-master init
 task-master init --rules cursor,windsurf
 ```
 
-- The `--rules` flag allows you to specify one or more rule sets (e.g., `cursor`, `roo`, `windsurf`, `cline`) to apply during initialization.
-- If omitted, all available rule sets are installed by default (cursor, windsurf, roo, cline).
-- You can use multiple comma-separated rules in a single command.
-
-**Example:**
-
-```bash
-task-master init --rules cursor,roo
-```
+- The `--rules` flag allows you to specify one or more rule profiles (e.g., `cursor`, `roo`, `windsurf`, `cline`) to apply during initialization.
+- If omitted, all available rule profiles are installed by default (cursor, windsurf, roo, cline).
+- You can use multiple comma-separated profiles in a single command.
 
 ## Manage Rules
 
 ```bash
-# Add rule sets to your project
+# Add rule profiles to your project
 # (e.g., .roo/rules, .windsurf/rules)
 task-master rules add <profile1,profile2,...>
 
@@ -267,9 +261,9 @@ task-master rules remove <profile1,profile2,...> --force
 task-master rules setup
 ```
 
-- Adding rules creates the rules directory (e.g., `.roo/rules`) and copies/initializes the rules.
-- Removing rules deletes the rules directory and associated MCP config.
-- **Safety Check**: Attempting to remove ALL rules profiles will trigger a critical warning requiring confirmation. Use `--force` to bypass.
+- Adding rules creates the profile and rules directory (e.g., `.roo/rules`) and copies/initializes the rules.
+- Removing rules deletes the profile and rules directory and associated MCP config.
+- **Safety Check**: Attempting to remove rule profiles will trigger a critical warning requiring confirmation. Use `--force` to bypass.
 - You can use multiple comma-separated rules in a single command.
 - The `setup` action launches an interactive prompt to select which rules to apply. The list of rules is always current with the available profiles, and no manual updates are needed. This command does **not** re-initialize your project or affect shell aliases; it only manages rules interactively.
 
@@ -289,9 +283,9 @@ You can launch the interactive rules setup at any time with:
 task-master rules setup
 ```
 
-This command opens a prompt where you can select which rules (e.g., Cursor, Roo, Windsurf) you want to apply to your project. The list of rules is always current with the available profiles—no manual updates needed. This does **not** re-initialize your project or ask about shell aliases; it only manages rules.
+This command opens a prompt where you can select which rule profiles (e.g., Cursor, Roo, Windsurf) you want to add to your project. This does **not** re-initialize your project or ask about shell aliases; it only manages rules.
 
-- Use this command to add rules interactively after project creation.
+- Use this command to add rule profiles interactively after project creation.
 - The same interactive prompt is also used during `init` if you don't specify rules with `--rules`.
 
 ## Configure AI Models

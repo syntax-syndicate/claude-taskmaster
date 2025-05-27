@@ -13,7 +13,7 @@ import {
 	getRulesProfile,
 	isValidProfile
 } from '../../../../src/utils/rule-transformer.js';
-import { RULES_PROFILES } from '../../../../src/constants/profiles.js';
+import { RULE_PROFILES } from '../../../../src/constants/profiles.js';
 import { RULES_ACTIONS } from '../../../../src/constants/rules-actions.js';
 import {
 	wouldRemovalLeaveNoProfiles,
@@ -56,7 +56,7 @@ export async function rulesDirect(args, log, context = {}) {
 		const addResults = [];
 
 		if (action === RULES_ACTIONS.REMOVE) {
-			// Safety check: Ensure this won't remove all rules profiles (unless forced)
+			// Safety check: Ensure this won't remove all rule profiles (unless forced)
 			if (!force && wouldRemovalLeaveNoProfiles(projectRoot, profiles)) {
 				const installedProfiles = getInstalledProfiles(projectRoot);
 				const remainingProfiles = installedProfiles.filter(
@@ -66,7 +66,7 @@ export async function rulesDirect(args, log, context = {}) {
 					success: false,
 					error: {
 						code: 'CRITICAL_REMOVAL_BLOCKED',
-						message: `CRITICAL: This operation would remove ALL remaining rules profiles (${profiles.join(', ')}), leaving your project with no rules configurations. This could significantly impact functionality. Currently installed profiles: ${installedProfiles.join(', ')}. If you're certain you want to proceed, set force: true or use the CLI with --force flag.`
+						message: `CRITICAL: This operation would remove ALL remaining rule profiles (${profiles.join(', ')}), leaving your project with no rules configurations. This could significantly impact functionality. Currently installed profiles: ${installedProfiles.join(', ')}. If you're certain you want to proceed, set force: true or use the CLI with --force flag.`
 					}
 				};
 			}
@@ -76,7 +76,7 @@ export async function rulesDirect(args, log, context = {}) {
 					removalResults.push({
 						profileName: profile,
 						success: false,
-						error: `The requested rules profile for '${profile}' is unavailable. Supported profiles are: ${RULES_PROFILES.join(', ')}.`
+						error: `The requested rules profile for '${profile}' is unavailable. Supported profiles are: ${RULE_PROFILES.join(', ')}.`
 					});
 					continue;
 				}
@@ -121,7 +121,7 @@ export async function rulesDirect(args, log, context = {}) {
 					addResults.push({
 						profileName: profile,
 						success: false,
-						error: `Profile not found: static import missing for '${profile}'. Valid profiles: ${RULES_PROFILES.join(', ')}`
+						error: `Profile not found: static import missing for '${profile}'. Valid profiles: ${RULE_PROFILES.join(', ')}`
 					});
 					continue;
 				}
