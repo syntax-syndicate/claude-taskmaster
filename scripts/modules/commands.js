@@ -2837,10 +2837,13 @@ Examples:
 				const errors = removalResults.filter(
 					(r) => r.error && !r.success && !r.skipped
 				);
+				const withNotices = removalResults.filter((r) => r.notice);
 
 				if (successes.length > 0) {
 					console.log(
-						chalk.green(`Successfully removed rules: ${successes.join(', ')}`)
+						chalk.green(
+							`Successfully removed Task Master rules: ${successes.join(', ')}`
+						)
 					);
 				}
 				if (skipped.length > 0) {
@@ -2855,6 +2858,13 @@ Examples:
 						console.log(
 							chalk.red(`Error removing ${r.profileName}: ${r.error}`)
 						);
+					});
+				}
+				// Display notices about preserved files/configurations
+				if (withNotices.length > 0) {
+					console.log(chalk.cyan('\nNotices:'));
+					withNotices.forEach((r) => {
+						console.log(chalk.cyan(`  ${r.profileName}: ${r.notice}`));
 					});
 				}
 			}

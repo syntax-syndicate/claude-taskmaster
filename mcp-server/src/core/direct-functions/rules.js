@@ -93,10 +93,11 @@ export async function rulesDirect(args, log, context = {}) {
 			const errors = removalResults.filter(
 				(r) => r.error && !r.success && !r.skipped
 			);
+			const withNotices = removalResults.filter((r) => r.notice);
 
 			let summary = '';
 			if (successes.length > 0) {
-				summary += `Successfully removed rules: ${successes.join(', ')}.`;
+				summary += `Successfully removed Task Master rules: ${successes.join(', ')}.`;
 			}
 			if (skipped.length > 0) {
 				summary += `Skipped (default or protected): ${skipped.join(', ')}.`;
@@ -105,6 +106,9 @@ export async function rulesDirect(args, log, context = {}) {
 				summary += errors
 					.map((r) => `Error removing ${r.profileName}: ${r.error}`)
 					.join(' ');
+			}
+			if (withNotices.length > 0) {
+				summary += ` Notices: ${withNotices.map((r) => `${r.profileName} - ${r.notice}`).join('; ')}.`;
 			}
 			disableSilentMode();
 			return {

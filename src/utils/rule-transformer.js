@@ -10,7 +10,10 @@ import path from 'path';
 import { log } from '../../scripts/modules/utils.js';
 
 // Import the shared MCP configuration helper
-import { setupMCPConfiguration } from './mcp-config-setup.js';
+import {
+	setupMCPConfiguration,
+	removeTaskMasterMCPConfiguration
+} from './mcp-config-setup.js';
 
 // Import profile constants (single source of truth)
 import { RULES_PROFILES } from '../constants/profiles.js';
@@ -275,7 +278,7 @@ export function convertAllRulesToProfileRules(projectDir, profile) {
 }
 
 /**
- * Remove profile rules for a specific profile
+ * Remove only Task Master specific files from a profile, leaving other existing rules intact
  * @param {string} projectDir - Target project directory
  * @param {Object} profile - Profile configuration
  * @returns {Object} Result object
@@ -283,49 +286,144 @@ export function convertAllRulesToProfileRules(projectDir, profile) {
 export function removeProfileRules(projectDir, profile) {
 	const targetDir = path.join(projectDir, profile.rulesDir);
 	const profileDir = path.join(projectDir, profile.profileDir);
-	const mcpConfigPath = path.join(projectDir, profile.mcpConfigPath);
 
 	let result = {
 		profileName: profile.profileName,
 		success: false,
 		skipped: false,
-		error: null
+		error: null,
+		filesRemoved: [],
+		mcpResult: null,
+		profileDirRemoved: false,
+		notice: null
 	};
 
 	try {
-		// Remove rules directory
+		// Check if profile directory exists at all
+		if (!fs.existsSync(profileDir)) {
+			result.success = true;
+			result.skipped = true;
+			log(
+				'debug',
+				`[Rule Transformer] Profile directory does not exist: ${profileDir}`
+			);
+			return result;
+		}
+
+		// 1. Remove only Task Master specific files from the rules directory
+		let hasOtherRulesFiles = false;
 		if (fs.existsSync(targetDir)) {
-			fs.rmSync(targetDir, { recursive: true, force: true });
-			log('debug', `[Rule Transformer] Removed rules directory: ${targetDir}`);
+			const taskmasterFiles = Object.values(profile.fileMap);
+			let removedFiles = [];
+
+			// Check all files in the rules directory
+			const allFiles = fs.readdirSync(targetDir);
+			for (const file of allFiles) {
+				if (taskmasterFiles.includes(file)) {
+					// This is a Task Master file, remove it
+					const filePath = path.join(targetDir, file);
+					fs.rmSync(filePath, { force: true });
+					removedFiles.push(file);
+					log('debug', `[Rule Transformer] Removed Task Master file: ${file}`);
+				} else {
+					// This is not a Task Master file, leave it
+					hasOtherRulesFiles = true;
+					log('debug', `[Rule Transformer] Preserved existing file: ${file}`);
+				}
+			}
+
+			result.filesRemoved = removedFiles;
+
+			// Only remove the rules directory if it's empty after removing Task Master files
+			const remainingFiles = fs.readdirSync(targetDir);
+			if (remainingFiles.length === 0) {
+				fs.rmSync(targetDir, { recursive: true, force: true });
+				log(
+					'debug',
+					`[Rule Transformer] Removed empty rules directory: ${targetDir}`
+				);
+			} else if (hasOtherRulesFiles) {
+				result.notice = `Preserved ${remainingFiles.length} existing rule files in ${profile.rulesDir}`;
+				log('info', `[Rule Transformer] ${result.notice}`);
+			}
 		}
 
-		// Remove MCP config if it exists
-		if (fs.existsSync(mcpConfigPath)) {
-			fs.rmSync(mcpConfigPath, { force: true });
-			log('debug', `[Rule Transformer] Removed MCP config: ${mcpConfigPath}`);
+		// 2. Handle MCP configuration - only remove Task Master, preserve other servers
+		if (profile.mcpConfig !== false) {
+			result.mcpResult = removeTaskMasterMCPConfiguration(
+				projectDir,
+				profile.mcpConfigPath
+			);
+			if (result.mcpResult.hasOtherServers) {
+				if (!result.notice) {
+					result.notice = 'Preserved other MCP server configurations';
+				} else {
+					result.notice += '; preserved other MCP server configurations';
+				}
+			}
 		}
 
-		// Call removal hook if defined
+		// 3. Call removal hook if defined (e.g., Roo's custom cleanup)
 		if (typeof profile.onRemoveRulesProfile === 'function') {
 			profile.onRemoveRulesProfile(projectDir);
 		}
 
-		// Remove profile directory if empty
+		// 4. Only remove profile directory if:
+		//    - It's completely empty after all operations, AND
+		//    - All rules removed were Task Master rules (no existing rules preserved), AND
+		//    - MCP config was completely deleted (not just Task Master removed), AND
+		//    - No other files or folders exist in the profile directory
 		if (fs.existsSync(profileDir)) {
 			const remaining = fs.readdirSync(profileDir);
-			if (remaining.length === 0) {
+			const allRulesWereTaskMaster = !hasOtherRulesFiles;
+			const mcpConfigCompletelyDeleted = result.mcpResult?.deleted === true;
+
+			// Check if there are any other files or folders beyond what we expect
+			const hasOtherFilesOrFolders = remaining.length > 0;
+
+			if (
+				remaining.length === 0 &&
+				allRulesWereTaskMaster &&
+				(profile.mcpConfig === false || mcpConfigCompletelyDeleted) &&
+				!hasOtherFilesOrFolders
+			) {
 				fs.rmSync(profileDir, { recursive: true, force: true });
+				result.profileDirRemoved = true;
 				log(
 					'debug',
-					`[Rule Transformer] Removed empty profile directory: ${profileDir}`
+					`[Rule Transformer] Removed profile directory: ${profileDir} (completely empty, all rules were Task Master rules, and MCP config was completely removed)`
 				);
+			} else {
+				// Determine what was preserved and why
+				const preservationReasons = [];
+				if (hasOtherFilesOrFolders) {
+					preservationReasons.push(
+						`${remaining.length} existing files/folders`
+					);
+				}
+				if (hasOtherRulesFiles) {
+					preservationReasons.push('existing rule files');
+				}
+				if (result.mcpResult?.hasOtherServers) {
+					preservationReasons.push('other MCP server configurations');
+				}
+
+				const preservationMessage = `Preserved ${preservationReasons.join(', ')} in ${profile.profileDir}`;
+
+				if (!result.notice) {
+					result.notice = preservationMessage;
+				} else if (!result.notice.includes('Preserved')) {
+					result.notice += `; ${preservationMessage.toLowerCase()}`;
+				}
+
+				log('info', `[Rule Transformer] ${preservationMessage}`);
 			}
 		}
 
 		result.success = true;
 		log(
 			'debug',
-			`[Rule Transformer] Successfully removed ${profile.profileName} rules from ${projectDir}`
+			`[Rule Transformer] Successfully removed ${profile.profileName} Task Master files from ${projectDir}`
 		);
 	} catch (error) {
 		result.error = error.message;
