@@ -17,15 +17,7 @@ const mockLog = {
 
 // Mock the logger import
 jest.mock('../../../scripts/modules/utils.js', () => ({
-	log: jest.fn((level, ...args) => {
-		// Handle the log function more robustly to avoid JSON parsing issues in tests
-		const mockFn = mockLog[level] || jest.fn();
-		// Convert objects to strings safely for testing
-		const safeArgs = args.map(arg => 
-			typeof arg === 'object' ? '[Object]' : String(arg)
-		);
-		return mockFn(...safeArgs);
-	})
+	log: (level, message) => mockLog[level]?.(message)
 }));
 
 describe('Selective Rules Removal', () => {
@@ -36,9 +28,14 @@ describe('Selective Rules Removal', () => {
 	let mockReadFileSync;
 	let mockWriteFileSync;
 	let mockMkdirSync;
+	let originalConsoleLog;
 
 	beforeEach(() => {
 		jest.clearAllMocks();
+
+		// Mock console.log to prevent JSON parsing issues in Jest
+		originalConsoleLog = console.log;
+		console.log = jest.fn();
 
 		// Create temp directory for testing
 		tempDir = fs.mkdtempSync(path.join(process.cwd(), 'test-temp-'));
@@ -55,6 +52,9 @@ describe('Selective Rules Removal', () => {
 	});
 
 	afterEach(() => {
+		// Restore console.log
+		console.log = originalConsoleLog;
+
 		// Clean up temp directory
 		try {
 			fs.rmSync(tempDir, { recursive: true, force: true });
