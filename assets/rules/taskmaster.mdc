@@ -22,7 +22,7 @@ This document provides a detailed reference for interacting with Taskmaster, cov
     *   Example: `task-master init --rules cursor,windsurf`
     *   Example: `task-master init -r roo`
 *   **What happens:**
-    *   For each, creates the appropriate profile and rules directory (e.g., `.roo/rules`) and MCP config (e.g., `.roo/mcp.json`).
+    *   For each, creates the appropriate rules directory (e.g., `.roo/rules`) and MCP config (e.g., `.roo/mcp.json`).
     *   If not specified, all rules profiles are initialized by default.
 
 
