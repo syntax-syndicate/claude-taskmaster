@@ -2740,6 +2740,7 @@ Examples:
 			}
 
 			const removalResults = [];
+			const addResults = [];
 
 			for (const profile of expandedProfiles) {
 				if (!isValidProfile(profile)) {
@@ -2762,6 +2763,14 @@ Examples:
 					console.log(
 						chalk.blue(`Completed adding rules for profile: ${profile}`)
 					);
+
+					// Store result with profile name for summary
+					addResults.push({
+						profileName: profile,
+						success: addResult.success,
+						failed: addResult.failed
+					});
+
 					console.log(
 						chalk.green(
 							`Summary for ${profile}: ${addResult.success} rules added, ${addResult.failed} failed.`
@@ -2777,6 +2786,28 @@ Examples:
 						`Unknown action. Use "${RULES_ACTIONS.ADD}" or "${RULES_ACTIONS.REMOVE}".`
 					);
 					process.exit(1);
+				}
+			}
+
+			// Print summary for additions
+			if (action === RULES_ACTIONS.ADD && addResults.length > 0) {
+				const totalSuccess = addResults.reduce((sum, r) => sum + r.success, 0);
+				const totalFailed = addResults.reduce((sum, r) => sum + r.failed, 0);
+				const successfulProfiles = addResults
+					.filter((r) => r.success > 0)
+					.map((r) => r.profileName);
+
+				if (successfulProfiles.length > 0) {
+					console.log(
+						chalk.green(
+							`\nSuccessfully added rules for: ${successfulProfiles.join(', ')}`
+						)
+					);
+					console.log(
+						chalk.green(
+							`Total: ${totalSuccess} rules added, ${totalFailed} failed.`
+						)
+					);
 				}
 			}
 
