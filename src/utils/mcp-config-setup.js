@@ -72,7 +72,7 @@ export function setupMCPConfiguration(projectDir, mcpConfigPath) {
 				log('info', 'task-master-ai server already configured in mcp.json');
 			}
 			// Write the updated configuration
-			fs.writeFileSync(mcpPath, JSON.stringify(mcpConfig, null, 4));
+			fs.writeFileSync(mcpPath, JSON.stringify(mcpConfig, null, 4) + '\n');
 			log('success', 'Updated MCP configuration file');
 		} catch (error) {
 			log('error', `Failed to update MCP configuration: ${error.message}`);
@@ -86,7 +86,7 @@ export function setupMCPConfiguration(projectDir, mcpConfigPath) {
 			const newMCPConfig = {
 				mcpServers: newMCPServer
 			};
-			fs.writeFileSync(mcpPath, JSON.stringify(newMCPConfig, null, 4));
+			fs.writeFileSync(mcpPath, JSON.stringify(newMCPConfig, null, 4) + '\n');
 			log(
 				'warn',
 				'Created new MCP configuration file (backup of original file was created if it existed)'
@@ -97,7 +97,7 @@ export function setupMCPConfiguration(projectDir, mcpConfigPath) {
 		const newMCPConfig = {
 			mcpServers: newMCPServer
 		};
-		fs.writeFileSync(mcpPath, JSON.stringify(newMCPConfig, null, 4));
+		fs.writeFileSync(mcpPath, JSON.stringify(newMCPConfig, null, 4) + '\n');
 		log('success', `Created MCP configuration file at ${mcpPath}`);
 	}
 
