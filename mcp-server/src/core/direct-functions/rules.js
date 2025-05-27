@@ -17,8 +17,8 @@ import { RULES_PROFILES } from '../../../../src/constants/profiles.js';
 import { RULES_ACTIONS } from '../../../../src/constants/rules-actions.js';
 import {
 	wouldRemovalLeaveNoProfiles,
-	getInstalledRulesProfiles
-} from '../../../../src/utils/rules-detection.js';
+	getInstalledProfiles
+} from '../../../../src/utils/profile-detection.js';
 import path from 'path';
 import fs from 'fs';
 
@@ -58,7 +58,7 @@ export async function rulesDirect(args, log, context = {}) {
 		if (action === RULES_ACTIONS.REMOVE) {
 			// Safety check: Ensure this won't remove all rules profiles (unless forced)
 			if (!force && wouldRemovalLeaveNoProfiles(projectRoot, profiles)) {
-				const installedProfiles = getInstalledRulesProfiles(projectRoot);
+				const installedProfiles = getInstalledProfiles(projectRoot);
 				const remainingProfiles = installedProfiles.filter(
 					(profile) => !profiles.includes(profile)
 				);

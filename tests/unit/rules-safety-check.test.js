@@ -1,7 +1,7 @@
 import {
-	getInstalledRulesProfiles,
+	getInstalledProfiles,
 	wouldRemovalLeaveNoProfiles
-} from '../../src/utils/rules-detection.js';
+} from '../../src/utils/profile-detection.js';
 import { rulesDirect } from '../../mcp-server/src/core/direct-functions/rules.js';
 import fs from 'fs';
 import path from 'path';
@@ -33,7 +33,7 @@ describe('Rules Safety Check', () => {
 		jest.restoreAllMocks();
 	});
 
-	describe('getInstalledRulesProfiles', () => {
+	describe('getInstalledProfiles', () => {
 		it('should detect installed profiles correctly', () => {
 			const projectRoot = '/test/project';
 
@@ -45,7 +45,7 @@ describe('Rules Safety Check', () => {
 				return false;
 			});
 
-			const installed = getInstalledRulesProfiles(projectRoot);
+			const installed = getInstalledProfiles(projectRoot);
 			expect(installed).toContain('cursor');
 			expect(installed).toContain('roo');
 			expect(installed).not.toContain('windsurf');
@@ -58,7 +58,7 @@ describe('Rules Safety Check', () => {
 			// Mock fs.existsSync to return false for all paths
 			mockExistsSync.mockReturnValue(false);
 
-			const installed = getInstalledRulesProfiles(projectRoot);
+			const installed = getInstalledProfiles(projectRoot);
 			expect(installed).toEqual([]);
 		});
 	});

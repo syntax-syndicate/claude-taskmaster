@@ -1,6 +1,6 @@
 /**
- * Rules Detection Utility
- * Helper functions to detect existing rules profiles in a project
+ * Profile Detection Utility
+ * Helper functions to detect existing profiles in a project
  */
 import fs from 'fs';
 import path from 'path';
@@ -8,11 +8,11 @@ import { RULES_PROFILES } from '../constants/profiles.js';
 import { getRulesProfile } from './rule-transformer.js';
 
 /**
- * Detect which rules profiles are currently installed in the project
+ * Detect which profiles are currently installed in the project
  * @param {string} projectRoot - Project root directory
  * @returns {string[]} Array of installed profile names
  */
-export function getInstalledRulesProfiles(projectRoot) {
+export function getInstalledProfiles(projectRoot) {
 	const installedProfiles = [];
 
 	for (const profileName of RULES_PROFILES) {
@@ -33,13 +33,13 @@ export function getInstalledRulesProfiles(projectRoot) {
 }
 
 /**
- * Check if removing the specified profiles would result in no rules profiles remaining
+ * Check if removing the specified profiles would result in no profiles remaining
  * @param {string} projectRoot - Project root directory
  * @param {string[]} profilesToRemove - Array of profile names to remove
  * @returns {boolean} True if removal would result in no profiles remaining
  */
 export function wouldRemovalLeaveNoProfiles(projectRoot, profilesToRemove) {
-	const installedProfiles = getInstalledRulesProfiles(projectRoot);
+	const installedProfiles = getInstalledProfiles(projectRoot);
 	const remainingProfiles = installedProfiles.filter(
 		(profile) => !profilesToRemove.includes(profile)
 	);

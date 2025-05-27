@@ -74,8 +74,8 @@ import {
 } from '../../src/ui/confirm.js';
 import {
 	wouldRemovalLeaveNoProfiles,
-	getInstalledRulesProfiles
-} from '../../src/utils/rules-detection.js';
+	getInstalledProfiles
+} from '../../src/utils/profile-detection.js';
 
 import { initializeProject } from '../init.js';
 import {
@@ -2739,7 +2739,7 @@ Examples:
 				if (!options.force) {
 					// Check if this removal would leave no profiles remaining
 					if (wouldRemovalLeaveNoProfiles(projectDir, expandedProfiles)) {
-						const installedProfiles = getInstalledRulesProfiles(projectDir);
+						const installedProfiles = getInstalledProfiles(projectDir);
 						confirmed = await confirmRemoveAllRemainingProfiles(
 							expandedProfiles,
 							installedProfiles
