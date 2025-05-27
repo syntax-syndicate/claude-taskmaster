@@ -7,6 +7,7 @@ import path from 'path';
 import readline from 'readline';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
+import boxen from 'boxen';
 import { log } from '../../scripts/modules/utils.js';
 import { getRulesProfile } from './rule-transformer.js';
 import { RULE_PROFILES } from '../constants/profiles.js';
@@ -86,21 +87,73 @@ const availableRulesProfiles = RULE_PROFILES.map((name) => {
  *
  * @returns {Promise<string[]>} Array of selected profile names (e.g., ['cursor', 'windsurf'])
  */
-export async function runInteractiveRulesSetup() {
+export async function runInteractiveProfilesSetup() {
+	// Generate the profile list dynamically with proper display names, alphabetized
+	const profileDescriptions = RULE_PROFILES.map((profileName) => {
+		const displayName = getProfileDisplayName(profileName);
+		const profile = getRulesProfile(profileName);
+
+		// Determine description based on profile type
+		let description;
+		if (Object.keys(profile.fileMap).length === 0) {
+			// Simple profiles (Claude, Codex) - specify the target file
+			const targetFileName =
+				profileName === 'claude' ? 'CLAUDE.md' : 'AGENTS.md';
+			description = `Integration guide for ${displayName} (${targetFileName})`;
+		} else {
+			// Full profiles with rules - check if they have MCP config
+			const hasMcpConfig = profile.mcpConfig === true;
+			if (hasMcpConfig) {
+				description = `Rule profile and MCP config for ${displayName}`;
+			} else {
+				description = `Rule profile for ${displayName}`;
+			}
+		}
+
+		return {
+			displayName,
+			description
+		};
+	}).sort((a, b) => a.displayName.localeCompare(b.displayName)); // Alphabetize by display name
+
+	const profileListText = profileDescriptions
+		.map(
+			({ displayName, description }) =>
+				chalk.white('• ') +
+				chalk.yellow(displayName) +
+				chalk.white(` - ${description}`)
+		)
+		.join('\n');
+
 	console.log(
-		chalk.cyan(
-			'\nRule profiles help enforce best practices and conventions for Task Master.'
+		boxen(
+			chalk.white.bold('Rule Profiles Setup') +
+				'\n\n' +
+				chalk.white(
+					'Rule profiles help enforce best practices and conventions for Task Master.\n' +
+						'Each profile provides coding guidelines tailored for specific AI coding environments.\n\n'
+				) +
+				chalk.cyan('Available Profiles:') +
+				'\n' +
+				profileListText,
+			{
+				padding: 1,
+				borderColor: 'blue',
+				borderStyle: 'round',
+				margin: { top: 1, bottom: 1 }
+			}
 		)
 	);
-	const rulesProfilesQuestion = {
+
+	const ruleProfilesQuestion = {
 		type: 'checkbox',
-		name: 'rulesProfiles',
-		message: 'Which tools would you like rule profiles included for?',
+		name: 'ruleProfiles',
+		message: 'Which rule profiles would you like to add to your project?',
 		choices: availableRulesProfiles,
 		validate: (input) => input.length > 0 || 'You must select at least one.'
 	};
-	const { rulesProfiles } = await inquirer.prompt([rulesProfilesQuestion]);
-	return rulesProfiles;
+	const { ruleProfiles } = await inquirer.prompt([ruleProfilesQuestion]);
+	return ruleProfiles;
 }
 
 // =============================================================================

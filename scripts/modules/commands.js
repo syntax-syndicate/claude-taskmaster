@@ -103,7 +103,7 @@ import {
 	getRulesProfile
 } from '../../src/utils/rule-transformer.js';
 import {
-	runInteractiveRulesSetup,
+	runInteractiveProfilesSetup,
 	generateProfileSummary,
 	categorizeProfileResults,
 	generateProfileRemovalSummary,
@@ -2703,8 +2703,8 @@ Examples:
 			 */
 			if (action === RULES_SETUP_ACTION) {
 				// Run interactive rules setup ONLY (no project init)
-				const selectedRulesProfiles = await runInteractiveRulesSetup();
-				for (const profile of selectedRulesProfiles) {
+				const selectedRuleProfiles = await runInteractiveProfilesSetup();
+				for (const profile of selectedRuleProfiles) {
 					if (!isValidProfile(profile)) {
 						console.warn(
 							`Rule profile for "${profile}" not found. Valid profiles: ${RULE_PROFILES.join(', ')}. Skipping.`

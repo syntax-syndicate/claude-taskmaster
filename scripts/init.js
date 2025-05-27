@@ -29,7 +29,7 @@ import {
 	convertAllRulesToProfileRules,
 	getRulesProfile
 } from '../src/utils/rule-transformer.js';
-import { runInteractiveRulesSetup } from '../src/utils/profiles.js';
+import { runInteractiveProfilesSetup } from '../src/utils/profiles.js';
 import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -309,7 +309,7 @@ async function initializeProject(options = {}) {
 	}
 
 	const skipPrompts = options.yes || (options.name && options.description);
-	let selectedRulesProfiles =
+	let selectedRuleProfiles =
 		options.rules && Array.isArray(options.rules) && options.rules.length > 0
 			? options.rules
 			: RULE_PROFILES; // Default to all profiles
@@ -335,7 +335,7 @@ async function initializeProject(options = {}) {
 		}
 
 		try {
-			createProjectStructure(addAliases, dryRun, selectedRulesProfiles);
+			createProjectStructure(addAliases, dryRun, selectedRuleProfiles);
 		} catch (error) {
 			log('error', `Error during initialization process: ${error.message}`);
 			process.exit(1);
@@ -384,10 +384,10 @@ async function initializeProject(options = {}) {
 			if (options.rulesExplicitlyProvided) {
 				log(
 					'info',
-					`Using rule profiles provided via command line: ${selectedRulesProfiles.join(', ')}`
+					`Using rule profiles provided via command line: ${selectedRuleProfiles.join(', ')}`
 				);
 			} else {
-				selectedRulesProfiles = await runInteractiveRulesSetup();
+				selectedRuleProfiles = await runInteractiveProfilesSetup();
 			}
 
 			const dryRun = options.dryRun || false;
@@ -405,7 +405,7 @@ async function initializeProject(options = {}) {
 			}
 
 			// Create structure using only necessary values
-			createProjectStructure(addAliasesPrompted, dryRun, selectedRulesProfiles);
+			createProjectStructure(addAliasesPrompted, dryRun, selectedRuleProfiles);
 		} catch (error) {
 			rl.close();
 			log('error', `Error during initialization process: ${error.message}`);
@@ -427,7 +427,7 @@ function promptQuestion(rl, question) {
 function createProjectStructure(
 	addAliases,
 	dryRun,
-	selectedRulesProfiles = RULE_PROFILES // Default to all rule profiles
+	selectedRuleProfiles = RULE_PROFILES // Default to all rule profiles
 ) {
 	const targetDir = process.cwd();
 	log('info', `Initializing project in ${targetDir}`);
@@ -490,7 +490,7 @@ function createProjectStructure(
 
 	// Generate profile rules from assets/rules
 	log('info', 'Generating profile rules from assets/rules...');
-	for (const profileName of selectedRulesProfiles) {
+	for (const profileName of selectedRuleProfiles) {
 		_processSingleProfile(profileName);
 	}
 
