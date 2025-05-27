@@ -4,7 +4,7 @@
 
 Added comprehensive rule profile management:
 
-- **New Profile Support**: Added comprehensive IDE profile support with five specialized profiles: Cline, Cursor, Roo, Trae, and Windsurf. Each profile is optimized for its respective IDE with appropriate mappings and configuration.
+- **New Profile Support**: Added comprehensive IDE profile support with seven specialized profiles: Claude Code, Cline, Codex, Cursor, Roo, Trae, and Windsurf. Each profile is optimized for its respective IDE with appropriate mappings and configuration.
 - **Initialization**: You can now specify which rule profiles to include at project initialization using `--rules <profiles>` or `-r <profiles>` (e.g., `task-master init -r cursor,roo`). Only the selected profiles and configuration are included.
 - **Add/Remove Commands**: `task-master rules add <profiles>` and `task-master rules remove <profiles>` let you manage specific rule profiles and MCP config after initialization, supporting multiple profiles at once.
 - **Interactive Setup**: `task-master rules setup` launches an interactive prompt to select which rule profiles to add to your project. This does **not** re-initialize your project or affect shell aliases; it only manages rules.
