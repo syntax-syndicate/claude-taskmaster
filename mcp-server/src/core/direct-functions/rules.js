@@ -18,7 +18,7 @@ import { RULES_ACTIONS } from '../../../../src/constants/rules-actions.js';
 import {
 	wouldRemovalLeaveNoProfiles,
 	getInstalledProfiles
-} from '../../../../src/utils/profile-detection.js';
+} from '../../../../src/utils/profiles.js';
 import path from 'path';
 import fs from 'fs';
 

@@ -1,5 +1,5 @@
 /**
- * @typedef {'cline' | 'cursor' | 'roo' | 'trae' | 'windsurf'} RulesProfile
+ * @typedef {'claude' | 'cline' | 'codex' | 'cursor' | 'roo' | 'trae' | 'windsurf'} RulesProfile
  */
 
 /**
@@ -10,8 +10,10 @@
  *
  * @type {RulesProfile[]}
  * @description Defines possible rule profile sets:
+ * - claude: Claude Code integration
  * - cline: Cline IDE rules
- * - cursor: Cursor IDE rules (default)
+ * - codex: Codex integration
+ * - cursor: Cursor IDE rules
  * - roo: Roo Code IDE rules
  * - trae: Trae IDE rules
  * - windsurf: Windsurf IDE rules
@@ -21,7 +23,15 @@
  * 2. Create a profile file in scripts/profiles/{profile}.js
  * 3. Export it as {profile}Profile in scripts/profiles/index.js
  */
-export const RULE_PROFILES = ['cline', 'cursor', 'roo', 'trae', 'windsurf'];
+export const RULE_PROFILES = [
+	'claude',
+	'cline',
+	'codex',
+	'cursor',
+	'roo',
+	'trae',
+	'windsurf'
+];
 
 /**
  * Check if a given rule profile is valid

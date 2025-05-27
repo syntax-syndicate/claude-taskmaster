@@ -75,7 +75,7 @@ import {
 import {
 	wouldRemovalLeaveNoProfiles,
 	getInstalledProfiles
-} from '../../src/utils/profile-detection.js';
+} from '../../src/utils/profiles.js';
 
 import { initializeProject } from '../init.js';
 import {
@@ -102,7 +102,13 @@ import {
 	isValidProfile,
 	getRulesProfile
 } from '../../src/utils/rule-transformer.js';
-import { runInteractiveRulesSetup } from '../../src/utils/rules-setup.js';
+import {
+	runInteractiveRulesSetup,
+	generateProfileSummary,
+	categorizeProfileResults,
+	generateProfileRemovalSummary,
+	categorizeRemovalResults
+} from '../../src/utils/profiles.js';
 
 /**
  * Runs the interactive setup process for model configuration.
@@ -2701,7 +2707,7 @@ Examples:
 				for (const profile of selectedRulesProfiles) {
 					if (!isValidProfile(profile)) {
 						console.warn(
-							`Rules profile for "${profile}" not found. Valid profiles: ${RULE_PROFILES.join(', ')}. Skipping.`
+							`Rule profile for "${profile}" not found. Valid profiles: ${RULE_PROFILES.join(', ')}. Skipping.`
 						);
 						continue;
 					}
@@ -2713,18 +2719,15 @@ Examples:
 					if (typeof profileConfig.onAddRulesProfile === 'function') {
 						profileConfig.onAddRulesProfile(projectDir);
 					}
-					console.log(
-						chalk.green(
-							`Summary for ${profile}: ${addResult.success} rules added, ${addResult.failed} failed.`
-						)
-					);
+
+					console.log(chalk.green(generateProfileSummary(profile, addResult)));
 				}
 				return;
 			}
 
 			if (!profiles || profiles.length === 0) {
 				console.error(
-					'Please specify at least one rules profile (e.g., windsurf, roo).'
+					'Please specify at least one rule profile (e.g., windsurf, roo).'
 				);
 				process.exit(1);
 			}
@@ -2760,7 +2763,7 @@ Examples:
 			for (const profile of expandedProfiles) {
 				if (!isValidProfile(profile)) {
 					console.warn(
-						`Rules profile for "${profile}" not found. Valid profiles: ${RULE_PROFILES.join(', ')}. Skipping.`
+						`Rule profile for "${profile}" not found. Valid profiles: ${RULE_PROFILES.join(', ')}. Skipping.`
 					);
 					continue;
 				}
@@ -2786,16 +2789,14 @@ Examples:
 						failed: addResult.failed
 					});
 
-					console.log(
-						chalk.green(
-							`Summary for ${profile}: ${addResult.success} rules added, ${addResult.failed} failed.`
-						)
-					);
+					console.log(chalk.green(generateProfileSummary(profile, addResult)));
 				} else if (action === RULES_ACTIONS.REMOVE) {
 					console.log(chalk.blue(`Removing rules for profile: ${profile}...`));
 					const result = removeProfileRules(projectDir, profileConfig);
 					removalResults.push(result);
-					console.log(chalk.blue(`Completed removal for profile: ${profile}`));
+					console.log(
+						chalk.green(generateProfileRemovalSummary(profile, result))
+					);
 				} else {
 					console.error(
 						`Unknown action. Use "${RULES_ACTIONS.ADD}" or "${RULES_ACTIONS.REMOVE}".`
@@ -2806,67 +2807,91 @@ Examples:
 
 			// Print summary for additions
 			if (action === RULES_ACTIONS.ADD && addResults.length > 0) {
-				const totalSuccess = addResults.reduce((sum, r) => sum + r.success, 0);
-				const totalFailed = addResults.reduce((sum, r) => sum + r.failed, 0);
-				const successfulProfiles = addResults
-					.filter((r) => r.success > 0)
-					.map((r) => r.profileName);
+				const {
+					allSuccessfulProfiles,
+					totalSuccess,
+					totalFailed,
+					simpleProfiles
+				} = categorizeProfileResults(addResults);
 
-				if (successfulProfiles.length > 0) {
+				if (allSuccessfulProfiles.length > 0) {
 					console.log(
 						chalk.green(
-							`\nSuccessfully added rules for: ${successfulProfiles.join(', ')}`
+							`\nSuccessfully added rules for: ${allSuccessfulProfiles.join(', ')}`
 						)
 					);
-					console.log(
-						chalk.green(
-							`Total: ${totalSuccess} rules added, ${totalFailed} failed.`
-						)
-					);
+
+					// Create a more descriptive summary
+					if (totalSuccess > 0 && simpleProfiles.length > 0) {
+						console.log(
+							chalk.green(
+								`Total: ${totalSuccess} rules added, ${totalFailed} failed, ${simpleProfiles.length} integration guide(s) copied.`
+							)
+						);
+					} else if (totalSuccess > 0) {
+						console.log(
+							chalk.green(
+								`Total: ${totalSuccess} rules added, ${totalFailed} failed.`
+							)
+						);
+					} else if (simpleProfiles.length > 0) {
+						console.log(
+							chalk.green(
+								`Total: ${simpleProfiles.length} integration guide(s) copied.`
+							)
+						);
+					}
 				}
 			}
 
 			// Print summary for removals
-			if (action === RULES_ACTIONS.REMOVE) {
-				const successes = removalResults
-					.filter((r) => r.success)
-					.map((r) => r.profileName);
-				const skipped = removalResults
-					.filter((r) => r.skipped)
-					.map((r) => r.profileName);
-				const errors = removalResults.filter(
-					(r) => r.error && !r.success && !r.skipped
-				);
-				const withNotices = removalResults.filter((r) => r.notice);
+			if (action === RULES_ACTIONS.REMOVE && removalResults.length > 0) {
+				const {
+					successfulRemovals,
+					skippedRemovals,
+					failedRemovals,
+					removalsWithNotices
+				} = categorizeRemovalResults(removalResults);
 
-				if (successes.length > 0) {
+				if (successfulRemovals.length > 0) {
 					console.log(
 						chalk.green(
-							`Successfully removed Task Master rules: ${successes.join(', ')}`
+							`\nSuccessfully removed rules for: ${successfulRemovals.join(', ')}`
 						)
 					);
 				}
-				if (skipped.length > 0) {
+				if (skippedRemovals.length > 0) {
 					console.log(
 						chalk.yellow(
-							`Skipped (default or protected): ${skipped.join(', ')}`
+							`Skipped (default or protected): ${skippedRemovals.join(', ')}`
 						)
 					);
 				}
-				if (errors.length > 0) {
-					errors.forEach((r) => {
-						console.log(
-							chalk.red(`Error removing ${r.profileName}: ${r.error}`)
-						);
+				if (failedRemovals.length > 0) {
+					console.log(chalk.red('\nErrors occurred:'));
+					failedRemovals.forEach((r) => {
+						console.log(chalk.red(`  ${r.profileName}: ${r.error}`));
 					});
 				}
 				// Display notices about preserved files/configurations
-				if (withNotices.length > 0) {
+				if (removalsWithNotices.length > 0) {
 					console.log(chalk.cyan('\nNotices:'));
-					withNotices.forEach((r) => {
+					removalsWithNotices.forEach((r) => {
 						console.log(chalk.cyan(`  ${r.profileName}: ${r.notice}`));
 					});
 				}
+
+				// Overall summary
+				const totalProcessed = removalResults.length;
+				const totalSuccessful = successfulRemovals.length;
+				const totalSkipped = skippedRemovals.length;
+				const totalFailed = failedRemovals.length;
+
+				console.log(
+					chalk.blue(
+						`\nTotal: ${totalProcessed} profile(s) processed - ${totalSuccessful} removed, ${totalSkipped} skipped, ${totalFailed} failed.`
+					)
+				);
 			}
 		});
 

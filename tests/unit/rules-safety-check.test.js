@@ -1,7 +1,7 @@
 import {
 	getInstalledProfiles,
 	wouldRemovalLeaveNoProfiles
-} from '../../src/utils/profile-detection.js';
+} from '../../src/utils/profiles.js';
 import { rulesDirect } from '../../mcp-server/src/core/direct-functions/rules.js';
 import fs from 'fs';
 import path from 'path';

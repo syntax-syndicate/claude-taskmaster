@@ -299,7 +299,23 @@ export function removeProfileRules(projectDir, profile) {
 	};
 
 	try {
-		// Check if profile directory exists at all
+		// Handle simple profiles (Claude, Codex) that just copy files to root
+		const isSimpleProfile = Object.keys(profile.fileMap).length === 0;
+
+		if (isSimpleProfile) {
+			// For simple profiles, just call their removal hook and return
+			if (typeof profile.onRemoveRulesProfile === 'function') {
+				profile.onRemoveRulesProfile(projectDir);
+			}
+			result.success = true;
+			log(
+				'debug',
+				`[Rule Transformer] Successfully removed ${profile.profileName} files from ${projectDir}`
+			);
+			return result;
+		}
+
+		// Check if profile directory exists at all (for full profiles)
 		if (!fs.existsSync(profileDir)) {
 			result.success = true;
 			result.skipped = true;

@@ -29,7 +29,7 @@ import {
 	convertAllRulesToProfileRules,
 	getRulesProfile
 } from '../src/utils/rule-transformer.js';
-import { runInteractiveRulesSetup } from '../src/utils/rules-setup.js';
+import { runInteractiveRulesSetup } from '../src/utils/profiles.js';
 import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);

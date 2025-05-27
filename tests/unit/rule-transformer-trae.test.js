@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { convertRuleToProfileRule } from '../../src/utils/rule-transformer.js';
-import * as traeProfile from '../../scripts/profiles/trae.js';
+import { traeProfile } from '../../scripts/profiles/trae.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -41,11 +41,7 @@ Also has references to .mdc files.`;
 
 		// Convert it
 		const testTraeRule = path.join(testDir, 'basic-terms.md');
-		convertRuleToProfileRule(
-			testCursorRule,
-			testTraeRule,
-			traeProfile.traeProfile
-		);
+		convertRuleToProfileRule(testCursorRule, testTraeRule, traeProfile);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testTraeRule, 'utf8');
@@ -76,11 +72,7 @@ alwaysApply: true
 
 		// Convert it
 		const testTraeRule = path.join(testDir, 'tool-refs.md');
-		convertRuleToProfileRule(
-			testCursorRule,
-			testTraeRule,
-			traeProfile.traeProfile
-		);
+		convertRuleToProfileRule(testCursorRule, testTraeRule, traeProfile);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testTraeRule, 'utf8');
@@ -108,11 +100,7 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 
 		// Convert it
 		const testTraeRule = path.join(testDir, 'file-refs.md');
-		convertRuleToProfileRule(
-			testCursorRule,
-			testTraeRule,
-			traeProfile.traeProfile
-		);
+		convertRuleToProfileRule(testCursorRule, testTraeRule, traeProfile);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testTraeRule, 'utf8');

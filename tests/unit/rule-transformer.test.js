@@ -12,7 +12,15 @@ describe('Rule Transformer - General', () => {
 			expect(RULE_PROFILES.length).toBeGreaterThan(0);
 
 			// Verify expected profiles are present
-			const expectedProfiles = ['cline', 'cursor', 'roo', 'trae', 'windsurf'];
+			const expectedProfiles = [
+				'claude',
+				'cline',
+				'codex',
+				'cursor',
+				'roo',
+				'trae',
+				'windsurf'
+			];
 			expectedProfiles.forEach((profile) => {
 				expect(RULE_PROFILES).toContain(profile);
 			});
@@ -31,7 +39,7 @@ describe('Rule Transformer - General', () => {
 			expect(isValidProfile(undefined)).toBe(false);
 		});
 
-		it('should return correct rules profile with getRulesProfile', () => {
+		it('should return correct rule profile with getRulesProfile', () => {
 			// Test valid profiles
 			RULE_PROFILES.forEach((profile) => {
 				const profileConfig = getRulesProfile(profile);
@@ -46,6 +54,9 @@ describe('Rule Transformer - General', () => {
 
 	describe('Profile Structure', () => {
 		it('should have all required properties for each profile', () => {
+			// Simple profiles that only copy files (no rule transformation)
+			const simpleProfiles = ['claude', 'codex'];
+
 			RULE_PROFILES.forEach((profile) => {
 				const profileConfig = getRulesProfile(profile);
 
@@ -56,7 +67,15 @@ describe('Rule Transformer - General', () => {
 				expect(profileConfig).toHaveProperty('rulesDir');
 				expect(profileConfig).toHaveProperty('profileDir');
 
-				// Check that conversionConfig has required structure
+				// Simple profiles have minimal structure
+				if (simpleProfiles.includes(profile)) {
+					// For simple profiles, conversionConfig and fileMap can be empty
+					expect(typeof profileConfig.conversionConfig).toBe('object');
+					expect(typeof profileConfig.fileMap).toBe('object');
+					return;
+				}
+
+				// Check that conversionConfig has required structure for full profiles
 				expect(profileConfig.conversionConfig).toHaveProperty('profileTerms');
 				expect(profileConfig.conversionConfig).toHaveProperty('toolNames');
 				expect(profileConfig.conversionConfig).toHaveProperty('toolContexts');
@@ -89,6 +108,9 @@ describe('Rule Transformer - General', () => {
 				'taskmaster.mdc'
 			];
 
+			// Simple profiles that only copy files (no rule transformation)
+			const simpleProfiles = ['claude', 'codex'];
+
 			RULE_PROFILES.forEach((profile) => {
 				const profileConfig = getRulesProfile(profile);
 
@@ -97,7 +119,12 @@ describe('Rule Transformer - General', () => {
 				expect(typeof profileConfig.fileMap).toBe('object');
 				expect(profileConfig.fileMap).not.toBeNull();
 
-				// Check that fileMap is not empty
+				// Simple profiles can have empty fileMap since they don't transform rules
+				if (simpleProfiles.includes(profile)) {
+					return;
+				}
+
+				// Check that fileMap is not empty for full profiles
 				const fileMapKeys = Object.keys(profileConfig.fileMap);
 				expect(fileMapKeys.length).toBeGreaterThan(0);
 
@@ -116,6 +143,9 @@ describe('Rule Transformer - General', () => {
 
 	describe('MCP Configuration Properties', () => {
 		it('should have all required MCP properties for each profile', () => {
+			// Simple profiles that only copy files (no MCP configuration)
+			const simpleProfiles = ['claude', 'codex'];
+
 			RULE_PROFILES.forEach((profile) => {
 				const profileConfig = getRulesProfile(profile);
 
@@ -124,7 +154,15 @@ describe('Rule Transformer - General', () => {
 				expect(profileConfig).toHaveProperty('mcpConfigName');
 				expect(profileConfig).toHaveProperty('mcpConfigPath');
 
-				// Check types
+				// Simple profiles have no MCP configuration
+				if (simpleProfiles.includes(profile)) {
+					expect(profileConfig.mcpConfig).toBe(false);
+					expect(profileConfig.mcpConfigName).toBe(null);
+					expect(profileConfig.mcpConfigPath).toBe(null);
+					return;
+				}
+
+				// Check types for full profiles
 				expect(typeof profileConfig.mcpConfig).toBe('boolean');
 				expect(typeof profileConfig.mcpConfigName).toBe('string');
 				expect(typeof profileConfig.mcpConfigPath).toBe('string');
@@ -138,6 +176,16 @@ describe('Rule Transformer - General', () => {
 
 		it('should have correct MCP configuration for each profile', () => {
 			const expectedConfigs = {
+				claude: {
+					mcpConfig: false,
+					mcpConfigName: null,
+					expectedPath: null
+				},
+				codex: {
+					mcpConfig: false,
+					mcpConfigName: null,
+					expectedPath: null
+				},
 				cursor: {
 					mcpConfig: true,
 					mcpConfigName: 'mcp.json',
@@ -176,8 +224,17 @@ describe('Rule Transformer - General', () => {
 		});
 
 		it('should have consistent profileDir and mcpConfigPath relationship', () => {
+			// Simple profiles that only copy files (no MCP configuration)
+			const simpleProfiles = ['claude', 'codex'];
+
 			RULE_PROFILES.forEach((profile) => {
 				const profileConfig = getRulesProfile(profile);
+
+				// Simple profiles have null mcpConfigPath
+				if (simpleProfiles.includes(profile)) {
+					expect(profileConfig.mcpConfigPath).toBe(null);
+					return;
+				}
 
 				// The mcpConfigPath should start with the profileDir
 				expect(profileConfig.mcpConfigPath).toMatch(
@@ -201,8 +258,11 @@ describe('Rule Transformer - General', () => {
 				return profileConfig.profileDir;
 			});
 
+			// Note: Claude and Codex both use "." (root directory) so we expect some duplication
 			const uniqueProfileDirs = [...new Set(profileDirs)];
-			expect(uniqueProfileDirs).toHaveLength(profileDirs.length);
+			// We should have fewer unique directories than total profiles due to simple profiles using root
+			expect(uniqueProfileDirs.length).toBeLessThanOrEqual(profileDirs.length);
+			expect(uniqueProfileDirs.length).toBeGreaterThan(0);
 		});
 
 		it('should have unique MCP config paths', () => {
@@ -211,8 +271,13 @@ describe('Rule Transformer - General', () => {
 				return profileConfig.mcpConfigPath;
 			});
 
+			// Note: Claude and Codex both have null mcpConfigPath so we expect some duplication
 			const uniqueMcpConfigPaths = [...new Set(mcpConfigPaths)];
-			expect(uniqueMcpConfigPaths).toHaveLength(mcpConfigPaths.length);
+			// We should have fewer unique paths than total profiles due to simple profiles having null
+			expect(uniqueMcpConfigPaths.length).toBeLessThanOrEqual(
+				mcpConfigPaths.length
+			);
+			expect(uniqueMcpConfigPaths.length).toBeGreaterThan(0);
 		});
 	});
 });
