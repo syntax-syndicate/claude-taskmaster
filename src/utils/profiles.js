@@ -99,14 +99,19 @@ export async function runInteractiveProfilesSetup() {
 			// Simple profiles (Claude, Codex) - specify the target file
 			const targetFileName =
 				profileName === 'claude' ? 'CLAUDE.md' : 'AGENTS.md';
-			description = `Integration guide for ${displayName} (${targetFileName})`;
+			description = `Integration guide (${targetFileName})`;
 		} else {
 			// Full profiles with rules - check if they have MCP config
 			const hasMcpConfig = profile.mcpConfig === true;
 			if (hasMcpConfig) {
-				description = `Rule profile and MCP config for ${displayName}`;
+				// Special case for Roo to mention agent modes
+				if (profileName === 'roo') {
+					description = `Rule profile, MCP config, and agent modes`;
+				} else {
+					description = `Rule profile and MCP config`;
+				}
 			} else {
-				description = `Rule profile for ${displayName}`;
+				description = `Rule profile`;
 			}
 		}
 
@@ -114,7 +119,7 @@ export async function runInteractiveProfilesSetup() {
 			displayName,
 			description
 		};
-	}).sort((a, b) => a.displayName.localeCompare(b.displayName)); // Alphabetize by display name
+	}).sort((a, b) => a.displayName.localeCompare(b.displayName));
 
 	const profileListText = profileDescriptions
 		.map(

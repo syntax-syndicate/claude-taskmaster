@@ -11,12 +11,21 @@ import { removeTaskMasterMCPConfiguration } from '../../../src/utils/mcp-config-
 const mockLog = {
 	info: jest.fn(),
 	error: jest.fn(),
-	debug: jest.fn()
+	debug: jest.fn(),
+	warn: jest.fn()
 };
 
 // Mock the logger import
 jest.mock('../../../scripts/modules/utils.js', () => ({
-	log: (level, message) => mockLog[level]?.(message)
+	log: jest.fn((level, ...args) => {
+		// Handle the log function more robustly to avoid JSON parsing issues in tests
+		const mockFn = mockLog[level] || jest.fn();
+		// Convert objects to strings safely for testing
+		const safeArgs = args.map(arg => 
+			typeof arg === 'object' ? '[Object]' : String(arg)
+		);
+		return mockFn(...safeArgs);
+	})
 }));
 
 describe('Selective Rules Removal', () => {
