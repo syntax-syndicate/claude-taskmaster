@@ -23,6 +23,12 @@ describe('MCP Configuration Validation', () => {
 				expectedConfigName: 'mcp.json',
 				expectedPath: '.roo/mcp.json'
 			},
+			trae: {
+				shouldHaveMcp: false,
+				expectedDir: '.trae',
+				expectedConfigName: 'trae_mcp_settings.json',
+				expectedPath: '.trae/trae_mcp_settings.json'
+			},
 			cline: {
 				shouldHaveMcp: false,
 				expectedDir: '.clinerules',
@@ -100,8 +106,11 @@ describe('MCP Configuration Validation', () => {
 		});
 
 		test('should use profile-specific config name for non-MCP profiles', () => {
-			const profile = getRulesProfile('cline');
-			expect(profile.mcpConfigName).toBe('cline_mcp_settings.json');
+			const clineProfile = getRulesProfile('cline');
+			expect(clineProfile.mcpConfigName).toBe('cline_mcp_settings.json');
+
+			const traeProfile = getRulesProfile('trae');
+			expect(traeProfile.mcpConfigName).toBe('trae_mcp_settings.json');
 		});
 	});
 
@@ -134,6 +143,7 @@ describe('MCP Configuration Validation', () => {
 			expect(mcpEnabledProfiles).toContain('windsurf');
 			expect(mcpEnabledProfiles).toContain('roo');
 			expect(mcpEnabledProfiles).not.toContain('cline');
+			expect(mcpEnabledProfiles).not.toContain('trae');
 		});
 
 		test('should provide all necessary information for MCP config creation', () => {

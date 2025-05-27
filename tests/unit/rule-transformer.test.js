@@ -12,7 +12,7 @@ describe('Rule Transformer - General', () => {
 			expect(RULE_PROFILES.length).toBeGreaterThan(0);
 
 			// Verify expected profiles are present
-			const expectedProfiles = ['cline', 'cursor', 'roo', 'windsurf'];
+			const expectedProfiles = ['cline', 'cursor', 'roo', 'trae', 'windsurf'];
 			expectedProfiles.forEach((profile) => {
 				expect(RULE_PROFILES).toContain(profile);
 			});
@@ -152,6 +152,11 @@ describe('Rule Transformer - General', () => {
 					mcpConfig: true,
 					mcpConfigName: 'mcp.json',
 					expectedPath: '.roo/mcp.json'
+				},
+				trae: {
+					mcpConfig: false,
+					mcpConfigName: 'trae_mcp_settings.json',
+					expectedPath: '.trae/trae_mcp_settings.json'
 				},
 				cline: {
 					mcpConfig: false,

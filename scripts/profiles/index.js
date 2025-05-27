@@ -2,4 +2,5 @@
 export * as clineProfile from './cline.js';
 export * as cursorProfile from './cursor.js';
 export * as rooProfile from './roo.js';
+export * as traeProfile from './trae.js';
 export * as windsurfProfile from './windsurf.js';
