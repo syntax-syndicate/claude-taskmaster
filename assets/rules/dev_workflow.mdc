@@ -49,12 +49,12 @@ Task Master offers two primary ways to interact:
 -   Maintain valid dependency structure with `add_dependency`/`remove_dependency` tools or `task-master add-dependency`/`remove-dependency` commands, `validate_dependencies` / `task-master validate-dependencies`, and `fix_dependencies` / `task-master fix-dependencies` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) when needed
 -   Respect dependency chains and task priorities when selecting work
 -   Report progress regularly using `get_tasks` / `task-master list`
--   Reorganize tasks as needed using `move_task` / `task-master move --from=<id> --to=<id>` (see @`taskmaster.mdc`) to change task hierarchy or ordering
+-   Reorganize tasks as needed using `move_task` / `task-master move --from=<id> --to=<id>` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) to change task hierarchy or ordering
 
 ## Task Complexity Analysis
 
--   Run `analyze_project_complexity` / `task-master analyze-complexity --research` (see @`taskmaster.mdc`) for comprehensive analysis
--   Review complexity report via `complexity_report` / `task-master complexity-report` (see @`taskmaster.mdc`) for a formatted, readable version.
+-   Run `analyze_project_complexity` / `task-master analyze-complexity --research` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) for comprehensive analysis
+-   Review complexity report via `complexity_report` / `task-master complexity-report` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) for a formatted, readable version.
 -   Focus on tasks with highest complexity scores (8-10) for detailed breakdown
 -   Use analysis results to determine appropriate subtask allocation
 -   Note that reports are automatically used by the `expand_task` tool/command
@@ -179,7 +179,7 @@ Taskmaster configuration is managed through two main mechanisms:
 Once a task has been broken down into subtasks using `expand_task` or similar methods, follow this iterative process for implementation:
 
 1.  **Understand the Goal (Preparation):**
-    *   Use `get_task` / `task-master show <subtaskId>` (see @`taskmaster.mdc`) to thoroughly understand the specific goals and requirements of the subtask.
+    *   Use `get_task` / `task-master show <subtaskId>` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) to thoroughly understand the specific goals and requirements of the subtask.
 
 2.  **Initial Exploration & Planning (Iteration 1):**
     *   This is the first attempt at creating a concrete implementation plan.
