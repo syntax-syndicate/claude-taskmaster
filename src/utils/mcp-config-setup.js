@@ -2,6 +2,28 @@ import fs from 'fs';
 import path from 'path';
 import { log } from '../../scripts/modules/utils.js';
 
+// Return JSON with existing mcp.json formatting style
+function formatJSONWithTabs(obj) {
+	let json = JSON.stringify(obj, null, '\t');
+
+	json = json.replace(
+		/(\[\n\t+)([^[\]]+?)(\n\t+\])/g,
+		(match, openBracket, content, closeBracket) => {
+			// Only convert to single line if content doesn't contain nested objects/arrays
+			if (!content.includes('{') && !content.includes('[')) {
+				const singleLineContent = content
+					.replace(/\n\t+/g, ' ')
+					.replace(/\s+/g, ' ')
+					.trim();
+				return `[${singleLineContent}]`;
+			}
+			return match;
+		}
+	);
+
+	return json;
+}
+
 // Structure matches project conventions (see scripts/init.js)
 export function setupMCPConfiguration(projectDir, mcpConfigPath) {
 	// Build the full path to the MCP config file
@@ -72,7 +94,7 @@ export function setupMCPConfiguration(projectDir, mcpConfigPath) {
 				log('info', 'task-master-ai server already configured in mcp.json');
 			}
 			// Write the updated configuration
-			fs.writeFileSync(mcpPath, JSON.stringify(mcpConfig, null, 4) + '\n');
+			fs.writeFileSync(mcpPath, formatJSONWithTabs(mcpConfig) + '\n');
 			log('success', 'Updated MCP configuration file');
 		} catch (error) {
 			log('error', `Failed to update MCP configuration: ${error.message}`);
@@ -86,7 +108,7 @@ export function setupMCPConfiguration(projectDir, mcpConfigPath) {
 			const newMCPConfig = {
 				mcpServers: newMCPServer
 			};
-			fs.writeFileSync(mcpPath, JSON.stringify(newMCPConfig, null, 4) + '\n');
+			fs.writeFileSync(mcpPath, formatJSONWithTabs(newMCPConfig) + '\n');
 			log(
 				'warn',
 				'Created new MCP configuration file (backup of original file was created if it existed)'
@@ -97,7 +119,7 @@ export function setupMCPConfiguration(projectDir, mcpConfigPath) {
 		const newMCPConfig = {
 			mcpServers: newMCPServer
 		};
-		fs.writeFileSync(mcpPath, JSON.stringify(newMCPConfig, null, 4) + '\n');
+		fs.writeFileSync(mcpPath, formatJSONWithTabs(newMCPConfig) + '\n');
 		log('success', `Created MCP configuration file at ${mcpPath}`);
 	}
 
