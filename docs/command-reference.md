@@ -254,13 +254,13 @@ task-master init --rules cursor,roo
 ```bash
 # Add rule sets to your project
 # (e.g., .roo/rules, .windsurf/rules)
-task-master rules add <rules1,rules2,...>
+task-master rules add <profile1,profile2,...>
 
 # Remove rule sets from your project
-task-master rules remove <rules1,rules2,...>
+task-master rules remove <profile1,profile2,...>
 
 # Remove rule sets bypassing safety check (dangerous)
-task-master rules remove <rules1,rules2,...> --force
+task-master rules remove <profile1,profile2,...> --force
 
 # Launch interactive rules setup to select rules
 # (does not re-initialize project or ask about shell aliases)
