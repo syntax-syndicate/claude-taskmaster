@@ -2,17 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import {
-	convertAllRulesToProfileRules,
-	convertRuleToProfileRule,
-	getRulesProfile
-} from '../../src/utils/rule-transformer.js';
-import * as rooProfile from '../../scripts/profiles/roo.js';
+import { convertRuleToProfileRule } from '../../src/utils/rule-transformer.js';
+import * as clineProfile from '../../scripts/profiles/cline.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-describe('Roo Rule Transformer', () => {
+describe('Cline Rule Transformer', () => {
 	const testDir = path.join(__dirname, 'temp-test-dir');
 
 	beforeAll(() => {
@@ -44,15 +40,15 @@ Also has references to .mdc files.`;
 		fs.writeFileSync(testCursorRule, testContent);
 
 		// Convert it
-		const testRooRule = path.join(testDir, 'basic-terms.md');
-		convertRuleToProfileRule(testCursorRule, testRooRule, rooProfile);
+		const testClineRule = path.join(testDir, 'basic-terms.md');
+		convertRuleToProfileRule(testCursorRule, testClineRule, clineProfile);
 
 		// Read the converted file
-		const convertedContent = fs.readFileSync(testRooRule, 'utf8');
+		const convertedContent = fs.readFileSync(testClineRule, 'utf8');
 
 		// Verify transformations
-		expect(convertedContent).toContain('Roo Code');
-		expect(convertedContent).toContain('roocode.com');
+		expect(convertedContent).toContain('Cline');
+		expect(convertedContent).toContain('cline.bot');
 		expect(convertedContent).toContain('.md');
 		expect(convertedContent).not.toContain('cursor.so');
 		expect(convertedContent).not.toContain('Cursor rule');
@@ -75,17 +71,17 @@ alwaysApply: true
 		fs.writeFileSync(testCursorRule, testContent);
 
 		// Convert it
-		const testRooRule = path.join(testDir, 'tool-refs.md');
-		convertRuleToProfileRule(testCursorRule, testRooRule, rooProfile);
+		const testClineRule = path.join(testDir, 'tool-refs.md');
+		convertRuleToProfileRule(testCursorRule, testClineRule, clineProfile);
 
 		// Read the converted file
-		const convertedContent = fs.readFileSync(testRooRule, 'utf8');
+		const convertedContent = fs.readFileSync(testClineRule, 'utf8');
 
-		// Verify transformations
-		expect(convertedContent).toContain('search_files tool');
-		expect(convertedContent).toContain('apply_diff tool');
-		expect(convertedContent).toContain('execute_command');
-		expect(convertedContent).toContain('use_mcp_tool');
+		// Verify transformations (Cline uses standard tool names)
+		expect(convertedContent).toContain('search tool');
+		expect(convertedContent).toContain('edit_file tool');
+		expect(convertedContent).toContain('run_command');
+		expect(convertedContent).toContain('use_mcp');
 	});
 
 	it('should correctly update file references', () => {
@@ -103,29 +99,15 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 		fs.writeFileSync(testCursorRule, testContent);
 
 		// Convert it
-		const testRooRule = path.join(testDir, 'file-refs.md');
-		convertRuleToProfileRule(testCursorRule, testRooRule, rooProfile);
+		const testClineRule = path.join(testDir, 'file-refs.md');
+		convertRuleToProfileRule(testCursorRule, testClineRule, clineProfile);
 
 		// Read the converted file
-		const convertedContent = fs.readFileSync(testRooRule, 'utf8');
+		const convertedContent = fs.readFileSync(testClineRule, 'utf8');
 
 		// Verify transformations
-		expect(convertedContent).toContain('(.roo/rules/dev_workflow.md)');
-		expect(convertedContent).toContain('(.roo/rules/taskmaster.md)');
+		expect(convertedContent).toContain('(.clinerules/dev_workflow.md)');
+		expect(convertedContent).toContain('(.clinerules/taskmaster.md)');
 		expect(convertedContent).not.toContain('(mdc:.cursor/rules/');
-	});
-
-	it('should run post-processing when converting all rules for Roo', () => {
-		// Simulate a rules directory with a .mdc file
-		const assetsRulesDir = path.join(testDir, 'assets', 'rules');
-		fs.mkdirSync(assetsRulesDir, { recursive: true });
-		const assetRule = path.join(assetsRulesDir, 'dev_workflow.mdc');
-		fs.writeFileSync(assetRule, 'dummy');
-		// Should create .roo/rules and call post-processing
-		convertAllRulesToProfileRules(testDir, rooProfile);
-		// Check for post-processing artifacts, e.g., rules-* folders or extra files
-		const rooDir = path.join(testDir, '.roo');
-		const found = fs.readdirSync(rooDir).some((f) => f.startsWith('rules-'));
-		expect(found).toBe(true); // There should be at least one rules-* folder
 	});
 });

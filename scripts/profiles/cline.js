@@ -13,7 +13,7 @@ const clineProfile = createProfile({
 	mcpConfigName: 'cline_mcp_settings.json',
 	fileExtension: '.mdc',
 	targetExtension: '.md',
-	toolMappings: COMMON_TOOL_MAPPINGS.ROO_STYLE, // Cline uses transformed tool names
+	toolMappings: COMMON_TOOL_MAPPINGS.STANDARD, // Cline uses standard tool names
 	customFileMap: {
 		'cursor_rules.mdc': 'cline_rules.md'
 	}
