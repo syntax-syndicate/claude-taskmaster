@@ -49,11 +49,11 @@ Task Master offers two primary ways to interact:
 -   Maintain valid dependency structure with `add_dependency`/`remove_dependency` tools or `task-master add-dependency`/`remove-dependency` commands, `validate_dependencies` / `task-master validate-dependencies`, and `fix_dependencies` / `task-master fix-dependencies` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) when needed
 -   Respect dependency chains and task priorities when selecting work
 -   Report progress regularly using `get_tasks` / `task-master list`
--   Reorganize tasks as needed using `move_task` / `task-master move --from=<id> --to=<id>` (see @`taskmaster.mdc`) toarchy or ordering
+-   Reorganize tasks as needed using `move_task` / `task-master move --from=<id> --to=<id>` (see @`taskmaster.mdc`) to change task hierarchy or ordering
 
 ## Task Complexity Analysis
 
--   Run `analyze_project_complexity` / `task-master analyze-complexity --taskmaster.mdc`) for comprehensive analysis
+-   Run `analyze_project_complexity` / `task-master analyze-complexity --research` (see @`taskmaster.mdc`) for comprehensive analysis
 -   Review complexity report via `complexity_report` / `task-master complexity-report` (see @`taskmaster.mdc`) for a formatted, readable version.
 -   Focus on tasks with highest complexity scores (8-10) for detailed breakdown
 -   Use analysis results to determine appropriate subtask allocation
@@ -157,7 +157,8 @@ Taskmaster configuration is managed through two main mechanisms:
 
 ## Task Reorganization
 
-- Use `move_task` / `task-master move --from=<id> --to=<id>` to move tasks or subtasks within the hierand supports several use cases:
+- Use `move_task` / `task-master move --from=<id> --to=<id>` to move tasks or subtasks within the hierarchy
+- This command supports several use cases:
   - Moving a standalone task to become a subtask (e.g., `--from=5 --to=7`)
   - Moving a subtask to become a standalone task (e.g., `--from=5.2 --to=7`) 
   - Moving a subtask to a different parent (e.g., `--from=5.2 --to=7.3`)
