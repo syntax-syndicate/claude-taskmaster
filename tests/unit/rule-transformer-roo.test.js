@@ -45,7 +45,11 @@ Also has references to .mdc files.`;
 
 		// Convert it
 		const testRooRule = path.join(testDir, 'basic-terms.md');
-		convertRuleToProfileRule(testCursorRule, testRooRule, rooProfile);
+		convertRuleToProfileRule(
+			testCursorRule,
+			testRooRule,
+			rooProfile.rooProfile
+		);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testRooRule, 'utf8');
@@ -76,7 +80,11 @@ alwaysApply: true
 
 		// Convert it
 		const testRooRule = path.join(testDir, 'tool-refs.md');
-		convertRuleToProfileRule(testCursorRule, testRooRule, rooProfile);
+		convertRuleToProfileRule(
+			testCursorRule,
+			testRooRule,
+			rooProfile.rooProfile
+		);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testRooRule, 'utf8');
@@ -104,7 +112,11 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 
 		// Convert it
 		const testRooRule = path.join(testDir, 'file-refs.md');
-		convertRuleToProfileRule(testCursorRule, testRooRule, rooProfile);
+		convertRuleToProfileRule(
+			testCursorRule,
+			testRooRule,
+			rooProfile.rooProfile
+		);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testRooRule, 'utf8');
@@ -122,7 +134,7 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 		const assetRule = path.join(assetsRulesDir, 'dev_workflow.mdc');
 		fs.writeFileSync(assetRule, 'dummy');
 		// Should create .roo/rules and call post-processing
-		convertAllRulesToProfileRules(testDir, rooProfile);
+		convertAllRulesToProfileRules(testDir, rooProfile.rooProfile);
 		// Check for post-processing artifacts, e.g., rules-* folders or extra files
 		const rooDir = path.join(testDir, '.roo');
 		const found = fs.readdirSync(rooDir).some((f) => f.startsWith('rules-'));

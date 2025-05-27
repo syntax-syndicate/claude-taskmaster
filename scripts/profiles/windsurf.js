@@ -1,8 +1,8 @@
 // Windsurf conversion profile for rule-transformer
 import { createProfile, COMMON_TOOL_MAPPINGS } from './base-profile.js';
 
-// Create windsurf profile using the base factory
-const windsurfProfile = createProfile({
+// Create and export windsurf profile using the base factory
+export const windsurfProfile = createProfile({
 	name: 'windsurf',
 	displayName: 'Windsurf',
 	url: 'windsurf.com',
@@ -15,18 +15,3 @@ const windsurfProfile = createProfile({
 	targetExtension: '.md',
 	toolMappings: COMMON_TOOL_MAPPINGS.STANDARD // Windsurf uses standard tool names
 });
-
-// Export all the standard profile properties
-export const {
-	conversionConfig,
-	fileMap,
-	globalReplacements,
-	profileName,
-	displayName,
-	profileDir,
-	rulesDir,
-	mcpConfig,
-	mcpConfigName,
-	mcpConfigPath,
-	getTargetRuleFilename
-} = windsurfProfile;

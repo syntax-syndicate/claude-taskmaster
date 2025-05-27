@@ -41,7 +41,11 @@ Also has references to .mdc files.`;
 
 		// Convert it
 		const testClineRule = path.join(testDir, 'basic-terms.md');
-		convertRuleToProfileRule(testCursorRule, testClineRule, clineProfile);
+		convertRuleToProfileRule(
+			testCursorRule,
+			testClineRule,
+			clineProfile.clineProfile
+		);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testClineRule, 'utf8');
@@ -72,7 +76,11 @@ alwaysApply: true
 
 		// Convert it
 		const testClineRule = path.join(testDir, 'tool-refs.md');
-		convertRuleToProfileRule(testCursorRule, testClineRule, clineProfile);
+		convertRuleToProfileRule(
+			testCursorRule,
+			testClineRule,
+			clineProfile.clineProfile
+		);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testClineRule, 'utf8');
@@ -100,7 +108,11 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 
 		// Convert it
 		const testClineRule = path.join(testDir, 'file-refs.md');
-		convertRuleToProfileRule(testCursorRule, testClineRule, clineProfile);
+		convertRuleToProfileRule(
+			testCursorRule,
+			testClineRule,
+			clineProfile.clineProfile
+		);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testClineRule, 'utf8');

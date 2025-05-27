@@ -1,8 +1,8 @@
 // Cline conversion profile for rule-transformer
 import { createProfile, COMMON_TOOL_MAPPINGS } from './base-profile.js';
 
-// Create cline profile using the base factory
-const clineProfile = createProfile({
+// Create and export cline profile using the base factory
+export const clineProfile = createProfile({
 	name: 'cline',
 	displayName: 'Cline',
 	url: 'cline.bot',
@@ -18,18 +18,3 @@ const clineProfile = createProfile({
 		'cursor_rules.mdc': 'cline_rules.md'
 	}
 });
-
-// Export all the standard profile properties
-export const {
-	conversionConfig,
-	fileMap,
-	globalReplacements,
-	profileName,
-	displayName,
-	profileDir,
-	rulesDir,
-	mcpConfig,
-	mcpConfigName,
-	mcpConfigPath,
-	getTargetRuleFilename
-} = clineProfile;

@@ -45,7 +45,11 @@ Also has references to .mdc files.`;
 
 		// Convert it
 		const testCursorOut = path.join(testDir, 'basic-terms.mdc');
-		convertRuleToProfileRule(testCursorRule, testCursorOut, cursorProfile);
+		convertRuleToProfileRule(
+			testCursorRule,
+			testCursorOut,
+			cursorProfile.cursorProfile
+		);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testCursorOut, 'utf8');
@@ -76,7 +80,11 @@ alwaysApply: true
 
 		// Convert it
 		const testCursorOut = path.join(testDir, 'tool-refs.mdc');
-		convertRuleToProfileRule(testCursorRule, testCursorOut, cursorProfile);
+		convertRuleToProfileRule(
+			testCursorRule,
+			testCursorOut,
+			cursorProfile.cursorProfile
+		);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testCursorOut, 'utf8');
@@ -106,7 +114,11 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 
 		// Convert it
 		const testCursorOut = path.join(testDir, 'file-refs.mdc');
-		convertRuleToProfileRule(testCursorRule, testCursorOut, cursorProfile);
+		convertRuleToProfileRule(
+			testCursorRule,
+			testCursorOut,
+			cursorProfile.cursorProfile
+		);
 
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testCursorOut, 'utf8');

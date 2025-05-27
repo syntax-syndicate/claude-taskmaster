@@ -102,8 +102,8 @@ function onPostConvertRulesProfile(targetDir) {
 	onAddRulesProfile(targetDir);
 }
 
-// Create roo profile using the base factory
-const rooProfile = createProfile({
+// Create and export roo profile using the base factory
+export const rooProfile = createProfile({
 	name: 'roo',
 	displayName: 'Roo Code',
 	url: 'roocode.com',
@@ -122,21 +122,6 @@ const rooProfile = createProfile({
 	onRemove: onRemoveRulesProfile,
 	onPostConvert: onPostConvertRulesProfile
 });
-
-// Export all the standard profile properties and lifecycle functions
-export const {
-	conversionConfig,
-	fileMap,
-	globalReplacements,
-	profileName,
-	displayName,
-	profileDir,
-	rulesDir,
-	mcpConfig,
-	mcpConfigName,
-	mcpConfigPath,
-	getTargetRuleFilename
-} = rooProfile;
 
 // Export lifecycle functions separately to avoid naming conflicts
 export { onAddRulesProfile, onRemoveRulesProfile, onPostConvertRulesProfile };
