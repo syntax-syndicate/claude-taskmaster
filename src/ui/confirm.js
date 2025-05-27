@@ -13,8 +13,23 @@ async function confirmProfilesRemove(profiles) {
 	console.log(
 		boxen(
 			chalk.yellow(
-				`WARNING: This will permanently delete all rules and configuration for: ${profileList}.
-This will remove the entire .[profile] directory for each selected profile.\n\nAre you sure you want to proceed?`
+				`WARNING: This will selectively remove Task Master components for: ${profileList}.
+
+What will be removed:
+• Task Master specific rule files (e.g., cursor_rules.mdc, taskmaster.mdc, etc.)
+• Task Master MCP server configuration (if no other MCP servers exist)
+
+What will be preserved:
+• Your existing custom rule files
+• Other MCP server configurations
+• The profile directory itself (unless completely empty after removal)
+
+The .[profile] directory will only be removed if ALL of the following are true:
+• All rules in the directory were Task Master rules (no custom rules)
+• No other files or folders exist in the profile directory
+• The MCP configuration was completely removed (no other servers)
+
+Are you sure you want to proceed?`
 			),
 			{ padding: 1, borderColor: 'yellow', borderStyle: 'round' }
 		)
@@ -24,7 +39,7 @@ This will remove the entire .[profile] directory for each selected profile.\n\nA
 		{
 			type: 'confirm',
 			name: 'confirm',
-			message: 'Type y to confirm, or n to abort:',
+			message: 'Type y to confirm selective removal, or n to abort:',
 			default: false
 		}
 	]);
@@ -45,13 +60,18 @@ async function confirmRemoveAllRemainingProfiles(profiles, remainingProfiles) {
 	console.log(
 		boxen(
 			chalk.red.bold(
-				`⚠️  CRITICAL WARNING: REMOVING ALL RULES PROFILES ⚠️\n\n` +
-					`You are about to remove: ${profileList}\n` +
-					`This will leave your project with NO rules profiles remaining!\n\n` +
-					`This could significantly impact functionality and development experience:\n` +
-					`• Loss of IDE-specific rules and conventions\n` +
-					`• No MCP configurations for AI assistants\n` +
-					`• Reduced development guidance and best practices\n\n` +
+				`⚠️  CRITICAL WARNING: REMOVING ALL TASK MASTER RULES PROFILES ⚠️\n\n` +
+					`You are about to remove Task Master components for: ${profileList}\n` +
+					`This will leave your project with NO Task Master rules profiles remaining!\n\n` +
+					`What will be removed:\n` +
+					`• All Task Master specific rule files\n` +
+					`• Task Master MCP server configurations\n` +
+					`• Profile directories (only if completely empty after removal)\n\n` +
+					`What will be preserved:\n` +
+					`• Your existing custom rule files\n` +
+					`• Other MCP server configurations\n` +
+					`• Profile directories with custom content\n\n` +
+					`This could impact Task Master functionality but will preserve your custom configurations.\n\n` +
 					`Are you absolutely sure you want to proceed?`
 			),
 			{
@@ -69,7 +89,8 @@ async function confirmRemoveAllRemainingProfiles(profiles, remainingProfiles) {
 		{
 			type: 'confirm',
 			name: 'confirm',
-			message: 'Type y to confirm removing ALL rules profiles, or n to abort:',
+			message:
+				'Type y to confirm removing ALL Task Master profiles, or n to abort:',
 			default: false
 		}
 	]);
