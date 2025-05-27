@@ -2,14 +2,15 @@
 'task-master-ai': minor
 ---
 
-Added flexible rules management:
+Added comprehensive rules profile management:
 
-- New `init` flag: You can now specify which rules to include at project initialization using `--rules <rules>` or `-r <rules>` (e.g., `task-master init -r cursor,roo`). Only the selected rules and configuration are included.
-- New commands: `task-master rules add <rules>` and `task-master rules remove <rules>` let you add or remove specific rules and MCP config after initialization, supporting multiple rules at once.
-- New command: `task-master rules setup` launches an interactive prompt to select which rules to apply to your project. This does **not** re-initialize your project or affect shell aliases; it only manages rules. The list of rules is always up-to-date with available profiles, so you never have to update the CLI when adding a new rule set.
-- The interactive rules setup flow is also used during `init` if you don't specify rules with `--rules`.
-- Documentation and tests were updated to reflect these changes.
+- **Initialization**: You can now specify which rule profiles to include at project initialization using `--rules <profiles>` or `-r <profiles>` (e.g., `task-master init -r cursor,roo`). Only the selected profiles and configuration are included.
+- **Add/Remove Commands**: `task-master rules add <profiles>` and `task-master rules remove <profiles>` let you manage specific rule profiles and MCP config after initialization, supporting multiple profiles at once.
+- **Interactive Setup**: `task-master rules setup` launches an interactive prompt to select which rule profiles to apply to your project. This does **not** re-initialize your project or affect shell aliases; it only manages rules. The list of profiles is always up-to-date with available options.
+- **Selective Removal**: Rules removal now intelligently preserves existing non-Task Master files and only removes Task Master-specific rules. Profile directories are only removed when completely empty and all conditions are met (no existing rules, no other files/folders, MCP config completely removed).
+- **Safety Features**: Confirmation messages clearly explain that only Task Master-specific rules and MCP configurations will be removed, while preserving existing custom rules and other files.
+- **Robust Validation**: Includes comprehensive checks for array types in MCP config processing and error handling throughout the rules management system.
 
-This enables more flexible, rule-specific project setups and makes rules management much easier. You can update or switch rules at any time after initialization using the interactive setup.
+This enables more flexible, rule-specific project setups with intelligent cleanup that preserves user customizations while safely managing Task Master components.
 
 - Resolves #338
