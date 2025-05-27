@@ -129,14 +129,19 @@ function updateFileReferences(content, conversionConfig) {
 }
 
 /**
- * Main transformation function that applies all conversions
+ * Transform rule content to profile-specific rules
+ * @param {string} content - The content to transform
+ * @param {Object} conversionConfig - The conversion configuration
+ * @param {Object} globalReplacements - Global text replacements
+ * @returns {string} - The transformed content
  */
-function transformCursorToProfileRules(
+function transformRuleContent(
 	content,
 	conversionConfig,
-	globalReplacements = []
+	globalReplacements
 ) {
 	let result = content;
+
 	// Apply all transformations in appropriate order
 	result = updateFileReferences(result, conversionConfig);
 	result = replaceBasicTerms(result, conversionConfig);
@@ -158,21 +163,20 @@ function transformCursorToProfileRules(
 }
 
 /**
- * Convert a single Cursor rule file to profile rule format
+ * Convert a Cursor rule file to a profile-specific rule file
+ * @param {string} sourcePath - Path to the source .mdc file
+ * @param {string} targetPath - Path to the target file
+ * @param {Object} profile - The profile configuration
+ * @returns {boolean} - Success status
  */
 export function convertRuleToProfileRule(sourcePath, targetPath, profile) {
 	const { conversionConfig, globalReplacements } = profile;
 	try {
-		log(
-			'debug',
-			`Converting Cursor rule ${path.basename(sourcePath)} to ${profile.profileName} rule ${path.basename(targetPath)}`
-		);
-
 		// Read source content
 		const content = fs.readFileSync(sourcePath, 'utf8');
 
 		// Transform content
-		const transformedContent = transformCursorToProfileRules(
+		const transformedContent = transformRuleContent(
 			content,
 			conversionConfig,
 			globalReplacements
@@ -186,17 +190,10 @@ export function convertRuleToProfileRule(sourcePath, targetPath, profile) {
 
 		// Write transformed content
 		fs.writeFileSync(targetPath, transformedContent);
-		log(
-			'debug',
-			`Successfully converted ${path.basename(sourcePath)} to ${path.basename(targetPath)}`
-		);
 
 		return true;
 	} catch (error) {
-		log(
-			'error',
-			`Failed to convert rule file ${path.basename(sourcePath)}: ${error.message}`
-		);
+		console.error(`Error converting rule file: ${error.message}`);
 		return false;
 	}
 }
@@ -246,7 +243,7 @@ export function convertAllRulesToProfileRules(projectDir, profile) {
 			let content = fs.readFileSync(sourcePath, 'utf8');
 
 			// Apply transformations
-			content = transformCursorToProfileRules(
+			content = transformRuleContent(
 				content,
 				profile.conversionConfig,
 				profile.globalReplacements
