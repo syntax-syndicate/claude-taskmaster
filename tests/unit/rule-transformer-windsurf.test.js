@@ -77,11 +77,11 @@ alwaysApply: true
 		// Read the converted file
 		const convertedContent = fs.readFileSync(testWindsurfRule, 'utf8');
 
-		// Verify transformations
-		expect(convertedContent).toContain('search_files tool');
-		expect(convertedContent).toContain('apply_diff tool');
-		expect(convertedContent).toContain('execute_command');
-		expect(convertedContent).toContain('use_mcp_tool');
+		// Verify transformations (Windsurf uses standard tool names, so no transformation)
+		expect(convertedContent).toContain('search tool');
+		expect(convertedContent).toContain('edit_file tool');
+		expect(convertedContent).toContain('run_command');
+		expect(convertedContent).toContain('use_mcp');
 	});
 
 	it('should correctly update file references', () => {

@@ -26,10 +26,10 @@ describe('Windsurf Profile Initialization Functionality', () => {
 		expect(windsurfProfileContent).toContain("targetExtension: '.md'");
 	});
 
-	test('windsurf.js uses transformed tool mappings', () => {
-		expect(windsurfProfileContent).toContain('COMMON_TOOL_MAPPINGS.ROO_STYLE');
-		// Should contain comment about transformed tool names
-		expect(windsurfProfileContent).toContain('transformed tool names');
+	test('windsurf.js uses standard tool mappings', () => {
+		expect(windsurfProfileContent).toContain('COMMON_TOOL_MAPPINGS.STANDARD');
+		// Should contain comment about standard tool names
+		expect(windsurfProfileContent).toContain('standard tool names');
 	});
 
 	test('windsurf.js contains correct URL configuration', () => {

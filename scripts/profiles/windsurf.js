@@ -13,7 +13,7 @@ const windsurfProfile = createProfile({
 	mcpConfigName: 'mcp.json',
 	fileExtension: '.mdc',
 	targetExtension: '.md',
-	toolMappings: COMMON_TOOL_MAPPINGS.ROO_STYLE // Windsurf uses transformed tool names
+	toolMappings: COMMON_TOOL_MAPPINGS.STANDARD // Windsurf uses standard tool names
 });
 
 // Export all the standard profile properties
