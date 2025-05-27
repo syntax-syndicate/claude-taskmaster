@@ -45,7 +45,7 @@ export async function runInteractiveRulesSetup() {
 	const rulesProfilesQuestion = {
 		type: 'checkbox',
 		name: 'rulesProfiles',
-		message: 'Which IDEs would you like rules included for?',
+		message: 'Which IDEs would you like rule profiles included for?',
 		choices: availableRulesProfiles,
 		validate: (input) => input.length > 0 || 'You must select at least one.'
 	};
