@@ -22,6 +22,7 @@ export const {
 	fileMap,
 	globalReplacements,
 	profileName,
+	displayName,
 	profileDir,
 	rulesDir,
 	mcpConfig,
