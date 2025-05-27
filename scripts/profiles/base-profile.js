@@ -67,7 +67,7 @@ export function createProfile(editorConfig) {
 		...(targetExtension !== fileExtension
 			? [
 					{
-						from: new RegExp(`\\${fileExtension}\\b`, 'g'),
+						from: new RegExp(`\\${fileExtension}(?!\\])\\b`, 'g'),
 						to: targetExtension
 					}
 				]
@@ -168,7 +168,14 @@ export function createProfile(editorConfig) {
 				const baseName = path.basename(filePath, '.mdc');
 				const newFileName =
 					fileMap[`${baseName}.mdc`] || `${baseName}${targetExtension}`;
-				return `[${text}](mdc:${rulesDir}/${newFileName})`;
+				// Update the link text to match the new filename
+				const newLinkText = newFileName;
+				// For Cursor, keep the mdc: protocol; for others, use standard relative paths
+				if (name.toLowerCase() === 'cursor') {
+					return `[${newLinkText}](mdc:${rulesDir}/${newFileName})`;
+				} else {
+					return `[${newLinkText}](${rulesDir}/${newFileName})`;
+				}
 			}
 		}
 	};

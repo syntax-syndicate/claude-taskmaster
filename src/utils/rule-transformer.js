@@ -136,12 +136,12 @@ function transformCursorToProfileRules(
 	conversionConfig,
 	globalReplacements = []
 ) {
-	// Apply all transformations in appropriate order
 	let result = content;
+	// Apply all transformations in appropriate order
+	result = updateFileReferences(result, conversionConfig);
 	result = replaceBasicTerms(result, conversionConfig);
 	result = replaceToolReferences(result, conversionConfig);
 	result = updateDocReferences(result, conversionConfig);
-	result = updateFileReferences(result, conversionConfig);
 
 	// Apply any global/catch-all replacements from the profile
 	// Super aggressive failsafe pass to catch any variations we might have missed
