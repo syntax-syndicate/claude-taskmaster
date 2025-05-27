@@ -82,6 +82,11 @@ import {
 	isValidTaskStatus,
 	TASK_STATUS_OPTIONS
 } from '../../src/constants/task-status.js';
+import {
+	isValidRulesAction,
+	RULES_ACTIONS,
+	RULES_SETUP_ACTION
+} from '../../src/constants/rules-actions.js';
 import { getTaskMasterVersion } from '../../src/utils/getVersion.js';
 import { RULES_PROFILES } from '../../src/constants/profiles.js';
 import {
@@ -2652,13 +2657,22 @@ Examples:
 	programInstance
 		.command('rules <action> [profiles...]')
 		.description(
-			'Add or remove rules for one or more profiles (e.g., task-master rules add windsurf roo)'
+			`Add or remove rules for one or more profiles. Valid actions: ${Object.values(RULES_ACTIONS).join(', ')}, ${RULES_SETUP_ACTION} (e.g., task-master rules add windsurf roo)`
 		)
 		.option(
 			'-f, --force',
 			'Skip confirmation prompt when removing rules (dangerous)'
 		)
 		.action(async (action, profiles, options) => {
+			// Validate action - handle setup separately since it's not in the enum
+			if (!isValidRulesAction(action) && action !== RULES_SETUP_ACTION) {
+				console.error(
+					chalk.red(
+						`Error: Invalid action '${action}'. Valid actions are: ${Object.values(RULES_ACTIONS).join(', ')}, ${RULES_SETUP_ACTION}`
+					)
+				);
+				process.exit(1);
+			}
 			const projectDir = process.cwd();
 
 			/**
@@ -2674,7 +2688,7 @@ Examples:
 			 *
 			 * The list of profiles is always up-to-date with the available profiles.
 			 */
-			if (action === 'setup') {
+			if (action === RULES_SETUP_ACTION) {
 				// Run interactive rules setup ONLY (no project init)
 				const selectedRulesProfiles = await runInteractiveRulesSetup();
 				for (const profile of selectedRulesProfiles) {
@@ -2713,7 +2727,7 @@ Examples:
 				.flatMap((b) => b.split(',').map((s) => s.trim()))
 				.filter(Boolean);
 
-			if (action === 'remove') {
+			if (action === RULES_ACTIONS.REMOVE) {
 				let confirmed = true;
 				if (!options.force) {
 					const ui = await import('./ui.js');
@@ -2736,7 +2750,7 @@ Examples:
 				}
 				const profileConfig = getRulesProfile(profile);
 
-				if (action === 'add') {
+				if (action === RULES_ACTIONS.ADD) {
 					console.log(chalk.blue(`Adding rules for profile: ${profile}...`));
 					const addResult = convertAllRulesToProfileRules(
 						projectDir,
@@ -2753,19 +2767,21 @@ Examples:
 							`Summary for ${profile}: ${addResult.success} rules added, ${addResult.failed} failed.`
 						)
 					);
-				} else if (action === 'remove') {
+				} else if (action === RULES_ACTIONS.REMOVE) {
 					console.log(chalk.blue(`Removing rules for profile: ${profile}...`));
 					const result = removeProfileRules(projectDir, profileConfig);
 					removalResults.push(result);
 					console.log(chalk.blue(`Completed removal for profile: ${profile}`));
 				} else {
-					console.error('Unknown action. Use "add" or "remove".');
+					console.error(
+						`Unknown action. Use "${RULES_ACTIONS.ADD}" or "${RULES_ACTIONS.REMOVE}".`
+					);
 					process.exit(1);
 				}
 			}
 
 			// Print summary for removals
-			if (action === 'remove') {
+			if (action === RULES_ACTIONS.REMOVE) {
 				const successes = removalResults
 					.filter((r) => r.success)
 					.map((r) => r.profileName);

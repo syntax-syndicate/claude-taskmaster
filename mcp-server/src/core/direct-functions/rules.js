@@ -14,6 +14,7 @@ import {
 	isValidProfile
 } from '../../../../src/utils/rule-transformer.js';
 import { RULES_PROFILES } from '../../../../src/constants/profiles.js';
+import { RULES_ACTIONS } from '../../../../src/constants/rules-actions.js';
 import path from 'path';
 import fs from 'fs';
 
@@ -50,7 +51,7 @@ export async function rulesDirect(args, log, context = {}) {
 		const removalResults = [];
 		const addResults = [];
 
-		if (action === 'remove') {
+		if (action === RULES_ACTIONS.REMOVE) {
 			for (const profile of profiles) {
 				if (!isValidProfile(profile)) {
 					removalResults.push({
@@ -91,7 +92,7 @@ export async function rulesDirect(args, log, context = {}) {
 				success: errors.length === 0,
 				data: { summary, results: removalResults }
 			};
-		} else if (action === 'add') {
+		} else if (action === RULES_ACTIONS.ADD) {
 			for (const profile of profiles) {
 				if (!isValidProfile(profile)) {
 					addResults.push({
@@ -164,7 +165,7 @@ export async function rulesDirect(args, log, context = {}) {
 				success: false,
 				error: {
 					code: 'INVALID_ACTION',
-					message: 'Unknown action. Use "add" or "remove".'
+					message: `Unknown action. Use "${RULES_ACTIONS.ADD}" or "${RULES_ACTIONS.REMOVE}".`
 				}
 			};
 		}
