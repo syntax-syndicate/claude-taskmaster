@@ -448,7 +448,7 @@ function createProjectStructure(
 			convertAllRulesToProfileRules(targetDir, profile);
 			// Also triggers MCP config setup (if applicable)
 		} else {
-			log('warn', `Unknown rules profile: ${profileName}`);
+			log('warn', `Unknown rule profile: ${profileName}`);
 		}
 	}
 

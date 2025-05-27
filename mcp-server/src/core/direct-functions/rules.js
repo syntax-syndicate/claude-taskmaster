@@ -76,7 +76,7 @@ export async function rulesDirect(args, log, context = {}) {
 					removalResults.push({
 						profileName: profile,
 						success: false,
-						error: `The requested rules profile for '${profile}' is unavailable. Supported profiles are: ${RULE_PROFILES.join(', ')}.`
+						error: `The requested rule profile for '${profile}' is unavailable. Supported profiles are: ${RULE_PROFILES.join(', ')}.`
 					});
 					continue;
 				}

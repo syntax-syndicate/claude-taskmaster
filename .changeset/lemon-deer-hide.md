@@ -2,7 +2,7 @@
 'task-master-ai': minor
 ---
 
-Added comprehensive rules profile management:
+Added comprehensive rule profile management:
 
 - **New Profile Support**: Added comprehensive IDE profile support with five specialized profiles: Cline, Cursor, Roo, Trae, and Windsurf. Each profile is optimized for its respective IDE with appropriate mappings and configuration.
 - **Initialization**: You can now specify which rule profiles to include at project initialization using `--rules <profiles>` or `-r <profiles>` (e.g., `task-master init -r cursor,roo`). Only the selected profiles and configuration are included.

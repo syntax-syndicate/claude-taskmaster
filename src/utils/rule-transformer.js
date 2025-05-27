@@ -26,7 +26,7 @@ export function isValidProfile(profile) {
 }
 
 /**
- * Get rules profile by name
+ * Get rule profile by name
  * @param {string} name - Profile name
  * @returns {Object|null} Profile object or null if not found
  */
