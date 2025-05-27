@@ -6,8 +6,8 @@ import {
 	convertAllRulesToProfileRules,
 	convertRuleToProfileRule,
 	getRulesProfile
-} from '../../src/utils/rule-transformer.js';
-import { rooProfile } from '../../scripts/profiles/roo.js';
+} from '../../../src/utils/rule-transformer.js';
+import { rooProfile } from '../../../scripts/profiles/roo.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

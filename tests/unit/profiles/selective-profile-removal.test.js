@@ -4,8 +4,8 @@ import { jest } from '@jest/globals';
 import {
 	removeProfileRules,
 	getRulesProfile
-} from '../../src/utils/rule-transformer.js';
-import { removeTaskMasterMCPConfiguration } from '../../src/utils/mcp-config-setup.js';
+} from '../../../src/utils/rule-transformer.js';
+import { removeTaskMasterMCPConfiguration } from '../../../src/utils/mcp-config-setup.js';
 
 // Mock logger
 const mockLog = {
@@ -15,7 +15,7 @@ const mockLog = {
 };
 
 // Mock the logger import
-jest.mock('../../scripts/modules/utils.js', () => ({
+jest.mock('../../../scripts/modules/utils.js', () => ({
 	log: (level, message) => mockLog[level]?.(message)
 }));
 

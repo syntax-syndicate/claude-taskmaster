@@ -2,17 +2,17 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { convertRuleToProfileRule } from '../../src/utils/rule-transformer.js';
-import { clineProfile } from '../../scripts/profiles/cline.js';
+import { convertRuleToProfileRule } from '../../../src/utils/rule-transformer.js';
+import { traeProfile } from '../../../scripts/profiles/trae.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-describe('Cline Rule Transformer', () => {
+describe('Trae Rule Transformer', () => {
 	const testDir = path.join(__dirname, 'temp-test-dir');
 
-	beforeAll(() => {
-		// Create test directory
+	beforeEach(() => {
+		// Create test directory before each test
 		if (!fs.existsSync(testDir)) {
 			fs.mkdirSync(testDir, { recursive: true });
 		}
@@ -40,15 +40,15 @@ Also has references to .mdc files.`;
 		fs.writeFileSync(testCursorRule, testContent);
 
 		// Convert it
-		const testClineRule = path.join(testDir, 'basic-terms.md');
-		convertRuleToProfileRule(testCursorRule, testClineRule, clineProfile);
+		const testTraeRule = path.join(testDir, 'basic-terms.md');
+		convertRuleToProfileRule(testCursorRule, testTraeRule, traeProfile);
 
 		// Read the converted file
-		const convertedContent = fs.readFileSync(testClineRule, 'utf8');
+		const convertedContent = fs.readFileSync(testTraeRule, 'utf8');
 
 		// Verify transformations
-		expect(convertedContent).toContain('Cline');
-		expect(convertedContent).toContain('cline.bot');
+		expect(convertedContent).toContain('Trae');
+		expect(convertedContent).toContain('trae.ai');
 		expect(convertedContent).toContain('.md');
 		expect(convertedContent).not.toContain('cursor.so');
 		expect(convertedContent).not.toContain('Cursor rule');
@@ -71,13 +71,13 @@ alwaysApply: true
 		fs.writeFileSync(testCursorRule, testContent);
 
 		// Convert it
-		const testClineRule = path.join(testDir, 'tool-refs.md');
-		convertRuleToProfileRule(testCursorRule, testClineRule, clineProfile);
+		const testTraeRule = path.join(testDir, 'tool-refs.md');
+		convertRuleToProfileRule(testCursorRule, testTraeRule, traeProfile);
 
 		// Read the converted file
-		const convertedContent = fs.readFileSync(testClineRule, 'utf8');
+		const convertedContent = fs.readFileSync(testTraeRule, 'utf8');
 
-		// Verify transformations (Cline uses standard tool names)
+		// Verify transformations (Trae uses standard tool names, so no transformation)
 		expect(convertedContent).toContain('search tool');
 		expect(convertedContent).toContain('edit_file tool');
 		expect(convertedContent).toContain('run_command');
@@ -99,15 +99,15 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 		fs.writeFileSync(testCursorRule, testContent);
 
 		// Convert it
-		const testClineRule = path.join(testDir, 'file-refs.md');
-		convertRuleToProfileRule(testCursorRule, testClineRule, clineProfile);
+		const testTraeRule = path.join(testDir, 'file-refs.md');
+		convertRuleToProfileRule(testCursorRule, testTraeRule, traeProfile);
 
 		// Read the converted file
-		const convertedContent = fs.readFileSync(testClineRule, 'utf8');
+		const convertedContent = fs.readFileSync(testTraeRule, 'utf8');
 
 		// Verify transformations
-		expect(convertedContent).toContain('(.clinerules/dev_workflow.md)');
-		expect(convertedContent).toContain('(.clinerules/taskmaster.md)');
+		expect(convertedContent).toContain('(.trae/rules/dev_workflow.md)');
+		expect(convertedContent).toContain('(.trae/rules/taskmaster.md)');
 		expect(convertedContent).not.toContain('(mdc:.cursor/rules/');
 	});
 });
