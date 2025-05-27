@@ -17,7 +17,7 @@ describe('Roo Profile Initialization Functionality', () => {
 
 		// Check for the general copy of assets/roocode which includes .roo base structure
 		expect(rooProfileContent).toContain(
-			"const sourceDir = path.resolve(__dirname, '../../assets/roocode');"
+			"const sourceDir = path.join(process.cwd(), 'assets', 'roocode');"
 		);
 		expect(rooProfileContent).toContain(
 			'copyRecursiveSync(sourceDir, targetDir);'

@@ -14,30 +14,26 @@ describe('Windsurf Profile Initialization Functionality', () => {
 		windsurfProfileContent = fs.readFileSync(windsurfJsPath, 'utf8');
 	});
 
-	test('windsurf.js exports correct profileName and rulesDir', () => {
-		expect(windsurfProfileContent).toContain("const profileName = 'Windsurf'");
-		expect(windsurfProfileContent).toContain(
-			"const rulesDir = '.windsurf/rules'"
-		);
+	test('windsurf.js uses factory pattern with correct configuration', () => {
+		expect(windsurfProfileContent).toContain("name: 'windsurf'");
+		expect(windsurfProfileContent).toContain("displayName: 'Windsurf'");
+		expect(windsurfProfileContent).toContain("rulesDir: '.windsurf/rules'");
+		expect(windsurfProfileContent).toContain("profileDir: '.windsurf'");
 	});
 
-	test('windsurf.js contains fileMap for .mdc to .md mapping', () => {
-		expect(windsurfProfileContent).toContain('fileMap = {');
-		expect(windsurfProfileContent).toContain(".mdc'");
-		expect(windsurfProfileContent).toContain(".md'");
+	test('windsurf.js configures .mdc to .md extension mapping', () => {
+		expect(windsurfProfileContent).toContain("fileExtension: '.mdc'");
+		expect(windsurfProfileContent).toContain("targetExtension: '.md'");
 	});
 
-	test('windsurf.js contains tool renaming and extension logic', () => {
-		expect(windsurfProfileContent).toContain('edit_file');
-		expect(windsurfProfileContent).toContain('apply_diff');
-		expect(windsurfProfileContent).toContain('search tool');
-		expect(windsurfProfileContent).toContain('search_files tool');
-		expect(windsurfProfileContent).toContain('.mdc');
-		expect(windsurfProfileContent).toContain('.md');
+	test('windsurf.js uses transformed tool mappings', () => {
+		expect(windsurfProfileContent).toContain('COMMON_TOOL_MAPPINGS.ROO_STYLE');
+		// Should contain comment about transformed tool names
+		expect(windsurfProfileContent).toContain('transformed tool names');
 	});
 
-	test('windsurf.js contains correct documentation URL transformation', () => {
-		expect(windsurfProfileContent).toContain('docs.cursor.com');
-		expect(windsurfProfileContent).toContain('docs.windsurf.com');
+	test('windsurf.js contains correct URL configuration', () => {
+		expect(windsurfProfileContent).toContain("url: 'windsurf.com'");
+		expect(windsurfProfileContent).toContain("docsUrl: 'docs.windsurf.com'");
 	});
 });

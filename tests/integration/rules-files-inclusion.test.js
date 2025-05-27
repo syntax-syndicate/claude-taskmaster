@@ -48,6 +48,11 @@ describe('Rules Files Inclusion in Package', () => {
 			rooJsContent.includes('copyRecursiveSync(sourceDir, targetDir)')
 		).toBe(true);
 
+		// Check for updated path handling
+		expect(
+			rooJsContent.includes("path.join(process.cwd(), 'assets', 'roocode')")
+		).toBe(true);
+
 		// Check for .roomodes file copying logic (source and destination paths)
 		expect(rooJsContent.includes("path.join(sourceDir, '.roomodes')")).toBe(
 			true
