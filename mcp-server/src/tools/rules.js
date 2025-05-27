@@ -34,6 +34,13 @@ export function registerRulesTool(server) {
 				.string()
 				.describe(
 					'The root directory of the project. Must be an absolute path.'
+				),
+			force: z
+				.boolean()
+				.optional()
+				.default(false)
+				.describe(
+					'DANGEROUS: Force removal even if it would leave no rules profiles. Only use if you are absolutely certain.'
 				)
 		}),
 		execute: withNormalizedProjectRoot(async (args, { log, session }) => {

@@ -259,6 +259,9 @@ task-master rules add <rules1,rules2,...>
 # Remove rule sets from your project
 task-master rules remove <rules1,rules2,...>
 
+# Remove rule sets bypassing safety check (dangerous)
+task-master rules remove <rules1,rules2,...> --force
+
 # Launch interactive rules setup to select rules
 # (does not re-initialize project or ask about shell aliases)
 task-master rules setup
@@ -266,6 +269,7 @@ task-master rules setup
 
 - Adding rules creates the rules directory (e.g., `.roo/rules`) and copies/initializes the rules.
 - Removing rules deletes the rules directory and associated MCP config.
+- **Safety Check**: Attempting to remove ALL rules profiles will trigger a critical warning requiring confirmation. Use `--force` to bypass.
 - You can use multiple comma-separated rules in a single command.
 - The `setup` action launches an interactive prompt to select which rules to apply. The list of rules is always current with the available profiles, and no manual updates are needed. This command does **not** re-initialize your project or affect shell aliases; it only manages rules interactively.
 

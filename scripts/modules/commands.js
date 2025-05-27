@@ -68,7 +68,14 @@ import {
 	displayApiKeyStatus,
 	displayAiUsageSummary
 } from './ui.js';
-import { confirmProfilesRemove } from '../../src/ui/confirm.js';
+import {
+	confirmProfilesRemove,
+	confirmRemoveAllRemainingProfiles
+} from '../../src/ui/confirm.js';
+import {
+	wouldRemovalLeaveNoProfiles,
+	getInstalledRulesProfiles
+} from '../../src/utils/rules-detection.js';
 
 import { initializeProject } from '../init.js';
 import {
@@ -2730,8 +2737,16 @@ Examples:
 			if (action === RULES_ACTIONS.REMOVE) {
 				let confirmed = true;
 				if (!options.force) {
-					const ui = await import('./ui.js');
-					confirmed = await confirmProfilesRemove(expandedProfiles);
+					// Check if this removal would leave no profiles remaining
+					if (wouldRemovalLeaveNoProfiles(projectDir, expandedProfiles)) {
+						const installedProfiles = getInstalledRulesProfiles(projectDir);
+						confirmed = await confirmRemoveAllRemainingProfiles(
+							expandedProfiles,
+							installedProfiles
+						);
+					} else {
+						confirmed = await confirmProfilesRemove(expandedProfiles);
+					}
 				}
 				if (!confirmed) {
 					console.log(chalk.yellow('Aborted: No rules were removed.'));
