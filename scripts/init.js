@@ -275,12 +275,26 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 
 // Main function to initialize a new project
 async function initializeProject(options = {}) {
+	// Receives options as argument
 	// Only display banner if not in silent mode
 	if (!isSilentMode()) {
 		displayBanner();
 	}
 
+	// Debug logging only if not in silent mode
+	// if (!isSilentMode()) {
+	// 	console.log('===== DEBUG: INITIALIZE PROJECT OPTIONS RECEIVED =====');
+	// 	console.log('Full options object:', JSON.stringify(options));
+	// 	console.log('options.yes:', options.yes);
+	// 	console.log('==================================================');
+	// }
+
 	const skipPrompts = options.yes || (options.name && options.description);
+
+	// if (!isSilentMode()) {
+	// 	console.log('Skip prompts determined:', skipPrompts);
+	// }
+
 	const selectedRuleProfiles =
 		options.rules && Array.isArray(options.rules) && options.rules.length > 0
 			? options.rules
