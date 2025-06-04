@@ -7,6 +7,7 @@
  */
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { log } from '../../scripts/modules/utils.js';
 
 // Import the shared MCP configuration helper
@@ -198,7 +199,9 @@ export function convertRuleToProfileRule(sourcePath, targetPath, profile) {
  * Convert all Cursor rules to profile rules for a specific profile
  */
 export function convertAllRulesToProfileRules(projectDir, profile) {
-	const sourceDir = path.join(process.cwd(), 'assets', 'rules');
+	const __filename = fileURLToPath(import.meta.url);
+	const __dirname = path.dirname(__filename);
+	const sourceDir = path.join(__dirname, '..', '..', 'assets', 'rules');
 	const targetDir = path.join(projectDir, profile.rulesDir);
 
 	// Ensure target directory exists
