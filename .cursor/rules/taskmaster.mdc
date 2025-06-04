@@ -3,6 +3,11 @@ description: Comprehensive reference for Taskmaster MCP tools and CLI commands.
 globs: **/*
 alwaysApply: true
 ---
+---
+description: Comprehensive reference for Taskmaster MCP tools and CLI commands.
+globs: **/*
+alwaysApply: true
+---
 # Taskmaster Tool & Command Reference
 
 This document provides a detailed reference for interacting with Taskmaster, covering both the recommended MCP tools, suitable for integrations like Cursor, and the corresponding `task-master` CLI commands, designed for direct user interaction or fallback.
@@ -16,15 +21,6 @@ This document provides a detailed reference for interacting with Taskmaster, cov
 ## Initialization & Setup
 
 ### 1. Initialize Project (`init`)
-
-*   **Rules Option:**
-    *   `--rules <rules>` or `-r <rules>`: Comma-separated list of rule sets to apply at initialization (e.g., `cursor,windsurf,roo`).
-    *   Example: `task-master init --rules cursor,windsurf`
-    *   Example: `task-master init -r roo`
-*   **What happens:**
-    *   For each, creates the appropriate rules directory (e.g., `.roo/rules`) and MCP config (e.g., `.roo/mcp.json`).
-    *   If not specified, all rule profiles are initialized by default.
-
 
 *   **MCP Tool:** `initialize_project`
 *   **CLI Command:** `task-master init [options]`
@@ -90,18 +86,6 @@ This document provides a detailed reference for interacting with Taskmaster, cov
 *   **API note:** API keys for selected AI providers (based on their model) need to exist in the mcp.json file to be accessible in MCP context. The API keys must be present in the local .env file for the CLI to be able to read them.
 *   **Model costs:** The costs in supported models are expressed in dollars. An input/output value of 3 is $3.00. A value of 0.8 is $0.80. 
 *   **Warning:** DO NOT MANUALLY EDIT THE .taskmaster/config.json FILE. Use the included commands either in the MCP or CLI format as needed. Always prioritize MCP tools when available and use the CLI as a fallback.
-
----
-
-### Add or Remove Rules After Initialization
-
-*   **CLI Command:**
-    *   `task-master rules add <rules>`: Add one or more rule sets to your project (e.g., `task-master rules add windsurf,roo`).
-    *   `task-master rules remove <rules>`: Remove one or more rule sets (e.g., `task-master rules remove windsurf`).
-*   **What happens:**
-    *   Adding rules creates the rules directory (e.g., `.roo/rules`) and MCP config (if appropriate).
-    *   Removing rules deletes the rules directory and associated MCP config.
-    *   You can use multiple comma-separated rules in a single command.
 
 ---
 
