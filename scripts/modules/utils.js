@@ -9,6 +9,11 @@ import chalk from 'chalk';
 import dotenv from 'dotenv';
 // Import specific config getters needed here
 import { getLogLevel, getDebugFlag } from './config-manager.js';
+import {
+	COMPLEXITY_REPORT_FILE,
+	LEGACY_COMPLEXITY_REPORT_FILE,
+	LEGACY_CONFIG_FILE
+} from '../../src/constants/paths.js';
 
 // Global silent mode flag
 let silentMode = false;
@@ -60,16 +65,16 @@ function resolveEnvVariable(key, session = null, projectRoot = null) {
 
 // --- Project Root Finding Utility ---
 /**
- * Finds the project root directory by searching for marker files/directories.
- * @param {string} [startPath=process.cwd()] - The directory to start searching from.
- * @param {string[]} [markers=['package.json', '.git', '.taskmasterconfig']] - Marker files/dirs to look for.
- * @returns {string|null} The path to the project root directory, or null if not found.
+ * Recursively searches upwards for project root starting from a given directory.
+ * @param {string} [startDir=process.cwd()] - The directory to start searching from.
+ * @param {string[]} [markers=['package.json', '.git', LEGACY_CONFIG_FILE]] - Marker files/dirs to look for.
+ * @returns {string|null} The path to the project root, or null if not found.
  */
 function findProjectRoot(
-	startPath = process.cwd(),
-	markers = ['package.json', '.git', '.taskmasterconfig']
+	startDir = process.cwd(),
+	markers = ['package.json', '.git', LEGACY_CONFIG_FILE]
 ) {
-	let currentPath = path.resolve(startPath);
+	let currentPath = path.resolve(startDir);
 	const rootPath = path.parse(currentPath).root;
 
 	while (currentPath !== rootPath) {
@@ -150,8 +155,17 @@ function log(level, ...args) {
 		return;
 	}
 
-	// Get log level dynamically from config-manager
-	const configLevel = getLogLevel() || 'info'; // Use getter
+	// GUARD: Prevent circular dependency during config loading
+	// Use a simple fallback log level instead of calling getLogLevel()
+	let configLevel = 'info'; // Default fallback
+	try {
+		// Only try to get config level if we're not in the middle of config loading
+		configLevel = getLogLevel() || 'info';
+	} catch (error) {
+		// If getLogLevel() fails (likely due to circular dependency),
+		// use default 'info' level and continue
+		configLevel = 'info';
+	}
 
 	// Use text prefixes instead of emojis
 	const prefixes = {
@@ -185,8 +199,17 @@ function log(level, ...args) {
  * @returns {Object|null} Parsed JSON data or null if error occurs
  */
 function readJSON(filepath) {
-	// Get debug flag dynamically from config-manager
-	const isDebug = getDebugFlag();
+	// GUARD: Prevent circular dependency during config loading
+	let isDebug = false; // Default fallback
+	try {
+		// Only try to get debug flag if we're not in the middle of config loading
+		isDebug = getDebugFlag();
+	} catch (error) {
+		// If getDebugFlag() fails (likely due to circular dependency),
+		// use default false and continue
+		isDebug = false;
+	}
+
 	try {
 		const rawData = fs.readFileSync(filepath, 'utf8');
 		return JSON.parse(rawData);
@@ -207,8 +230,17 @@ function readJSON(filepath) {
  * @param {Object} data - Data to write
  */
 function writeJSON(filepath, data) {
-	// Get debug flag dynamically from config-manager
-	const isDebug = getDebugFlag();
+	// GUARD: Prevent circular dependency during config loading
+	let isDebug = false; // Default fallback
+	try {
+		// Only try to get debug flag if we're not in the middle of config loading
+		isDebug = getDebugFlag();
+	} catch (error) {
+		// If getDebugFlag() fails (likely due to circular dependency),
+		// use default false and continue
+		isDebug = false;
+	}
+
 	try {
 		const dir = path.dirname(filepath);
 		if (!fs.existsSync(dir)) {
@@ -236,29 +268,52 @@ function sanitizePrompt(prompt) {
 }
 
 /**
- * Reads and parses the complexity report if it exists
+ * Reads the complexity report from file
  * @param {string} customPath - Optional custom path to the report
  * @returns {Object|null} The parsed complexity report or null if not found
  */
 function readComplexityReport(customPath = null) {
-	// Get debug flag dynamically from config-manager
-	const isDebug = getDebugFlag();
+	// GUARD: Prevent circular dependency during config loading
+	let isDebug = false; // Default fallback
 	try {
-		const reportPath =
-			customPath ||
-			path.join(process.cwd(), 'scripts', 'task-complexity-report.json');
+		// Only try to get debug flag if we're not in the middle of config loading
+		isDebug = getDebugFlag();
+	} catch (error) {
+		// If getDebugFlag() fails (likely due to circular dependency),
+		// use default false and continue
+		isDebug = false;
+	}
+
+	try {
+		let reportPath;
+		if (customPath) {
+			reportPath = customPath;
+		} else {
+			// Try new location first, then fall back to legacy
+			const newPath = path.join(process.cwd(), COMPLEXITY_REPORT_FILE);
+			const legacyPath = path.join(
+				process.cwd(),
+				LEGACY_COMPLEXITY_REPORT_FILE
+			);
+
+			reportPath = fs.existsSync(newPath) ? newPath : legacyPath;
+		}
+
 		if (!fs.existsSync(reportPath)) {
+			if (isDebug) {
+				log('debug', `Complexity report not found at ${reportPath}`);
+			}
 			return null;
 		}
 
-		const reportData = fs.readFileSync(reportPath, 'utf8');
-		return JSON.parse(reportData);
-	} catch (error) {
-		log('warn', `Could not read complexity report: ${error.message}`);
-		// Optionally log full error in debug mode
+		const reportData = readJSON(reportPath);
 		if (isDebug) {
-			// Use dynamic debug flag
-			log('error', 'Full error details:', error);
+			log('debug', `Successfully read complexity report from ${reportPath}`);
+		}
+		return reportData;
+	} catch (error) {
+		if (isDebug) {
+			log('error', `Error reading complexity report: ${error.message}`);
 		}
 		return null;
 	}
@@ -395,7 +450,7 @@ function findTaskById(
 	}
 
 	let taskResult = null;
-	let originalSubtaskCount = null;
+	const originalSubtaskCount = null;
 
 	// Find the main task
 	const id = parseInt(taskId, 10);
@@ -410,7 +465,6 @@ function findTaskById(
 
 	// If task found and statusFilter provided, filter its subtasks
 	if (statusFilter && task.subtasks && Array.isArray(task.subtasks)) {
-		const originalSubtaskCount = task.subtasks.length;
 		// Clone the task to avoid modifying the original array
 		const filteredTask = { ...task };
 		filteredTask.subtasks = task.subtasks.filter(
@@ -420,7 +474,6 @@ function findTaskById(
 		);
 
 		taskResult = filteredTask;
-		originalSubtaskCount = originalSubtaskCount;
 	}
 
 	// If task found and complexityReport provided, add complexity data
@@ -443,7 +496,7 @@ function truncate(text, maxLength) {
 		return text;
 	}
 
-	return text.slice(0, maxLength - 3) + '...';
+	return `${text.slice(0, maxLength - 3)}...`;
 }
 
 /**

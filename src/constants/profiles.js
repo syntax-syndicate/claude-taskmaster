@@ -34,6 +34,20 @@ export const RULE_PROFILES = [
 ];
 
 /**
+ * Centralized enum for all supported Roo agent modes
+ * @type {string[]}
+ * @description Available Roo Code IDE modes for rule generation
+ */
+export const ROO_MODES = [
+	'architect',
+	'ask',
+	'boomerang',
+	'code',
+	'debug',
+	'test'
+];
+
+/**
  * Check if a given rule profile is valid
  * @param {string} rulesProfile - The rule profile to check
  * @returns {boolean} True if the rule profile is valid, false otherwise

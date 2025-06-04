@@ -62,7 +62,7 @@ describe('Rules Files Inclusion in Package', () => {
 		);
 
 		// Check for mode-specific rule file copying logic
-		expect(rooJsContent.includes('for (const mode of rooModes)')).toBe(true);
+		expect(rooJsContent.includes('for (const mode of ROO_MODES)')).toBe(true);
 		expect(
 			rooJsContent.includes(
 				'path.join(rooModesDir, `rules-${mode}`, `${mode}-rules`)'
@@ -74,18 +74,16 @@ describe('Rules Files Inclusion in Package', () => {
 			)
 		).toBe(true);
 
-		// Check for definition of rooModes array and all modes
-		const rooModesArrayRegex = /const rooModes\s*=\s*\[([^\]]+)\]\s*;?/;
-		const rooModesMatch = rooJsContent.match(rooModesArrayRegex);
-		expect(rooModesMatch).not.toBeNull();
-		if (rooModesMatch) {
-			expect(rooModesMatch[1].includes('architect')).toBe(true);
-			expect(rooModesMatch[1].includes('ask')).toBe(true);
-			expect(rooModesMatch[1].includes('boomerang')).toBe(true);
-			expect(rooModesMatch[1].includes('code')).toBe(true);
-			expect(rooModesMatch[1].includes('debug')).toBe(true);
-			expect(rooModesMatch[1].includes('test')).toBe(true);
-		}
+		// Check for import of ROO_MODES from profiles.js
+		expect(
+			rooJsContent.includes(
+				"import { ROO_MODES } from '../../src/constants/profiles.js'"
+			)
+		).toBe(true);
+
+		// Verify mode variable is used in the template strings (this confirms modes are being processed)
+		expect(rooJsContent.includes('rules-${mode}')).toBe(true);
+		expect(rooJsContent.includes('${mode}-rules')).toBe(true);
 	});
 
 	test('source Roo files exist in assets directory', () => {

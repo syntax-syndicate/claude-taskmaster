@@ -104,7 +104,7 @@ Task Master offers two primary ways to interact:
 
 Taskmaster configuration is managed through two main mechanisms:
 
-1.  **`.taskmasterconfig` File (Primary):**
+1.  **`.taskmaster/config.json` File (Primary):**
     *   Located in the project root directory.
     *   Stores most configuration settings: AI model selections (main, research, fallback), parameters (max tokens, temperature), logging level, default subtasks/priority, project name, etc.
     *   **Managed via `task-master models --setup` command.** Do not edit manually unless you know what you are doing.
@@ -179,7 +179,7 @@ Taskmaster configuration is managed through two main mechanisms:
 Once a task has been broken down into subtasks using `expand_task` or similar methods, follow this iterative process for implementation:
 
 1.  **Understand the Goal (Preparation):**
-    *   Use `get_task` / `task-master show <subtaskId>` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) to thoroughly understand the specific goals and requirements of the subtask.
+    *   Use `get_task` / `task-master show <subtaskId>`r.mdc`) to thoroughly understand the specific goals and requirements of the subtask.
 
 2.  **Initial Exploration & Planning (Iteration 1):**
     *   This is the first attempt at creating a concrete implementation plan.

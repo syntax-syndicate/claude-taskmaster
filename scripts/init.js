@@ -31,6 +31,17 @@ import {
 } from '../src/utils/rule-transformer.js';
 import { runInteractiveProfilesSetup } from '../src/utils/profiles.js';
 import { execSync } from 'child_process';
+import {
+	EXAMPLE_PRD_FILE,
+	TASKMASTER_CONFIG_FILE,
+	TASKMASTER_TEMPLATES_DIR,
+	TASKMASTER_DIR,
+	TASKMASTER_TASKS_DIR,
+	TASKMASTER_DOCS_DIR,
+	TASKMASTER_REPORTS_DIR,
+	ENV_EXAMPLE_FILE,
+	GITIGNORE_FILE
+} from '../src/constants/paths.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -168,8 +179,7 @@ alias taskmaster='task-master'
 		log('success', `Added Task Master aliases to ${shellConfigFile}`);
 		log(
 			'info',
-			'To use the aliases in your current terminal, run: source ' +
-				shellConfigFile
+			`To use the aliases in your current terminal, run: source ${shellConfigFile}`
 		);
 
 		return true;
@@ -186,43 +196,9 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 
 	// Map template names to their actual source paths
 	switch (templateName) {
-		case 'dev_workflow.mdc':
-			sourcePath = path.join(
-				__dirname,
-				'..',
-				'.cursor',
-				'rules',
-				'dev_workflow.mdc'
-			);
-			break;
-		case 'taskmaster.mdc':
-			sourcePath = path.join(
-				__dirname,
-				'..',
-				'.cursor',
-				'rules',
-				'taskmaster.mdc'
-			);
-			break;
-		case 'cursor_rules.mdc':
-			sourcePath = path.join(
-				__dirname,
-				'..',
-				'.cursor',
-				'rules',
-				'cursor_rules.mdc'
-			);
-			break;
-		case 'self_improve.mdc':
-			sourcePath = path.join(
-				__dirname,
-				'..',
-				'.cursor',
-				'rules',
-				'self_improve.mdc'
-			);
-			break;
-
+		// case 'README-task-master.md':
+		// 	sourcePath = path.join(__dirname, '..', 'README-task-master.md');
+		// 	break;
 		default:
 			// For other files like env.example, gitignore, etc. that don't have direct equivalents
 			sourcePath = path.join(__dirname, '..', 'assets', templateName);
@@ -263,10 +239,7 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 
 			if (newLines.length > 0) {
 				// Add a comment to separate the original content from our additions
-				const updatedContent =
-					existingContent.trim() +
-					'\n\n# Added by Claude Task Master\n' +
-					newLines.join('\n');
+				const updatedContent = `${existingContent.trim()}\n\n# Added by Task Master AI\n${newLines.join('\n')}`;
 				fs.writeFileSync(targetPath, updatedContent);
 				log('success', `Updated ${targetPath} with additional entries`);
 			} else {
@@ -334,12 +307,7 @@ async function initializeProject(options = {}) {
 			};
 		}
 
-		try {
-			createProjectStructure(addAliases, dryRun, selectedRuleProfiles);
-		} catch (error) {
-			log('error', `Error during initialization process: ${error.message}`);
-			process.exit(1);
-		}
+		createProjectStructure(addAliases, dryRun, options, selectedRuleProfiles);
 	} else {
 		// Interactive logic
 		log('info', 'Required options not provided, proceeding with prompts.');
@@ -405,7 +373,12 @@ async function initializeProject(options = {}) {
 			}
 
 			// Create structure using only necessary values
-			createProjectStructure(addAliasesPrompted, dryRun, selectedRuleProfiles);
+			createProjectStructure(
+				addAliasesPrompted,
+				dryRun,
+				options,
+				selectedRuleProfiles
+			);
 		} catch (error) {
 			rl.close();
 			log('error', `Error during initialization process: ${error.message}`);
@@ -427,14 +400,18 @@ function promptQuestion(rl, question) {
 function createProjectStructure(
 	addAliases,
 	dryRun,
+	options,
 	selectedRuleProfiles = RULE_PROFILES // Default to all rule profiles
 ) {
 	const targetDir = process.cwd();
 	log('info', `Initializing project in ${targetDir}`);
 
-	// Create directories
-	ensureDirectoryExists(path.join(targetDir, 'scripts'));
-	ensureDirectoryExists(path.join(targetDir, 'tasks'));
+	// Create NEW .taskmaster directory structure (using constants)
+	ensureDirectoryExists(path.join(targetDir, TASKMASTER_DIR));
+	ensureDirectoryExists(path.join(targetDir, TASKMASTER_TASKS_DIR));
+	ensureDirectoryExists(path.join(targetDir, TASKMASTER_DOCS_DIR));
+	ensureDirectoryExists(path.join(targetDir, TASKMASTER_REPORTS_DIR));
+	ensureDirectoryExists(path.join(targetDir, TASKMASTER_TEMPLATES_DIR));
 
 	// Copy template files with replacements
 	const replacements = {
@@ -455,27 +432,24 @@ function createProjectStructure(
 	// Copy .env.example
 	copyTemplateFile(
 		'env.example',
-		path.join(targetDir, '.env.example'),
+		path.join(targetDir, ENV_EXAMPLE_FILE),
 		replacements
 	);
 
-	// Copy .taskmasterconfig with project name
+	// Copy config.json with project name to NEW location
 	copyTemplateFile(
-		'.taskmasterconfig',
-		path.join(targetDir, '.taskmasterconfig'),
+		'config.json',
+		path.join(targetDir, TASKMASTER_CONFIG_FILE),
 		{
 			...replacements
 		}
 	);
 
 	// Copy .gitignore
-	copyTemplateFile('gitignore', path.join(targetDir, '.gitignore'));
+	copyTemplateFile('gitignore', path.join(targetDir, GITIGNORE_FILE));
 
-	// Copy example_prd.txt
-	copyTemplateFile(
-		'example_prd.txt',
-		path.join(targetDir, 'scripts', 'example_prd.txt')
-	);
+	// Copy example_prd.txt to NEW location
+	copyTemplateFile('example_prd.txt', path.join(targetDir, EXAMPLE_PRD_FILE));
 
 	// Initialize git repository if git is available
 	try {
@@ -523,7 +497,7 @@ function createProjectStructure(
 	}
 
 	// === Add Model Configuration Step ===
-	if (!isSilentMode() && !dryRun) {
+	if (!isSilentMode() && !dryRun && !options?.yes) {
 		console.log(
 			boxen(chalk.cyan('Configuring AI Models...'), {
 				padding: 0.5,
@@ -554,6 +528,12 @@ function createProjectStructure(
 		);
 	} else if (dryRun) {
 		log('info', 'DRY RUN: Skipping interactive model setup.');
+	} else if (options?.yes) {
+		log('info', 'Skipping interactive model setup due to --yes flag.');
+		log(
+			'info',
+			'Default AI models will be used. You can configure different models later using "task-master models --setup" or "task-master models --set-..." commands.'
+		);
 	}
 	// ====================================
 
@@ -561,11 +541,9 @@ function createProjectStructure(
 	if (!isSilentMode()) {
 		console.log(
 			boxen(
-				warmGradient.multiline(
+				`${warmGradient.multiline(
 					figlet.textSync('Success!', { font: 'Standard' })
-				) +
-					'\n' +
-					chalk.green('Project initialized successfully!'),
+				)}\n${chalk.green('Project initialized successfully!')}`,
 				{
 					padding: 1,
 					margin: 1,
@@ -580,76 +558,29 @@ function createProjectStructure(
 	if (!isSilentMode()) {
 		console.log(
 			boxen(
-				chalk.cyan.bold('Things you should do next:') +
-					'\n\n' +
-					chalk.white('1. ') +
-					chalk.yellow(
-						'Configure AI models (if needed) and add API keys to `.env`'
-					) +
-					'\n' +
-					chalk.white('   ├─ ') +
-					chalk.dim('Models: Use `task-master models` commands') +
-					'\n' +
-					chalk.white('   └─ ') +
-					chalk.dim(
-						'Keys: Add provider API keys to .env (or inside the MCP config file i.e. .cursor/mcp.json)'
-					) +
-					'\n' +
-					chalk.white('2. ') +
-					chalk.yellow(
-						'Discuss your idea with AI and ask for a PRD using example_prd.txt, and save it to scripts/PRD.txt'
-					) +
-					'\n' +
-					chalk.white('3. ') +
-					chalk.yellow(
-						'Ask Cursor Agent (or run CLI) to parse your PRD and generate initial tasks:'
-					) +
-					'\n' +
-					chalk.white('   └─ ') +
-					chalk.dim('MCP Tool: ') +
-					chalk.cyan('parse_prd') +
-					chalk.dim(' | CLI: ') +
-					chalk.cyan('task-master parse-prd scripts/prd.txt') +
-					'\n' +
-					chalk.white('4. ') +
-					chalk.yellow(
-						'Ask Cursor to analyze the complexity of the tasks in your PRD using research'
-					) +
-					'\n' +
-					chalk.white('   └─ ') +
-					chalk.dim('MCP Tool: ') +
-					chalk.cyan('analyze_project_complexity') +
-					chalk.dim(' | CLI: ') +
-					chalk.cyan('task-master analyze-complexity') +
-					'\n' +
-					chalk.white('5. ') +
-					chalk.yellow(
-						'Ask Cursor to expand all of your tasks using the complexity analysis'
-					) +
-					'\n' +
-					chalk.white('6. ') +
-					chalk.yellow('Ask Cursor to begin working on the next task') +
-					'\n' +
-					chalk.white('7. ') +
-					chalk.yellow(
-						'Ask Cursor to set the status of one or many tasks/subtasks at a time. Use the task id from the task lists.'
-					) +
-					'\n' +
-					chalk.white('8. ') +
-					chalk.yellow(
-						'Ask Cursor to update all tasks from a specific task id based on new learnings or pivots in your project.'
-					) +
-					'\n' +
-					chalk.white('9. ') +
-					chalk.green.bold('Ship it!') +
-					'\n\n' +
-					chalk.dim(
-						'* Review the README.md file to learn how to use other commands via Cursor Agent.'
-					) +
-					'\n' +
-					chalk.dim(
-						'* Use the task-master command without arguments to see all available commands.'
-					),
+				`${chalk.cyan.bold('Things you should do next:')}\n\n${chalk.white('1. ')}${chalk.yellow(
+					'Configure AI models (if needed) and add API keys to `.env`'
+				)}\n${chalk.white('   ├─ ')}${chalk.dim('Models: Use `task-master models` commands')}\n${chalk.white('   └─ ')}${chalk.dim(
+					'Keys: Add provider API keys to .env (or inside the MCP config file i.e. .cursor/mcp.json)'
+				)}\n${chalk.white('2. ')}${chalk.yellow(
+					'Discuss your idea with AI and ask for a PRD using example_prd.txt, and save it to scripts/PRD.txt'
+				)}\n${chalk.white('3. ')}${chalk.yellow(
+					'Ask Cursor Agent (or run CLI) to parse your PRD and generate initial tasks:'
+				)}\n${chalk.white('   └─ ')}${chalk.dim('MCP Tool: ')}${chalk.cyan('parse_prd')}${chalk.dim(' | CLI: ')}${chalk.cyan('task-master parse-prd scripts/prd.txt')}\n${chalk.white('4. ')}${chalk.yellow(
+					'Ask Cursor to analyze the complexity of the tasks in your PRD using research'
+				)}\n${chalk.white('   └─ ')}${chalk.dim('MCP Tool: ')}${chalk.cyan('analyze_project_complexity')}${chalk.dim(' | CLI: ')}${chalk.cyan('task-master analyze-complexity')}\n${chalk.white('5. ')}${chalk.yellow(
+					'Ask Cursor to expand all of your tasks using the complexity analysis'
+				)}\n${chalk.white('6. ')}${chalk.yellow('Ask Cursor to begin working on the next task')}\n${chalk.white('7. ')}${chalk.yellow(
+					'Add new tasks anytime using the add-task command or MCP tool'
+				)}\n${chalk.white('8. ')}${chalk.yellow(
+					'Ask Cursor to set the status of one or many tasks/subtasks at a time. Use the task id from the task lists.'
+				)}\n${chalk.white('9. ')}${chalk.yellow(
+					'Ask Cursor to update all tasks from a specific task id based on new learnings or pivots in your project.'
+				)}\n${chalk.white('10. ')}${chalk.green.bold('Ship it!')}\n\n${chalk.dim(
+					'* Review the README.md file to learn how to use other commands via Cursor Agent.'
+				)}\n${chalk.dim(
+					'* Use the task-master command without arguments to see all available commands.'
+				)}`,
 				{
 					padding: 1,
 					margin: 1,

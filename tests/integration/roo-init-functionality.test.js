@@ -27,8 +27,10 @@ describe('Roo Profile Initialization Functionality', () => {
 		expect(rooProfileContent).toContain(
 			"const rooModesDir = path.join(sourceDir, '.roo');"
 		);
+
+		// Check for import of ROO_MODES from profiles.js instead of local definition
 		expect(rooProfileContent).toContain(
-			"const rooModes = ['architect', 'ask', 'boomerang', 'code', 'debug', 'test'];"
+			"import { ROO_MODES } from '../../src/constants/profiles.js';"
 		);
 	});
 
@@ -49,7 +51,7 @@ describe('Roo Profile Initialization Functionality', () => {
 
 	test('roo.js profile copies mode-specific rule files via onAddRulesProfile', () => {
 		expect(rooProfileContent).toContain('onAddRulesProfile(targetDir)');
-		expect(rooProfileContent).toContain('for (const mode of rooModes)');
+		expect(rooProfileContent).toContain('for (const mode of ROO_MODES)');
 
 		// Check for the specific mode rule file copy logic
 		expect(rooProfileContent).toContain(

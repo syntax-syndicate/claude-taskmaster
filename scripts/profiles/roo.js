@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { isSilentMode, log } from '../modules/utils.js';
 import { createProfile, COMMON_TOOL_MAPPINGS } from './base-profile.js';
+import { ROO_MODES } from '../../src/constants/profiles.js';
 
 // Lifecycle functions for Roo profile
 function onAddRulesProfile(targetDir) {
@@ -10,7 +11,6 @@ function onAddRulesProfile(targetDir) {
 	copyRecursiveSync(sourceDir, targetDir);
 
 	const rooModesDir = path.join(sourceDir, '.roo');
-	const rooModes = ['architect', 'ask', 'boomerang', 'code', 'debug', 'test'];
 
 	// Copy .roomodes to project root
 	const roomodesSrc = path.join(sourceDir, '.roomodes');
@@ -26,7 +26,7 @@ function onAddRulesProfile(targetDir) {
 		log('debug', `[Roo] .roomodes not found at ${roomodesSrc}`);
 	}
 
-	for (const mode of rooModes) {
+	for (const mode of ROO_MODES) {
 		const src = path.join(rooModesDir, `rules-${mode}`, `${mode}-rules`);
 		const dest = path.join(targetDir, '.roo', `rules-${mode}`, `${mode}-rules`);
 		if (fs.existsSync(src)) {
@@ -89,7 +89,7 @@ function onRemoveRulesProfile(targetDir) {
 		if (fs.readdirSync(rooDir).length === 0) {
 			try {
 				fs.rmSync(rooDir, { recursive: true, force: true });
-				log('debug', `[Roo] Removed empty .roo directory`);
+				log('debug', '[Roo] Removed empty .roo directory');
 			} catch (err) {
 				log('debug', `[Roo] Failed to remove .roo directory: ${err.message}`);
 			}
