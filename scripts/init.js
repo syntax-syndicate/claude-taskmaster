@@ -195,6 +195,9 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 
 	// Map template names to their actual source paths
 	switch (templateName) {
+		// case 'scripts_README.md':
+		// 	sourcePath = path.join(__dirname, '..', 'assets', 'scripts_README.md');
+		// 	break;
 		// case 'README-task-master.md':
 		// 	sourcePath = path.join(__dirname, '..', 'README-task-master.md');
 		// 	break;
