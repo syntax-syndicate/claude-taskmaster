@@ -308,6 +308,12 @@ async function initializeProject(options = {}) {
 			console.log('SKIPPING PROMPTS - Using defaults or provided values');
 		}
 
+		// Use provided options or defaults
+		const projectName = options.name || 'task-master-project';
+		const projectDescription =
+			options.description || 'A project managed with Task Master AI';
+		const projectVersion = options.version || '0.1.0';
+		const authorName = options.author || 'Vibe coder';
 		const dryRun = options.dryRun || false;
 		const addAliases = options.aliases || false;
 
