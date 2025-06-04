@@ -2879,7 +2879,8 @@ Examples:
 						profileConfig
 					);
 					if (typeof profileConfig.onAddRulesProfile === 'function') {
-						profileConfig.onAddRulesProfile(projectDir);
+						const assetsDir = path.join(process.cwd(), 'assets');
+						profileConfig.onAddRulesProfile(projectDir, assetsDir);
 					}
 					console.log(
 						chalk.blue(`Completed adding rules for profile: ${profile}`)
