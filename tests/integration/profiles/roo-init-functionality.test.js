@@ -11,14 +11,16 @@ describe('Roo Profile Initialization Functionality', () => {
 		rooProfileContent = fs.readFileSync(rooJsPath, 'utf8');
 	});
 
-	     test('roo.js profile ensures Roo directory structure via onAddRulesProfile', () => {
-             // Check if onAddRulesProfile function exists
-             expect(rooProfileContent).toContain('onAddRulesProfile(targetDir, assetsDir)');
+	test('roo.js profile ensures Roo directory structure via onAddRulesProfile', () => {
+		// Check if onAddRulesProfile function exists
+		expect(rooProfileContent).toContain(
+			'onAddRulesProfile(targetDir, assetsDir)'
+		);
 
-		             // Check for the general copy of assets/roocode which includes .roo base structure
-             expect(rooProfileContent).toContain(
-                     "const sourceDir = path.join(assetsDir, 'roocode');"
-             );
+		// Check for the general copy of assets/roocode which includes .roo base structure
+		expect(rooProfileContent).toContain(
+			"const sourceDir = path.join(assetsDir, 'roocode');"
+		);
 		expect(rooProfileContent).toContain(
 			'copyRecursiveSync(sourceDir, targetDir);'
 		);
@@ -34,8 +36,10 @@ describe('Roo Profile Initialization Functionality', () => {
 		);
 	});
 
-	     test('roo.js profile copies .roomodes file via onAddRulesProfile', () => {
-             expect(rooProfileContent).toContain('onAddRulesProfile(targetDir, assetsDir)');
+	test('roo.js profile copies .roomodes file via onAddRulesProfile', () => {
+		expect(rooProfileContent).toContain(
+			'onAddRulesProfile(targetDir, assetsDir)'
+		);
 
 		// Check for the specific .roomodes copy logic
 		expect(rooProfileContent).toContain(
@@ -49,8 +53,10 @@ describe('Roo Profile Initialization Functionality', () => {
 		);
 	});
 
-	     test('roo.js profile copies mode-specific rule files via onAddRulesProfile', () => {
-             expect(rooProfileContent).toContain('onAddRulesProfile(targetDir, assetsDir)');
+	test('roo.js profile copies mode-specific rule files via onAddRulesProfile', () => {
+		expect(rooProfileContent).toContain(
+			'onAddRulesProfile(targetDir, assetsDir)'
+		);
 		expect(rooProfileContent).toContain('for (const mode of ROO_MODES)');
 
 		// Check for the specific mode rule file copy logic

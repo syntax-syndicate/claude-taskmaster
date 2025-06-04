@@ -21,8 +21,10 @@ describe('Roo Files Inclusion in Package', () => {
 		const rooJsPath = path.join(process.cwd(), 'scripts', 'profiles', 'roo.js');
 		const rooJsContent = fs.readFileSync(rooJsPath, 'utf8');
 
-		             // Check for the main handler function
-             expect(rooJsContent.includes('onAddRulesProfile(targetDir, assetsDir)')).toBe(true);
+		// Check for the main handler function
+		expect(
+			rooJsContent.includes('onAddRulesProfile(targetDir, assetsDir)')
+		).toBe(true);
 
 		// Check for general recursive copy of assets/roocode
 		expect(
@@ -30,9 +32,7 @@ describe('Roo Files Inclusion in Package', () => {
 		).toBe(true);
 
 		// Check for updated path handling
-		expect(
-			rooJsContent.includes("path.join(assetsDir, 'roocode')")
-		).toBe(true);
+		expect(rooJsContent.includes("path.join(assetsDir, 'roocode')")).toBe(true);
 
 		// Check for .roomodes file copying logic (source and destination paths)
 		expect(rooJsContent.includes("path.join(sourceDir, '.roomodes')")).toBe(
