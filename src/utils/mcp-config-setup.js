@@ -26,6 +26,15 @@ function formatJSONWithTabs(obj) {
 
 // Structure matches project conventions (see scripts/init.js)
 export function setupMCPConfiguration(projectDir, mcpConfigPath) {
+	// Handle null mcpConfigPath (e.g., for Claude/Codex profiles)
+	if (!mcpConfigPath) {
+		log(
+			'debug',
+			'[MCP Config] No mcpConfigPath provided, skipping MCP configuration setup'
+		);
+		return;
+	}
+
 	// Build the full path to the MCP config file
 	const mcpPath = path.join(projectDir, mcpConfigPath);
 	const configDir = path.dirname(mcpPath);
@@ -136,6 +145,17 @@ export function setupMCPConfiguration(projectDir, mcpConfigPath) {
  * @returns {Object} Result object with success status and details
  */
 export function removeTaskMasterMCPConfiguration(projectDir, mcpConfigPath) {
+	// Handle null mcpConfigPath (e.g., for Claude/Codex profiles)
+	if (!mcpConfigPath) {
+		return {
+			success: true,
+			removed: false,
+			deleted: false,
+			error: null,
+			hasOtherServers: false
+		};
+	}
+
 	const mcpPath = path.join(projectDir, mcpConfigPath);
 
 	let result = {

@@ -4,8 +4,9 @@ import fs from 'fs';
 import { isSilentMode, log } from '../modules/utils.js';
 
 // Lifecycle functions for Codex profile
-function onAddRulesProfile(targetDir) {
-	const sourceFile = path.join(process.cwd(), 'assets', 'AGENTS.md');
+function onAddRulesProfile(targetDir, assetsDir) {
+	// Use the provided assets directory to find the source file
+	const sourceFile = path.join(assetsDir, 'AGENTS.md');
 	const destFile = path.join(targetDir, 'AGENTS.md');
 
 	if (fs.existsSync(sourceFile)) {
@@ -13,29 +14,25 @@ function onAddRulesProfile(targetDir) {
 			fs.copyFileSync(sourceFile, destFile);
 			log('debug', `[Codex] Copied AGENTS.md to ${destFile}`);
 		} catch (err) {
-			log('debug', `[Codex] Failed to copy AGENTS.md: ${err.message}`);
+			log('error', `[Codex] Failed to copy AGENTS.md: ${err.message}`);
 		}
-	} else {
-		log('debug', `[Codex] AGENTS.md not found at ${sourceFile}`);
 	}
 }
 
 function onRemoveRulesProfile(targetDir) {
-	log('debug', `[Codex] onRemoveRulesProfile called for ${targetDir}`);
 	const agentsFile = path.join(targetDir, 'AGENTS.md');
 	if (fs.existsSync(agentsFile)) {
 		try {
 			fs.rmSync(agentsFile, { force: true });
-			log('debug', `[Codex] Removed AGENTS.md from ${targetDir}`);
+			log('debug', `[Codex] Removed AGENTS.md from ${agentsFile}`);
 		} catch (err) {
-			log('debug', `[Codex] Failed to remove AGENTS.md: ${err.message}`);
+			log('error', `[Codex] Failed to remove AGENTS.md: ${err.message}`);
 		}
 	}
-	log('debug', `[Codex] onRemoveRulesProfile completed for ${targetDir}`);
 }
 
-function onPostConvertRulesProfile(targetDir) {
-	onAddRulesProfile(targetDir);
+function onPostConvertRulesProfile(targetDir, assetsDir) {
+	onAddRulesProfile(targetDir, assetsDir);
 }
 
 // Simple filename function

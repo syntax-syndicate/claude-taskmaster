@@ -136,10 +136,14 @@ export async function rulesDirect(args, log, context = {}) {
 				const profileRulesDir = path.join(projectRoot, rulesDir);
 				const profileDir = profileConfig.profileDir;
 				const mcpConfig = profileConfig.mcpConfig !== false;
-				const mcpPath = path.join(projectRoot, profileConfig.mcpConfigPath);
+				const mcpPath =
+					mcpConfig && profileConfig.mcpConfigPath
+						? path.join(projectRoot, profileConfig.mcpConfigPath)
+						: null;
 
 				// Check what was created
-				const mcpConfigCreated = mcpConfig ? fs.existsSync(mcpPath) : undefined;
+				const mcpConfigCreated =
+					mcpConfig && mcpPath ? fs.existsSync(mcpPath) : undefined;
 				const rulesDirCreated = fs.existsSync(profileRulesDir);
 				const profileFolderCreated = fs.existsSync(
 					path.join(projectRoot, profileDir)

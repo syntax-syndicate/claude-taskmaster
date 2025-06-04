@@ -199,6 +199,19 @@ export function convertRuleToProfileRule(sourcePath, targetPath, profile) {
  * Convert all Cursor rules to profile rules for a specific profile
  */
 export function convertAllRulesToProfileRules(projectDir, profile) {
+	// Handle simple profiles (Claude, Codex) that just copy files to root
+	const isSimpleProfile = Object.keys(profile.fileMap).length === 0;
+	if (isSimpleProfile) {
+		// For simple profiles, just call their post-processing hook and return
+		const __filename = fileURLToPath(import.meta.url);
+		const __dirname = path.dirname(__filename);
+		const assetsDir = path.join(__dirname, '..', '..', 'assets');
+		if (typeof profile.onPostConvertRulesProfile === 'function') {
+			profile.onPostConvertRulesProfile(projectDir, assetsDir);
+		}
+		return { success: 1, failed: 0 };
+	}
+
 	const __filename = fileURLToPath(import.meta.url);
 	const __dirname = path.dirname(__filename);
 	const sourceDir = path.join(__dirname, '..', '..', 'assets', 'rules');
@@ -271,7 +284,8 @@ export function convertAllRulesToProfileRules(projectDir, profile) {
 
 	// Call post-processing hook if defined (e.g., for Roo's rules-*mode* folders)
 	if (typeof profile.onPostConvertRulesProfile === 'function') {
-		profile.onPostConvertRulesProfile(projectDir);
+		const assetsDir = path.join(__dirname, '..', '..', 'assets');
+		profile.onPostConvertRulesProfile(projectDir, assetsDir);
 	}
 
 	return { success, failed };

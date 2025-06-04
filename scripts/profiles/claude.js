@@ -4,8 +4,9 @@ import fs from 'fs';
 import { isSilentMode, log } from '../modules/utils.js';
 
 // Lifecycle functions for Claude Code profile
-function onAddRulesProfile(targetDir) {
-	const sourceFile = path.join(process.cwd(), 'assets', 'AGENTS.md');
+function onAddRulesProfile(targetDir, assetsDir) {
+	// Use the provided assets directory to find the source file
+	const sourceFile = path.join(assetsDir, 'AGENTS.md');
 	const destFile = path.join(targetDir, 'CLAUDE.md');
 
 	if (fs.existsSync(sourceFile)) {
@@ -13,29 +14,25 @@ function onAddRulesProfile(targetDir) {
 			fs.copyFileSync(sourceFile, destFile);
 			log('debug', `[Claude] Copied AGENTS.md to ${destFile}`);
 		} catch (err) {
-			log('debug', `[Claude] Failed to copy AGENTS.md: ${err.message}`);
+			log('error', `[Claude] Failed to copy AGENTS.md: ${err.message}`);
 		}
-	} else {
-		log('debug', `[Claude] AGENTS.md not found at ${sourceFile}`);
 	}
 }
 
 function onRemoveRulesProfile(targetDir) {
-	log('debug', `[Claude] onRemoveRulesProfile called for ${targetDir}`);
 	const claudeFile = path.join(targetDir, 'CLAUDE.md');
 	if (fs.existsSync(claudeFile)) {
 		try {
 			fs.rmSync(claudeFile, { force: true });
-			log('debug', `[Claude] Removed CLAUDE.md from ${targetDir}`);
+			log('debug', `[Claude] Removed CLAUDE.md from ${claudeFile}`);
 		} catch (err) {
-			log('debug', `[Claude] Failed to remove CLAUDE.md: ${err.message}`);
+			log('error', `[Claude] Failed to remove CLAUDE.md: ${err.message}`);
 		}
 	}
-	log('debug', `[Claude] onRemoveRulesProfile completed for ${targetDir}`);
 }
 
-function onPostConvertRulesProfile(targetDir) {
-	onAddRulesProfile(targetDir);
+function onPostConvertRulesProfile(targetDir, assetsDir) {
+	onAddRulesProfile(targetDir, assetsDir);
 }
 
 // Simple filename function
