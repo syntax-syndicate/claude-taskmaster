@@ -77,13 +77,25 @@ describe('Roo Files Inclusion in Package', () => {
 
 		// Also verify that the expected mode names are defined in the imported constant
 		// by checking that the import is from the correct file that contains all 6 modes
-		const profilesConstantsPath = path.join(process.cwd(), 'src', 'constants', 'profiles.js');
+		const profilesConstantsPath = path.join(
+			process.cwd(),
+			'src',
+			'constants',
+			'profiles.js'
+		);
 		const profilesContent = fs.readFileSync(profilesConstantsPath, 'utf8');
-		
+
 		// Check that ROO_MODES is exported and contains all expected modes
 		expect(profilesContent.includes('export const ROO_MODES')).toBe(true);
-		const expectedModes = ['architect', 'ask', 'boomerang', 'code', 'debug', 'test'];
-		expectedModes.forEach(mode => {
+		const expectedModes = [
+			'architect',
+			'ask',
+			'boomerang',
+			'code',
+			'debug',
+			'test'
+		];
+		expectedModes.forEach((mode) => {
 			expect(profilesContent.includes(`'${mode}'`)).toBe(true);
 		});
 	});
