@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import { jest } from '@jest/globals';
 import {
 	removeProfileRules,
@@ -38,7 +39,7 @@ describe('Selective Rules Removal', () => {
 		console.log = jest.fn();
 
 		// Create temp directory for testing
-		tempDir = fs.mkdtempSync(path.join(process.cwd(), 'test-temp-'));
+		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'task-master-test-'));
 
 		// Set up spies on fs methods
 		mockExistsSync = jest.spyOn(fs, 'existsSync');
