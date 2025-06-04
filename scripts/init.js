@@ -16,7 +16,6 @@
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
-import inquirer from 'inquirer';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import chalk from 'chalk';
@@ -29,7 +28,7 @@ import {
 	convertAllRulesToProfileRules,
 	getRulesProfile
 } from '../src/utils/rule-transformer.js';
-import { runInteractiveProfilesSetup } from '../src/utils/profiles.js';
+
 import { execSync } from 'child_process';
 import {
 	EXAMPLE_PRD_FILE,
@@ -282,7 +281,7 @@ async function initializeProject(options = {}) {
 	}
 
 	const skipPrompts = options.yes || (options.name && options.description);
-	let selectedRuleProfiles =
+	const selectedRuleProfiles =
 		options.rules && Array.isArray(options.rules) && options.rules.length > 0
 			? options.rules
 			: RULE_PROFILES; // Default to all profiles
@@ -340,9 +339,9 @@ async function initializeProject(options = {}) {
 				chalk.yellow('\nDo you want to continue with these settings? (Y/n): ')
 			);
 			const shouldContinue = confirmInput.trim().toLowerCase() !== 'n';
-			rl.close();
 
 			if (!shouldContinue) {
+				rl.close();
 				log('info', 'Project initialization cancelled by user');
 				process.exit(0);
 				return;
@@ -355,7 +354,15 @@ async function initializeProject(options = {}) {
 					`Using rule profiles provided via command line: ${selectedRuleProfiles.join(', ')}`
 				);
 			} else {
-				selectedRuleProfiles = await runInteractiveProfilesSetup();
+				try {
+					const targetDir = process.cwd();
+					execSync('npx task-master rules setup', {
+						stdio: 'inherit',
+						cwd: targetDir
+					});
+				} catch (error) {
+					log('error', 'Failed to run interactive rules setup:', error.message);
+				}
 			}
 
 			const dryRun = options.dryRun || false;
@@ -379,6 +386,7 @@ async function initializeProject(options = {}) {
 				options,
 				selectedRuleProfiles
 			);
+			rl.close();
 		} catch (error) {
 			rl.close();
 			log('error', `Error during initialization process: ${error.message}`);
