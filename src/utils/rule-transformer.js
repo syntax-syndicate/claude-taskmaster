@@ -284,7 +284,7 @@ export function removeProfileRules(projectDir, profile) {
 	const targetDir = path.join(projectDir, profile.rulesDir);
 	const profileDir = path.join(projectDir, profile.profileDir);
 
-	let result = {
+	const result = {
 		profileName: profile.profileName,
 		success: false,
 		skipped: false,
