@@ -21,8 +21,8 @@ describe('Roo Files Inclusion in Package', () => {
 		const rooJsPath = path.join(process.cwd(), 'scripts', 'profiles', 'roo.js');
 		const rooJsContent = fs.readFileSync(rooJsPath, 'utf8');
 
-		// Check for the main handler function
-		expect(rooJsContent.includes('onAddRulesProfile(targetDir)')).toBe(true);
+		             // Check for the main handler function
+             expect(rooJsContent.includes('onAddRulesProfile(targetDir, assetsDir)')).toBe(true);
 
 		// Check for general recursive copy of assets/roocode
 		expect(
@@ -31,7 +31,7 @@ describe('Roo Files Inclusion in Package', () => {
 
 		// Check for updated path handling
 		expect(
-			rooJsContent.includes("path.join(process.cwd(), 'assets', 'roocode')")
+			rooJsContent.includes("path.join(assetsDir, 'roocode')")
 		).toBe(true);
 
 		// Check for .roomodes file copying logic (source and destination paths)
@@ -73,7 +73,7 @@ describe('Roo Files Inclusion in Package', () => {
 		// We should be able to find the template literals that use the mode variable
 		expect(rooJsContent.includes('`rules-${mode}`')).toBe(true);
 		expect(rooJsContent.includes('`${mode}-rules`')).toBe(true);
-		expect(rooJsContent.includes("for mode '${mode}'")).toBe(true);
+		expect(rooJsContent.includes('Copied ${mode}-rules to ${dest}')).toBe(true);
 
 		// Also verify that the expected mode names are defined in the imported constant
 		// by checking that the import is from the correct file that contains all 6 modes
