@@ -230,10 +230,14 @@ export function convertAllRulesToProfileRules(projectDir, profile) {
 				continue;
 			}
 
-			const targetFilename = profile.getTargetRuleFilename
-				? profile.getTargetRuleFilename(sourceFile)
-				: sourceFile;
+			const targetFilename = profile.fileMap[sourceFile];
 			const targetPath = path.join(targetDir, targetFilename);
+
+			// Ensure target subdirectory exists (for rules like taskmaster/dev_workflow.md)
+			const targetFileDir = path.dirname(targetPath);
+			if (!fs.existsSync(targetFileDir)) {
+				fs.mkdirSync(targetFileDir, { recursive: true });
+			}
 
 			// Read source content
 			let content = fs.readFileSync(sourcePath, 'utf8');
