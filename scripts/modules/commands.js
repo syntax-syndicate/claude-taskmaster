@@ -2959,7 +2959,7 @@ Examples:
 				if (successfulRemovals.length > 0) {
 					console.log(
 						chalk.green(
-							`\nSuccessfully removed rules for: ${successfulRemovals.join(', ')}`
+							`\nSuccessfully removed profiles for: ${successfulRemovals.join(', ')}`
 						)
 					);
 				}
