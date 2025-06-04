@@ -31,9 +31,9 @@ export function createProfile(editorConfig) {
 	// Standard file mapping with custom overrides
 	const defaultFileMap = {
 		'cursor_rules.mdc': `${name.toLowerCase()}_rules${targetExtension}`,
-		'dev_workflow.mdc': `dev_workflow${targetExtension}`,
+		'dev_workflow.mdc': `taskmaster/dev_workflow${targetExtension}`,
 		'self_improve.mdc': `self_improve${targetExtension}`,
-		'taskmaster.mdc': `taskmaster${targetExtension}`
+		'taskmaster.mdc': `taskmaster/taskmaster${targetExtension}`
 	};
 
 	const fileMap = { ...defaultFileMap, ...customFileMap };
@@ -168,8 +168,8 @@ export function createProfile(editorConfig) {
 				const baseName = path.basename(filePath, '.mdc');
 				const newFileName =
 					fileMap[`${baseName}.mdc`] || `${baseName}${targetExtension}`;
-				// Update the link text to match the new filename
-				const newLinkText = newFileName;
+				// Update the link text to match the new filename (strip directory path for display)
+				const newLinkText = path.basename(newFileName);
 				// For Cursor, keep the mdc: protocol; for others, use standard relative paths
 				if (name.toLowerCase() === 'cursor') {
 					return `[${newLinkText}](mdc:${rulesDir}/${newFileName})`;

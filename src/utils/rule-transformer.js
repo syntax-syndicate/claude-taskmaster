@@ -323,23 +323,59 @@ export function removeProfileRules(projectDir, profile) {
 		let hasOtherRulesFiles = false;
 		if (fs.existsSync(targetDir)) {
 			const taskmasterFiles = Object.values(profile.fileMap);
-			let removedFiles = [];
+			const removedFiles = [];
 
-			// Check all files in the rules directory
-			const allFiles = fs.readdirSync(targetDir);
-			for (const file of allFiles) {
-				if (taskmasterFiles.includes(file)) {
-					// This is a Task Master file, remove it
-					const filePath = path.join(targetDir, file);
-					fs.rmSync(filePath, { force: true });
-					removedFiles.push(file);
-					log('debug', `[Rule Transformer] Removed Task Master file: ${file}`);
-				} else {
-					// This is not a Task Master file, leave it
-					hasOtherRulesFiles = true;
-					log('debug', `[Rule Transformer] Preserved existing file: ${file}`);
+			// Helper function to recursively check and remove Task Master files
+			function processDirectory(dirPath, relativePath = '') {
+				const items = fs.readdirSync(dirPath);
+
+				for (const item of items) {
+					const itemPath = path.join(dirPath, item);
+					const relativeItemPath = relativePath
+						? path.join(relativePath, item)
+						: item;
+					const stat = fs.statSync(itemPath);
+
+					if (stat.isDirectory()) {
+						// Recursively process subdirectory
+						processDirectory(itemPath, relativeItemPath);
+
+						// Check if directory is empty after processing and remove if so
+						try {
+							const remainingItems = fs.readdirSync(itemPath);
+							if (remainingItems.length === 0) {
+								fs.rmSync(itemPath, { recursive: true, force: true });
+								log(
+									'debug',
+									`[Rule Transformer] Removed empty directory: ${relativeItemPath}`
+								);
+							}
+						} catch (error) {
+							// Directory might have been removed already, ignore
+						}
+					} else if (stat.isFile()) {
+						if (taskmasterFiles.includes(relativeItemPath)) {
+							// This is a Task Master file, remove it
+							fs.rmSync(itemPath, { force: true });
+							removedFiles.push(relativeItemPath);
+							log(
+								'debug',
+								`[Rule Transformer] Removed Task Master file: ${relativeItemPath}`
+							);
+						} else {
+							// This is not a Task Master file, leave it
+							hasOtherRulesFiles = true;
+							log(
+								'debug',
+								`[Rule Transformer] Preserved existing file: ${relativeItemPath}`
+							);
+						}
+					}
 				}
 			}
+
+			// Process the rules directory recursively
+			processDirectory(targetDir);
 
 			result.filesRemoved = removedFiles;
 
