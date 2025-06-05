@@ -236,11 +236,11 @@ task-master add-task --prompt="Description" --priority=high
 task-master init
 
 # Initialize a new project applying specific rules
-task-master init --rules cursor,windsurf
+task-master init --rules cursor,windsurf,vscode
 ```
 
 - The `--rules` flag allows you to specify one or more rule profiles (e.g., `cursor`, `roo`, `windsurf`, `cline`) to apply during initialization.
-- If omitted, all available rule profiles are installed by default (cursor, windsurf, roo, cline).
+- If omitted, all available rule profiles are installed by default (claude, cline, codex, cursor, roo, trae, vscode, windsurf).
 - You can use multiple comma-separated profiles in a single command.
 
 ## Manage Rules
@@ -270,7 +270,7 @@ task-master rules setup
 **Examples:**
 
 ```bash
-task-master rules add windsurf,roo
+task-master rules add windsurf,roo,vscode
 task-master rules remove windsurf
 task-master rules setup
 ```

@@ -24,7 +24,7 @@ This document provides a detailed reference for interacting with Taskmaster, cov
     *   `--name <name>`: `Set the name for your project in Taskmaster's configuration.`
     *   `--description <text>`: `Provide a brief description for your project.`
     *   `--version <version>`: `Set the initial version for your project, e.g., '0.1.0'.`
-    *   `--rules <rules>` or `-r <rules>`: `Comma-separated list of rule sets to apply at initialization (e.g., 'cursor,windsurf,roo'). If not specified, all rule profiles are initialized by default.`
+    *   `--rules <rules>` or `-r <rules>`: `Comma-separated list of rule sets to apply at initialization (e.g., 'cursor,windsurf,roo,vscode'). If not specified, all rule profiles are initialized by default.`
     *   `-y, --yes`: `Initialize Taskmaster quickly using default settings without interactive prompts.`
 *   **Usage:** Run this once at the beginning of a new project.
 *   **Rules Examples:**
@@ -65,7 +65,7 @@ This document provides a detailed reference for interacting with Taskmaster, cov
     *   `add <rules>`: `Add one or more rule sets to your project (e.g., 'windsurf,roo').`
     *   `remove <rules>`: `Remove one or more rule sets from your project (e.g., 'windsurf').`
 *   **Key Parameters:**
-    *   `<rules>`: `Comma-separated list of rule sets to add or remove (e.g., 'cursor', 'windsurf', 'roo', 'cline', 'trae').`
+    *   `<rules>`: `Comma-separated list of rule sets to add or remove (e.g., 'cursor', 'windsurf', 'roo', 'cline', 'trae', 'vscode').`
 *   **Usage Examples:**
     *   `task-master rules add windsurf,roo`: `Add Windsurf and Roo rule sets to your project.`
     *   `task-master rules remove windsurf`: `Remove the Windsurf rule set from your project.`
