@@ -5,4 +5,5 @@ export { codexProfile } from './codex.js';
 export { cursorProfile } from './cursor.js';
 export { rooProfile } from './roo.js';
 export { traeProfile } from './trae.js';
+export { vscodeProfile } from './vscode.js';
 export { windsurfProfile } from './windsurf.js';

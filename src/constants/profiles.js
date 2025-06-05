@@ -1,5 +1,5 @@
 /**
- * @typedef {'claude' | 'cline' | 'codex' | 'cursor' | 'roo' | 'trae' | 'windsurf'} RulesProfile
+ * @typedef {'claude' | 'cline' | 'codex' | 'cursor' | 'roo' | 'trae' | 'windsurf' | 'vscode'} RulesProfile
  */
 
 /**
@@ -16,6 +16,7 @@
  * - cursor: Cursor IDE rules
  * - roo: Roo Code IDE rules
  * - trae: Trae IDE rules
+ * - vscode: VS Code with GitHub Copilot integration
  * - windsurf: Windsurf IDE rules
  *
  * To add a new rule profile:
@@ -30,6 +31,7 @@ export const RULE_PROFILES = [
 	'cursor',
 	'roo',
 	'trae',
+	'vscode',
 	'windsurf'
 ];
 

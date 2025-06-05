@@ -5,17 +5,17 @@ import path from 'path';
 describe('MCP Configuration Validation', () => {
 	describe('Profile MCP Configuration Properties', () => {
 		const expectedMcpConfigurations = {
+			cline: {
+				shouldHaveMcp: false,
+				expectedDir: '.clinerules',
+				expectedConfigName: 'cline_mcp_settings.json',
+				expectedPath: '.clinerules/cline_mcp_settings.json'
+			},
 			cursor: {
 				shouldHaveMcp: true,
 				expectedDir: '.cursor',
 				expectedConfigName: 'mcp.json',
 				expectedPath: '.cursor/mcp.json'
-			},
-			windsurf: {
-				shouldHaveMcp: true,
-				expectedDir: '.windsurf',
-				expectedConfigName: 'mcp.json',
-				expectedPath: '.windsurf/mcp.json'
 			},
 			roo: {
 				shouldHaveMcp: true,
@@ -29,11 +29,17 @@ describe('MCP Configuration Validation', () => {
 				expectedConfigName: 'trae_mcp_settings.json',
 				expectedPath: '.trae/trae_mcp_settings.json'
 			},
-			cline: {
-				shouldHaveMcp: false,
-				expectedDir: '.clinerules',
-				expectedConfigName: 'cline_mcp_settings.json',
-				expectedPath: '.clinerules/cline_mcp_settings.json'
+			vscode: {
+				shouldHaveMcp: true,
+				expectedDir: '.vscode',
+				expectedConfigName: 'mcp.json',
+				expectedPath: '.vscode/mcp.json'
+			},
+			windsurf: {
+				shouldHaveMcp: true,
+				expectedDir: '.windsurf',
+				expectedConfigName: 'mcp.json',
+				expectedPath: '.windsurf/mcp.json'
 			}
 		};
 
@@ -98,7 +104,7 @@ describe('MCP Configuration Validation', () => {
 
 	describe('MCP Configuration File Names', () => {
 		test('should use standard mcp.json for MCP-enabled profiles', () => {
-			const standardMcpProfiles = ['cursor', 'windsurf', 'roo'];
+			const standardMcpProfiles = ['cursor', 'roo', 'vscode', 'windsurf'];
 			standardMcpProfiles.forEach((profileName) => {
 				const profile = getRulesProfile(profileName);
 				expect(profile.mcpConfigName).toBe('mcp.json');
@@ -162,12 +168,13 @@ describe('MCP Configuration Validation', () => {
 			});
 
 			expect(mcpEnabledProfiles).toContain('cursor');
-			expect(mcpEnabledProfiles).toContain('windsurf');
 			expect(mcpEnabledProfiles).toContain('roo');
-			expect(mcpEnabledProfiles).not.toContain('cline');
-			expect(mcpEnabledProfiles).not.toContain('trae');
+			expect(mcpEnabledProfiles).toContain('vscode');
+			expect(mcpEnabledProfiles).toContain('windsurf');
 			expect(mcpEnabledProfiles).not.toContain('claude');
+			expect(mcpEnabledProfiles).not.toContain('cline');
 			expect(mcpEnabledProfiles).not.toContain('codex');
+			expect(mcpEnabledProfiles).not.toContain('trae');
 		});
 
 		test('should provide all necessary information for MCP config creation', () => {

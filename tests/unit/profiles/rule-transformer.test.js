@@ -19,6 +19,7 @@ describe('Rule Transformer - General', () => {
 				'cursor',
 				'roo',
 				'trae',
+				'vscode',
 				'windsurf'
 			];
 			expectedProfiles.forEach((profile) => {
@@ -181,6 +182,11 @@ describe('Rule Transformer - General', () => {
 					mcpConfigName: null,
 					expectedPath: null
 				},
+				cline: {
+					mcpConfig: false,
+					mcpConfigName: 'cline_mcp_settings.json',
+					expectedPath: '.clinerules/cline_mcp_settings.json'
+				},
 				codex: {
 					mcpConfig: false,
 					mcpConfigName: null,
@@ -190,11 +196,6 @@ describe('Rule Transformer - General', () => {
 					mcpConfig: true,
 					mcpConfigName: 'mcp.json',
 					expectedPath: '.cursor/mcp.json'
-				},
-				windsurf: {
-					mcpConfig: true,
-					mcpConfigName: 'mcp.json',
-					expectedPath: '.windsurf/mcp.json'
 				},
 				roo: {
 					mcpConfig: true,
@@ -206,10 +207,15 @@ describe('Rule Transformer - General', () => {
 					mcpConfigName: 'trae_mcp_settings.json',
 					expectedPath: '.trae/trae_mcp_settings.json'
 				},
-				cline: {
-					mcpConfig: false,
-					mcpConfigName: 'cline_mcp_settings.json',
-					expectedPath: '.clinerules/cline_mcp_settings.json'
+				vscode: {
+					mcpConfig: true,
+					mcpConfigName: 'mcp.json',
+					expectedPath: '.vscode/mcp.json'
+				},
+				windsurf: {
+					mcpConfig: true,
+					mcpConfigName: 'mcp.json',
+					expectedPath: '.windsurf/mcp.json'
 				}
 			};
 

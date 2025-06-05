@@ -67,14 +67,8 @@ function getProfileDisplayName(name) {
 	return profile?.displayName || name.charAt(0).toUpperCase() + name.slice(1);
 }
 
-// Dynamically generate availableRulesProfiles from RULE_PROFILES
-const availableRulesProfiles = RULE_PROFILES.map((name) => {
-	const displayName = getProfileDisplayName(name);
-	return {
-		name: displayName,
-		value: name
-	};
-});
+// Note: Profile choices are now generated dynamically within runInteractiveProfilesSetup()
+// to ensure proper alphabetical sorting and pagination configuration
 
 /**
  * Launches an interactive prompt for selecting which rule profiles to include in your project.
@@ -115,6 +109,7 @@ export async function runInteractiveProfilesSetup() {
 		}
 
 		return {
+			profileName,
 			displayName,
 			description
 		};
@@ -142,11 +137,21 @@ export async function runInteractiveProfilesSetup() {
 		)
 	);
 
+	// Generate choices in the same order as the display text above
+	const sortedChoices = profileDescriptions.map(
+		({ profileName, displayName }) => ({
+			name: displayName,
+			value: profileName
+		})
+	);
+
 	const ruleProfilesQuestion = {
 		type: 'checkbox',
 		name: 'ruleProfiles',
 		message: 'Which rule profiles would you like to add to your project?',
-		choices: availableRulesProfiles,
+		choices: sortedChoices,
+		pageSize: sortedChoices.length, // Show all options without pagination
+		loop: false, // Disable loop scrolling
 		validate: (input) => input.length > 0 || 'You must select at least one.'
 	};
 	const { ruleProfiles } = await inquirer.prompt([ruleProfilesQuestion]);
