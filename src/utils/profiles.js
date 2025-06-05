@@ -4,7 +4,6 @@
  */
 import fs from 'fs';
 import path from 'path';
-import readline from 'readline';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import boxen from 'boxen';
@@ -106,12 +105,12 @@ export async function runInteractiveProfilesSetup() {
 			if (hasMcpConfig) {
 				// Special case for Roo to mention agent modes
 				if (profileName === 'roo') {
-					description = `Rule profile, MCP config, and agent modes`;
+					description = 'Rule profile, MCP config, and agent modes';
 				} else {
-					description = `Rule profile and MCP config`;
+					description = 'Rule profile and MCP config';
 				}
 			} else {
-				description = `Rule profile`;
+				description = 'Rule profile';
 			}
 		}
 
@@ -124,23 +123,16 @@ export async function runInteractiveProfilesSetup() {
 	const profileListText = profileDescriptions
 		.map(
 			({ displayName, description }) =>
-				chalk.white('• ') +
-				chalk.yellow(displayName) +
-				chalk.white(` - ${description}`)
+				`${chalk.white('• ')}${chalk.yellow(displayName)}${chalk.white(` - ${description}`)}`
 		)
 		.join('\n');
 
 	console.log(
 		boxen(
-			chalk.white.bold('Rule Profiles Setup') +
-				'\n\n' +
-				chalk.white(
-					'Rule profiles help enforce best practices and conventions for Task Master.\n' +
-						'Each profile provides coding guidelines tailored for specific AI coding environments.\n\n'
-				) +
-				chalk.cyan('Available Profiles:') +
-				'\n' +
-				profileListText,
+			`${chalk.white.bold('Rule Profiles Setup')}\n\n${chalk.white(
+				'Rule profiles help enforce best practices and conventions for Task Master.\n' +
+					'Each profile provides coding guidelines tailored for specific AI coding environments.\n\n'
+			)}${chalk.cyan('Available Profiles:')}\n${profileListText}`,
 			{
 				padding: 1,
 				borderColor: 'blue',
@@ -208,11 +200,11 @@ export function generateProfileRemovalSummary(profileName, removeResult) {
 		return `Summary for ${profileName}: Integration guide (${targetFileName}) removed`;
 	} else {
 		// Full profiles have rules directories and potentially MCP configs
-		let summary = `Summary for ${profileName}: Rules directory removed`;
+		const baseMessage = `Summary for ${profileName}: Rules directory removed`;
 		if (removeResult.notice) {
-			summary += ` (${removeResult.notice})`;
+			return `${baseMessage} (${removeResult.notice})`;
 		}
-		return summary;
+		return baseMessage;
 	}
 }
 
