@@ -138,13 +138,9 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 		const writeCall = mockWriteFileSync.mock.calls[0];
 		const transformedContent = writeCall[1];
 
-		// Verify transformations - files should now be in taskmaster subdirectory
-		expect(transformedContent).toContain(
-			'(.clinerules/taskmaster/dev_workflow.md)'
-		);
-		expect(transformedContent).toContain(
-			'(.clinerules/taskmaster/taskmaster.md)'
-		);
+		// Verify file path transformations - no taskmaster subdirectory for Cline
+		expect(transformedContent).toContain('(.clinerules/dev_workflow.md)');
+		expect(transformedContent).toContain('(.clinerules/taskmaster.md)');
 		expect(transformedContent).not.toContain('(mdc:.cursor/rules/');
 	});
 

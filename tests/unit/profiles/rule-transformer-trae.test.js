@@ -138,13 +138,9 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 		const writeCall = mockWriteFileSync.mock.calls[0];
 		const transformedContent = writeCall[1];
 
-		// Verify transformations - files should now be in taskmaster subdirectory
-		expect(transformedContent).toContain(
-			'(.trae/rules/taskmaster/dev_workflow.md)'
-		);
-		expect(transformedContent).toContain(
-			'(.trae/rules/taskmaster/taskmaster.md)'
-		);
+		// Verify transformations - no taskmaster subdirectory for Trae
+		expect(transformedContent).toContain('(.trae/rules/dev_workflow.md)'); // File path transformation - no taskmaster subdirectory for Trae
+		expect(transformedContent).toContain('(.trae/rules/taskmaster.md)'); // File path transformation - no taskmaster subdirectory for Trae
 		expect(transformedContent).not.toContain('(mdc:.cursor/rules/');
 	});
 

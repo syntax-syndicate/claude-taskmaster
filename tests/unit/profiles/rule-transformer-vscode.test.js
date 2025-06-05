@@ -148,11 +148,11 @@ Files are in the .cursor/rules directory and we should reference the rules direc
 			'applyTo: ".github/instructions/*.md"'
 		); // globs -> applyTo with path transformation
 		expect(transformedContent).toContain(
-			'(.github/instructions/taskmaster/dev_workflow.md)'
-		); // File path transformation
+			'(.github/instructions/dev_workflow.md)'
+		); // File path transformation - no taskmaster subdirectory for VS Code
 		expect(transformedContent).toContain(
-			'(.github/instructions/taskmaster/taskmaster.md)'
-		); // File path transformation
+			'(.github/instructions/taskmaster.md)'
+		); // File path transformation - no taskmaster subdirectory for VS Code
 		expect(transformedContent).toContain('instructions directory'); // "rules directory" -> "instructions directory"
 		expect(transformedContent).not.toContain('(mdc:.cursor/rules/');
 		expect(transformedContent).not.toContain('.cursor/rules');

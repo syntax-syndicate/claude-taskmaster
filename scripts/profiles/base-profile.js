@@ -4,6 +4,23 @@ import path from 'path';
 /**
  * Creates a standardized profile configuration for different editors
  * @param {Object} editorConfig - Editor-specific configuration
+ * @param {string} editorConfig.name - Profile name (e.g., 'cursor', 'vscode')
+ * @param {string} [editorConfig.displayName] - Display name for the editor (defaults to name)
+ * @param {string} editorConfig.url - Editor website URL
+ * @param {string} editorConfig.docsUrl - Editor documentation URL
+ * @param {string} editorConfig.profileDir - Directory for profile configuration
+ * @param {string} [editorConfig.rulesDir] - Directory for rules files (defaults to profileDir/rules)
+ * @param {boolean} [editorConfig.mcpConfig=true] - Whether to create MCP configuration
+ * @param {string} [editorConfig.mcpConfigName='mcp.json'] - Name of MCP config file
+ * @param {string} [editorConfig.fileExtension='.mdc'] - Source file extension
+ * @param {string} [editorConfig.targetExtension='.md'] - Target file extension
+ * @param {Object} [editorConfig.toolMappings={}] - Tool name mappings
+ * @param {Array} [editorConfig.customReplacements=[]] - Custom text replacements
+ * @param {Object} [editorConfig.customFileMap={}] - Custom file name mappings
+ * @param {boolean} [editorConfig.supportsRulesSubdirectories=false] - Whether to use taskmaster/ subdirectory for taskmaster-specific rules (only Cursor uses this by default)
+ * @param {Function} [editorConfig.onAdd] - Lifecycle hook for profile addition
+ * @param {Function} [editorConfig.onRemove] - Lifecycle hook for profile removal
+ * @param {Function} [editorConfig.onPostConvert] - Lifecycle hook for post-conversion
  * @returns {Object} - Complete profile configuration
  */
 export function createProfile(editorConfig) {
@@ -21,6 +38,7 @@ export function createProfile(editorConfig) {
 		toolMappings = {},
 		customReplacements = [],
 		customFileMap = {},
+		supportsRulesSubdirectories = false,
 		onAdd,
 		onRemove,
 		onPostConvert
@@ -29,11 +47,13 @@ export function createProfile(editorConfig) {
 	const mcpConfigPath = `${profileDir}/${mcpConfigName}`;
 
 	// Standard file mapping with custom overrides
+	// Use taskmaster subdirectory only if profile supports it
+	const taskmasterPrefix = supportsRulesSubdirectories ? 'taskmaster/' : '';
 	const defaultFileMap = {
 		'cursor_rules.mdc': `${name.toLowerCase()}_rules${targetExtension}`,
-		'dev_workflow.mdc': `taskmaster/dev_workflow${targetExtension}`,
+		'dev_workflow.mdc': `${taskmasterPrefix}dev_workflow${targetExtension}`,
 		'self_improve.mdc': `self_improve${targetExtension}`,
-		'taskmaster.mdc': `taskmaster/taskmaster${targetExtension}`
+		'taskmaster.mdc': `${taskmasterPrefix}taskmaster${targetExtension}`
 	};
 
 	const fileMap = { ...defaultFileMap, ...customFileMap };
@@ -200,6 +220,7 @@ export function createProfile(editorConfig) {
 		mcpConfig,
 		mcpConfigName,
 		mcpConfigPath,
+		supportsRulesSubdirectories,
 		fileMap,
 		globalReplacements: baseGlobalReplacements,
 		conversionConfig,

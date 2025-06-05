@@ -14,6 +14,7 @@ export const cursorProfile = createProfile({
 	fileExtension: '.mdc',
 	targetExtension: '.mdc', // Cursor keeps .mdc extension
 	toolMappings: COMMON_TOOL_MAPPINGS.STANDARD,
+	supportsRulesSubdirectories: true,
 	customFileMap: {
 		'cursor_rules.mdc': 'cursor_rules.mdc' // Keep the same name for cursor
 	}
