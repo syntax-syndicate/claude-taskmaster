@@ -5,12 +5,7 @@ describe('Trae Profile Initialization Functionality', () => {
 	let traeProfileContent;
 
 	beforeAll(() => {
-		const traeJsPath = path.join(
-			process.cwd(),
-			'src',
-			'profiles',
-			'trae.js'
-		);
+		const traeJsPath = path.join(process.cwd(), 'src', 'profiles', 'trae.js');
 		traeProfileContent = fs.readFileSync(traeJsPath, 'utf8');
 	});
 

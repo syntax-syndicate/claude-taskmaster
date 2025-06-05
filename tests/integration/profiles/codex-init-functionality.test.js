@@ -5,12 +5,7 @@ describe('Codex Profile Initialization Functionality', () => {
 	let codexProfileContent;
 
 	beforeAll(() => {
-		const codexJsPath = path.join(
-			process.cwd(),
-			'src',
-			'profiles',
-			'codex.js'
-		);
+		const codexJsPath = path.join(process.cwd(), 'src', 'profiles', 'codex.js');
 		codexProfileContent = fs.readFileSync(codexJsPath, 'utf8');
 	});
 

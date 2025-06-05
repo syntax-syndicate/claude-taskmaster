@@ -5,12 +5,7 @@ describe('Cline Profile Initialization Functionality', () => {
 	let clineProfileContent;
 
 	beforeAll(() => {
-		const clineJsPath = path.join(
-			process.cwd(),
-			'src',
-			'profiles',
-			'cline.js'
-		);
+		const clineJsPath = path.join(process.cwd(), 'src', 'profiles', 'cline.js');
 		clineProfileContent = fs.readFileSync(clineJsPath, 'utf8');
 	});
 
