@@ -11,7 +11,7 @@ jest.mock('fs', () => ({
 // Import modules after mocking
 import fs from 'fs';
 import { convertRuleToProfileRule } from '../../../src/utils/rule-transformer.js';
-import { clineProfile } from '../../../scripts/profiles/cline.js';
+import { clineProfile } from '../../../src/profiles/cline.js';
 
 describe('Cline Rule Transformer', () => {
 	// Set up spies on the mocked modules

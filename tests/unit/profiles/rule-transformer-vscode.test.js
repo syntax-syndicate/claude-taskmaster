@@ -11,7 +11,7 @@ jest.mock('fs', () => ({
 // Import modules after mocking
 import fs from 'fs';
 import { convertRuleToProfileRule } from '../../../src/utils/rule-transformer.js';
-import { vscodeProfile } from '../../../scripts/profiles/vscode.js';
+import { vscodeProfile } from '../../../src/profiles/vscode.js';
 
 describe('VS Code Rule Transformer', () => {
 	// Set up spies on the mocked modules

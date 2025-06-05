@@ -1,7 +1,7 @@
 // Codex profile for rule-transformer
 import path from 'path';
 import fs from 'fs';
-import { isSilentMode, log } from '../modules/utils.js';
+import { isSilentMode, log } from '../../scripts/modules/utils.js';
 
 // Lifecycle functions for Codex profile
 function onAddRulesProfile(targetDir, assetsDir) {

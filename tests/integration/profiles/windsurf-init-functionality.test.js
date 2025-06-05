@@ -7,7 +7,7 @@ describe('Windsurf Profile Initialization Functionality', () => {
 	beforeAll(() => {
 		const windsurfJsPath = path.join(
 			process.cwd(),
-			'scripts',
+			'src',
 			'profiles',
 			'windsurf.js'
 		);

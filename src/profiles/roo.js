@@ -1,9 +1,9 @@
 // Roo Code conversion profile for rule-transformer
 import path from 'path';
 import fs from 'fs';
-import { isSilentMode, log } from '../modules/utils.js';
+import { isSilentMode, log } from '../../scripts/modules/utils.js';
 import { createProfile, COMMON_TOOL_MAPPINGS } from './base-profile.js';
-import { ROO_MODES } from '../../src/constants/profiles.js';
+import { ROO_MODES } from '../constants/profiles.js';
 
 // Lifecycle functions for Roo profile
 function onAddRulesProfile(targetDir, assetsDir) {

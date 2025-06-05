@@ -37,7 +37,7 @@ describe('Rules Files Inclusion in Package', () => {
 
 	test('roo.js profile contains logic for Roo directory creation and file copying', () => {
 		// Read the roo.js profile file
-		const rooJsPath = path.join(process.cwd(), 'scripts', 'profiles', 'roo.js');
+		const rooJsPath = path.join(process.cwd(), 'src', 'profiles', 'roo.js');
 		const rooJsContent = fs.readFileSync(rooJsPath, 'utf8');
 
 		// Check for the main handler function
@@ -77,7 +77,7 @@ describe('Rules Files Inclusion in Package', () => {
 		// Check for import of ROO_MODES from profiles.js
 		expect(
 			rooJsContent.includes(
-				"import { ROO_MODES } from '../../src/constants/profiles.js'"
+				"import { ROO_MODES } from '../constants/profiles.js'"
 			)
 		).toBe(true);
 

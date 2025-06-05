@@ -7,7 +7,7 @@ describe('Codex Profile Initialization Functionality', () => {
 	beforeAll(() => {
 		const codexJsPath = path.join(
 			process.cwd(),
-			'scripts',
+			'src',
 			'profiles',
 			'codex.js'
 		);

@@ -7,7 +7,7 @@ describe('Claude Profile Initialization Functionality', () => {
 	beforeAll(() => {
 		const claudeJsPath = path.join(
 			process.cwd(),
-			'scripts',
+			'src',
 			'profiles',
 			'claude.js'
 		);

@@ -11,7 +11,7 @@ jest.mock('fs', () => ({
 // Import modules after mocking
 import fs from 'fs';
 import { convertRuleToProfileRule } from '../../../src/utils/rule-transformer.js';
-import { rooProfile } from '../../../scripts/profiles/roo.js';
+import { rooProfile } from '../../../src/profiles/roo.js';
 
 describe('Roo Rule Transformer', () => {
 	// Set up spies on the mocked modules

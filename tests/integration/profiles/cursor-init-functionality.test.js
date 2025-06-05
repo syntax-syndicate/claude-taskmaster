@@ -7,7 +7,7 @@ describe('Cursor Profile Initialization Functionality', () => {
 	beforeAll(() => {
 		const cursorJsPath = path.join(
 			process.cwd(),
-			'scripts',
+			'src',
 			'profiles',
 			'cursor.js'
 		);

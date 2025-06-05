@@ -7,7 +7,7 @@ describe('Cline Profile Initialization Functionality', () => {
 	beforeAll(() => {
 		const clineJsPath = path.join(
 			process.cwd(),
-			'scripts',
+			'src',
 			'profiles',
 			'cline.js'
 		);

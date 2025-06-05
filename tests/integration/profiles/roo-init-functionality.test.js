@@ -7,7 +7,7 @@ describe('Roo Profile Initialization Functionality', () => {
 
 	beforeAll(() => {
 		// Read the roo.js profile file content once for all tests
-		const rooJsPath = path.join(process.cwd(), 'scripts', 'profiles', 'roo.js');
+		const rooJsPath = path.join(process.cwd(), 'src', 'profiles', 'roo.js');
 		rooProfileContent = fs.readFileSync(rooJsPath, 'utf8');
 	});
 
@@ -32,7 +32,7 @@ describe('Roo Profile Initialization Functionality', () => {
 
 		// Check for import of ROO_MODES from profiles.js instead of local definition
 		expect(rooProfileContent).toContain(
-			"import { ROO_MODES } from '../../src/constants/profiles.js';"
+			"import { ROO_MODES } from '../constants/profiles.js';"
 		);
 	});
 

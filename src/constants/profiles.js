@@ -21,8 +21,8 @@
  *
  * To add a new rule profile:
  * 1. Add the profile name to this array
- * 2. Create a profile file in scripts/profiles/{profile}.js
- * 3. Export it as {profile}Profile in scripts/profiles/index.js
+ * 2. Create a profile file in src/profiles/{profile}.js
+ * 3. Export it as {profile}Profile in src/profiles/index.js
  */
 export const RULE_PROFILES = [
 	'claude',

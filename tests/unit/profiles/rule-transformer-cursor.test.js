@@ -11,7 +11,7 @@ jest.mock('fs', () => ({
 // Import modules after mocking
 import fs from 'fs';
 import { convertRuleToProfileRule } from '../../../src/utils/rule-transformer.js';
-import { cursorProfile } from '../../../scripts/profiles/cursor.js';
+import { cursorProfile } from '../../../src/profiles/cursor.js';
 
 describe('Cursor Rule Transformer', () => {
 	// Set up spies on the mocked modules

@@ -20,7 +20,7 @@ import {
 import { RULE_PROFILES } from '../constants/profiles.js';
 
 // --- Profile Imports ---
-import * as profilesModule from '../../scripts/profiles/index.js';
+import * as profilesModule from '../profiles/index.js';
 
 export function isValidProfile(profile) {
 	return RULE_PROFILES.includes(profile);

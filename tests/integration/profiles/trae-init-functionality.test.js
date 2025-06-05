@@ -7,7 +7,7 @@ describe('Trae Profile Initialization Functionality', () => {
 	beforeAll(() => {
 		const traeJsPath = path.join(
 			process.cwd(),
-			'scripts',
+			'src',
 			'profiles',
 			'trae.js'
 		);
