@@ -14,7 +14,7 @@ import { log } from '../../scripts/modules/utils.js';
 import {
 	setupMCPConfiguration,
 	removeTaskMasterMCPConfiguration
-} from './mcp-config-setup.js';
+} from './create-mcp-config.js';
 
 // Import profile constants (single source of truth)
 import { RULE_PROFILES } from '../constants/profiles.js';

@@ -6,7 +6,7 @@ import {
 	removeProfileRules,
 	getRulesProfile
 } from '../../../src/utils/rule-transformer.js';
-import { removeTaskMasterMCPConfiguration } from '../../../src/utils/mcp-config-setup.js';
+import { removeTaskMasterMCPConfiguration } from '../../../src/utils/create-mcp-config.js';
 
 // Mock logger
 const mockLog = {
