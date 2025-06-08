@@ -547,11 +547,22 @@ function isApiKeySet(providerName, session = null, projectRoot = null) {
  * @returns {boolean} True if the key exists and is not a placeholder, false otherwise.
  */
 function getMcpApiKeyStatus(providerName, projectRoot = null) {
-	const mcpConfigPath = path.join(
-		findProjectRoot() || '.',
-		'.cursor',
-		'mcp.json'
-	);
+	// 1. 恢复rootDir检查和警告
+	const rootDir = projectRoot || findProjectRoot();
+	if (!rootDir) {
+		console.warn(
+			chalk.yellow('Warning: Could not find project root to check mcp.json.')
+		);
+		return false; // Cannot check without root
+	}
+	const mcpConfigPath = path.join(rootDir, '.cursor', 'mcp.json');
+
+	// 2. 文件存在性检查，保留注释warn
+	if (!fs.existsSync(mcpConfigPath)) {
+		// console.warn(chalk.yellow('Warning: .cursor/mcp.json not found.'));
+		return false; // File doesn't exist
+	}
+
 	try {
 		const mcpConfigRaw = fs.readFileSync(mcpConfigPath, 'utf-8');
 		const mcpConfig = JSON.parse(mcpConfigRaw);
