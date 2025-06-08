@@ -526,23 +526,17 @@ function isApiKeySet(providerName, session = null, projectRoot = null) {
 		bedrock: 'AWS_ACCESS_KEY_ID' // Bedrock uses AWS credentials
 		// Add other providers as needed
 	};
-
-	const providerKey = providerName?.toLowerCase();
-	if (!providerKey || !keyMap[providerKey]) {
-		log('warn', `Unknown provider name: ${providerName} in isApiKeySet check.`);
-		return false;
+	let envVarName = keyMap[providerName?.toLowerCase()];
+	if (!envVarName) {
+		envVarName = `${providerName?.toUpperCase()}_API_KEY`;
 	}
-
-	const envVarName = keyMap[providerKey];
 	const apiKeyValue = resolveEnvVariable(envVarName, session, projectRoot);
-
-	// Check if the key exists, is not empty, and is not a placeholder
 	return (
 		apiKeyValue &&
 		apiKeyValue.trim() !== '' &&
-		!/YOUR_.*_API_KEY_HERE/.test(apiKeyValue) && // General placeholder check
+		!/YOUR_.*_API_KEY_HERE/.test(apiKeyValue) &&
 		!apiKeyValue.includes('KEY_HERE')
-	); // Another common placeholder pattern
+	);
 }
 
 /**
@@ -553,28 +547,17 @@ function isApiKeySet(providerName, session = null, projectRoot = null) {
  * @returns {boolean} True if the key exists and is not a placeholder, false otherwise.
  */
 function getMcpApiKeyStatus(providerName, projectRoot = null) {
-	const rootDir = projectRoot || findProjectRoot(); // Use existing root finding
-	if (!rootDir) {
-		console.warn(
-			chalk.yellow('Warning: Could not find project root to check mcp.json.')
-		);
-		return false; // Cannot check without root
-	}
-	const mcpConfigPath = path.join(rootDir, '.cursor', 'mcp.json');
-
-	if (!fs.existsSync(mcpConfigPath)) {
-		// console.warn(chalk.yellow('Warning: .cursor/mcp.json not found.'));
-		return false; // File doesn't exist
-	}
-
+	const mcpConfigPath = path.join(
+		findProjectRoot() || '.',
+		'.cursor',
+		'mcp.json'
+	);
 	try {
 		const mcpConfigRaw = fs.readFileSync(mcpConfigPath, 'utf-8');
 		const mcpConfig = JSON.parse(mcpConfigRaw);
-
-		const mcpEnv = mcpConfig?.mcpServers?.['taskmaster-ai']?.env;
+		const mcpEnv = mcpConfig?.mcpServers?.['task-master-ai']?.env;
 		if (!mcpEnv) {
-			// console.warn(chalk.yellow('Warning: Could not find taskmaster-ai env in mcp.json.'));
-			return false; // Structure missing
+			return false;
 		}
 
 		let apiKeyToCheck = null;
@@ -782,9 +765,15 @@ function getAllProviders() {
 
 function getBaseUrlForRole(role, explicitRoot = null) {
 	const roleConfig = getModelConfigForRole(role, explicitRoot);
-	return roleConfig && typeof roleConfig.baseURL === 'string'
-		? roleConfig.baseURL
-		: undefined;
+	if (roleConfig && typeof roleConfig.baseURL === 'string') {
+		return roleConfig.baseURL;
+	}
+	const provider = roleConfig?.provider;
+	if (provider) {
+		const envVarName = `${provider.toUpperCase()}_BASE_URL`;
+		return resolveEnvVariable(envVarName, null, explicitRoot);
+	}
+	return undefined;
 }
 
 export {
