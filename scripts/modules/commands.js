@@ -2772,40 +2772,43 @@ Examples:
 
 	// Add/remove profile rules command
 	programInstance
-		.command('rules <action> [profiles...]')
+		.command('rules [action] [profiles...]')
 		.description(
-			`Add or remove rules for one or more profiles. Valid actions: ${Object.values(RULES_ACTIONS).join(', ')}, ${RULES_SETUP_ACTION} (e.g., task-master rules add windsurf roo)`
+			`Add or remove rules for one or more profiles. Valid actions: ${Object.values(RULES_ACTIONS).join(', ')} (e.g., task-master rules ${RULES_ACTIONS.ADD} windsurf roo)`
 		)
 		.option(
 			'-f, --force',
 			'Skip confirmation prompt when removing rules (dangerous)'
 		)
+		.option(
+			`--${RULES_SETUP_ACTION}`,
+			'Run interactive setup to select rule profiles to add'
+		)
+		.addHelpText(
+			'after',
+			`
+		Examples:
+		$ task-master rules ${RULES_ACTIONS.ADD} windsurf roo          # Add Windsurf and Roo rule sets
+		$ task-master rules ${RULES_ACTIONS.REMOVE} windsurf          # Remove Windsurf rule set
+		$ task-master rules --${RULES_SETUP_ACTION}                  # Interactive setup to select rule profiles`
+		)
 		.action(async (action, profiles, options) => {
-			// Validate action - handle setup separately since it's not in the enum
-			if (!isValidRulesAction(action) && action !== RULES_SETUP_ACTION) {
-				console.error(
-					chalk.red(
-						`Error: Invalid action '${action}'. Valid actions are: ${Object.values(RULES_ACTIONS).join(', ')}, ${RULES_SETUP_ACTION}`
-					)
-				);
-				process.exit(1);
-			}
 			const projectDir = process.cwd();
 
 			/**
-			 * 'task-master rules setup' action:
+			 * 'task-master rules --setup' action:
 			 *
 			 * Launches an interactive prompt to select which rule profiles to add to the current project.
 			 * This does NOT perform project initialization or ask about shell aliases—only rules selection.
 			 *
 			 * Example usage:
-			 *   $ task-master rules setup
+			 *   $ task-master rules --setup
 			 *
 			 * Useful for adding rules after project creation.
 			 *
 			 * The list of profiles is always up-to-date with the available profiles.
 			 */
-			if (action === RULES_SETUP_ACTION) {
+			if (options[RULES_SETUP_ACTION]) {
 				// Run interactive rules setup ONLY (no project init)
 				const selectedRuleProfiles = await runInteractiveProfilesSetup();
 				for (const profile of selectedRuleProfiles) {
@@ -2827,6 +2830,21 @@ Examples:
 					console.log(chalk.green(generateProfileSummary(profile, addResult)));
 				}
 				return;
+			}
+
+			// Validate action for non-setup mode
+			if (!action || !isValidRulesAction(action)) {
+				console.error(
+					chalk.red(
+						`Error: Invalid or missing action '${action || 'none'}'. Valid actions are: ${Object.values(RULES_ACTIONS).join(', ')}`
+					)
+				);
+				console.error(
+					chalk.yellow(
+						`For interactive setup, use: task-master rules --${RULES_SETUP_ACTION}`
+					)
+				);
+				process.exit(1);
 			}
 
 			if (!profiles || profiles.length === 0) {
