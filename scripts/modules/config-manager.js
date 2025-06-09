@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import { fileURLToPath } from 'url';
 import { log, findProjectRoot, resolveEnvVariable } from './utils.js';
 import { LEGACY_CONFIG_FILE } from '../../src/constants/paths.js';
+import { HOSTED_AI_PROVIDERS } from '../../src/constants/ai-providers.js';
 import { findConfigPath } from '../../src/utils/path-utils.js';
 import {
 	VALIDATED_PROVIDERS,
