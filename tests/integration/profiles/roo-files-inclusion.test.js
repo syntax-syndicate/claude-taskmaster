@@ -90,7 +90,7 @@ describe('Roo Files Inclusion in Package', () => {
 		const expectedModes = [
 			'architect',
 			'ask',
-			'boomerang',
+			'orchestrator',
 			'code',
 			'debug',
 			'test'

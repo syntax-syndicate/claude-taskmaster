@@ -43,7 +43,7 @@ export const RULE_PROFILES = [
 export const ROO_MODES = [
 	'architect',
 	'ask',
-	'boomerang',
+	'orchestrator',
 	'code',
 	'debug',
 	'test'

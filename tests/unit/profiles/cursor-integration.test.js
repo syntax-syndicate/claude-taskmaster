@@ -29,11 +29,8 @@ describe('Cursor Integration', () => {
 		// Spy on fs methods
 		jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
 		jest.spyOn(fs, 'readFileSync').mockImplementation((filePath) => {
-			if (filePath.toString().includes('.cursormodes')) {
-				return 'Existing cursormodes content';
-			}
-			if (filePath.toString().includes('-rules')) {
-				return 'Existing mode rules content';
+			if (filePath.toString().includes('mcp.json')) {
+				return JSON.stringify({ mcpServers: {} }, null, 2);
 			}
 			return '{}';
 		});
@@ -58,29 +55,10 @@ describe('Cursor Integration', () => {
 		// Create rules directory
 		fs.mkdirSync(path.join(tempDir, '.cursor', 'rules'), { recursive: true });
 
-		// Create mode-specific rule directories
-		const cursorModes = [
-			'architect',
-			'ask',
-			'boomerang',
-			'code',
-			'debug',
-			'test'
-		];
-		for (const mode of cursorModes) {
-			fs.mkdirSync(path.join(tempDir, '.cursor', `rules-${mode}`), {
-				recursive: true
-			});
-			fs.writeFileSync(
-				path.join(tempDir, '.cursor', `rules-${mode}`, `${mode}-rules`),
-				`Content for ${mode} rules`
-			);
-		}
-
-		// Copy .cursormodes file
+		// Create MCP config file
 		fs.writeFileSync(
-			path.join(tempDir, '.cursormodes'),
-			'Cursormodes file content'
+			path.join(tempDir, '.cursor', 'mcp.json'),
+			JSON.stringify({ mcpServers: {} }, null, 2)
 		);
 	}
 
