@@ -4,7 +4,6 @@ import chalk from 'chalk';
 import { fileURLToPath } from 'url';
 import { log, findProjectRoot, resolveEnvVariable } from './utils.js';
 import { LEGACY_CONFIG_FILE } from '../../src/constants/paths.js';
-import { HOSTED_AI_PROVIDERS } from '../../src/constants/ai-providers.js';
 import { findConfigPath } from '../../src/utils/path-utils.js';
 import {
 	VALIDATED_PROVIDERS,
@@ -510,7 +509,8 @@ function isApiKeySet(providerName, session = null, projectRoot = null) {
 		azure: 'AZURE_OPENAI_API_KEY',
 		openrouter: 'OPENROUTER_API_KEY',
 		xai: 'XAI_API_KEY',
-		vertex: 'GOOGLE_API_KEY' // Vertex uses the same key as Google
+		vertex: 'GOOGLE_API_KEY', // Vertex uses the same key as Google
+		bedrock: 'AWS_ACCESS_KEY_ID' // Bedrock uses AWS credentials
 		// Add other providers as needed
 	};
 
@@ -605,6 +605,10 @@ function getMcpApiKeyStatus(providerName, projectRoot = null) {
 			case 'vertex':
 				apiKeyToCheck = mcpEnv.GOOGLE_API_KEY; // Vertex uses Google API key
 				placeholderValue = 'YOUR_GOOGLE_API_KEY_HERE';
+				break;
+			case 'bedrock':
+				apiKeyToCheck = mcpEnv.AWS_ACCESS_KEY_ID; // Bedrock uses AWS credentials
+				placeholderValue = 'YOUR_AWS_ACCESS_KEY_ID_HERE';
 				break;
 			default:
 				return false; // Unknown provider

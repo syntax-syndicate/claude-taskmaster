@@ -346,19 +346,18 @@ async function runInteractiveSetup(projectRoot) {
 		if (noChangeOption) {
 			systemOptions.push(noChangeOption);
 		}
-		commonPrefix.push(cancelOption);
-		commonPrefix.push(...customProviderOptions);
+		systemOptions.push(cancelOption);
 
 		const systemLength = systemOptions.length;
 
 		if (allowNone) {
 			choices = [
 				...systemOptions,
-				new inquirer.Separator('── Standard Models ──'),
+				new inquirer.Separator('\n── Standard Models ──'),
 				{ name: '⚪ None (disable)', value: null },
 				...roleChoices,
-				new inquirer.Separator('── Custom Providers ──'),
-				...customOptions
+				new inquirer.Separator('\n── Custom Providers ──'),
+				...customProviderOptions
 			];
 			// Adjust default index: System + Sep1 + None (+2)
 			const noneOptionIndex = systemLength + 1;
@@ -369,10 +368,10 @@ async function runInteractiveSetup(projectRoot) {
 		} else {
 			choices = [
 				...systemOptions,
-				new inquirer.Separator('── Standard Models ──'),
+				new inquirer.Separator('\n── Standard Models ──'),
 				...roleChoices,
-				new inquirer.Separator('── Custom Providers ──'),
-				...customOptions
+				new inquirer.Separator('\n── Custom Providers ──'),
+				...customProviderOptions
 			];
 			// Adjust default index: System + Sep (+1)
 			defaultIndex =
@@ -463,130 +462,6 @@ async function runInteractiveSetup(projectRoot) {
 	const coreOptionsSetup = { projectRoot }; // Pass root for setup actions
 
 	// Helper to handle setting a model (including custom)
-	async function handleCustomProviderSelection(provider, role) {
-		const providerConfigs = {
-			bedrock: {
-				prompt: `Enter the custom Bedrock Model ID for the ${role} role (e.g., anthropic.claude-3-sonnet-20240229-v1:0):`,
-				envVars: ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY'],
-				successMessage:
-					'Custom Bedrock model will be used. No validation performed.'
-			},
-			azure: {
-				prompt: `Enter the custom Azure OpenAI deployment name for the ${role} role:`,
-				envVars: ['AZURE_OPENAI_API_KEY', 'AZURE_OPENAI_ENDPOINT'],
-				successMessage:
-					'Custom Azure model will be used. No validation performed.'
-			},
-			vertex: {
-				prompt: `Enter the custom Vertex AI model ID for the ${role} role (e.g., gemini-pro):`,
-				envVars: ['GOOGLE_APPLICATION_CREDENTIALS'],
-				successMessage:
-					'Custom Vertex model will be used. No validation performed.'
-			},
-			openrouter: {
-				prompt: `Enter the custom OpenRouter Model ID for the ${role} role:`,
-				envVars: [],
-				successMessage: '',
-				validate: true
-			},
-			ollama: {
-				prompt: `Enter the custom Ollama Model ID for the ${role} role:`,
-				envVars: [],
-				successMessage: '',
-				validate: true
-			}
-		};
-
-		const config = providerConfigs[provider];
-		if (!config) {
-			return { success: false, error: `Unknown provider: ${provider}` };
-		}
-
-		const { customId } = await inquirer.prompt([
-			{
-				type: 'input',
-				name: 'customId',
-				message: config.prompt
-			}
-		]);
-
-		if (!customId) {
-			console.log(chalk.yellow('No custom ID entered. Skipping role.'));
-			return { success: false };
-		}
-
-		// Check required environment variables
-		if (config.envVars.length > 0) {
-			const missingVars = config.envVars.filter(
-				(envVar) => !process.env[envVar]
-			);
-			if (missingVars.length > 0) {
-				console.error(
-					chalk.red(
-						`Error: Missing environment variables: ${missingVars.join(', ')}. Please set them before using custom ${provider} models.`
-					)
-				);
-				return { success: false };
-			}
-		}
-
-		// Handle validation for specific providers
-		if (provider === 'openrouter' && config.validate) {
-			const openRouterModels = await fetchOpenRouterModelsCLI();
-			if (
-				!openRouterModels ||
-				!openRouterModels.some((m) => m.id === customId)
-			) {
-				console.error(
-					chalk.red(
-						`Error: Model ID "${customId}" not found in the live OpenRouter model list. Please check the ID.`
-					)
-				);
-				return { success: false };
-			}
-		} else if (provider === 'ollama' && config.validate) {
-			const ollamaBaseURL = getBaseUrlForRole(role, projectRoot);
-			const ollamaModels = await fetchOllamaModelsCLI(ollamaBaseURL);
-			if (ollamaModels === null) {
-				console.error(
-					chalk.red(
-						`Error: Unable to connect to Ollama server at ${ollamaBaseURL}. Please ensure Ollama is running and try again.`
-					)
-				);
-				return { success: false };
-			} else if (!ollamaModels.some((m) => m.model === customId)) {
-				console.error(
-					chalk.red(
-						`Error: Model ID "${customId}" not found in the Ollama instance. Please verify the model is pulled and available.`
-					)
-				);
-				console.log(
-					chalk.yellow(
-						`You can check available models with: curl ${ollamaBaseURL}/tags`
-					)
-				);
-				return { success: false };
-			}
-		}
-
-		if (config.successMessage) {
-			console.log(
-				chalk.blue(
-					config.successMessage.replace(
-						'Custom Bedrock',
-						`Custom ${provider.charAt(0).toUpperCase() + provider.slice(1)}`
-					)
-				)
-			);
-		}
-
-		return {
-			success: true,
-			modelId: customId,
-			provider: provider
-		};
-	}
-
 	async function handleSetModel(role, selectedValue, currentModelId) {
 		if (selectedValue === '__CANCEL__') {
 			console.log(
@@ -607,50 +482,180 @@ async function runInteractiveSetup(projectRoot) {
 		let isCustomSelection = false;
 
 		if (selectedValue === '__CUSTOM_OPENROUTER__') {
-			const result = await handleCustomProviderSelection('openrouter', role);
-			if (!result.success) {
-				setupSuccess = false;
-				return true;
-			}
 			isCustomSelection = true;
-			modelIdToSet = result.modelId;
-			providerHint = result.provider;
+			const { customId } = await inquirer.prompt([
+				{
+					type: 'input',
+					name: 'customId',
+					message: `Enter the custom OpenRouter Model ID for the ${role} role:`
+				}
+			]);
+			if (!customId) {
+				console.log(chalk.yellow('No custom ID entered. Skipping role.'));
+				return true; // Continue setup, but don't set this role
+			}
+			modelIdToSet = customId;
+			providerHint = CUSTOM_PROVIDERS.OPENROUTER;
+			// Validate against live OpenRouter list
+			const openRouterModels = await fetchOpenRouterModelsCLI();
+			if (
+				!openRouterModels ||
+				!openRouterModels.some((m) => m.id === modelIdToSet)
+			) {
+				console.error(
+					chalk.red(
+						`Error: Model ID "${modelIdToSet}" not found in the live OpenRouter model list. Please check the ID.`
+					)
+				);
+				setupSuccess = false;
+				return true; // Continue setup, but mark as failed
+			}
 		} else if (selectedValue === '__CUSTOM_OLLAMA__') {
-			const result = await handleCustomProviderSelection('ollama', role);
-			if (!result.success) {
-				setupSuccess = false;
-				return true;
-			}
 			isCustomSelection = true;
-			modelIdToSet = result.modelId;
-			providerHint = result.provider;
+			const { customId } = await inquirer.prompt([
+				{
+					type: 'input',
+					name: 'customId',
+					message: `Enter the custom Ollama Model ID for the ${role} role:`
+				}
+			]);
+			if (!customId) {
+				console.log(chalk.yellow('No custom ID entered. Skipping role.'));
+				return true; // Continue setup, but don't set this role
+			}
+			modelIdToSet = customId;
+			providerHint = CUSTOM_PROVIDERS.OLLAMA;
+			// Get the Ollama base URL from config for this role
+			const ollamaBaseURL = getBaseUrlForRole(role, projectRoot);
+			// Validate against live Ollama list
+			const ollamaModels = await fetchOllamaModelsCLI(ollamaBaseURL);
+			if (ollamaModels === null) {
+				console.error(
+					chalk.red(
+						`Error: Unable to connect to Ollama server at ${ollamaBaseURL}. Please ensure Ollama is running and try again.`
+					)
+				);
+				setupSuccess = false;
+				return true; // Continue setup, but mark as failed
+			} else if (!ollamaModels.some((m) => m.model === modelIdToSet)) {
+				console.error(
+					chalk.red(
+						`Error: Model ID "${modelIdToSet}" not found in the Ollama instance. Please verify the model is pulled and available.`
+					)
+				);
+				console.log(
+					chalk.yellow(
+						`You can check available models with: curl ${ollamaBaseURL}/tags`
+					)
+				);
+				setupSuccess = false;
+				return true; // Continue setup, but mark as failed
+			}
 		} else if (selectedValue === '__CUSTOM_BEDROCK__') {
-			const result = await handleCustomProviderSelection('bedrock', role);
-			if (!result.success) {
-				setupSuccess = false;
-				return true;
-			}
 			isCustomSelection = true;
-			modelIdToSet = result.modelId;
-			providerHint = result.provider;
+			const { customId } = await inquirer.prompt([
+				{
+					type: 'input',
+					name: 'customId',
+					message: `Enter the custom Bedrock Model ID for the ${role} role (e.g., anthropic.claude-3-sonnet-20240229-v1:0):`
+				}
+			]);
+			if (!customId) {
+				console.log(chalk.yellow('No custom ID entered. Skipping role.'));
+				return true; // Continue setup, but don't set this role
+			}
+			modelIdToSet = customId;
+			providerHint = CUSTOM_PROVIDERS.BEDROCK;
+
+			// Check if AWS environment variables exist
+			if (
+				!process.env.AWS_ACCESS_KEY_ID ||
+				!process.env.AWS_SECRET_ACCESS_KEY
+			) {
+				console.error(
+					chalk.red(
+						'Error: AWS_ACCESS_KEY_ID and/or AWS_SECRET_ACCESS_KEY environment variables are missing. Please set them before using custom Bedrock models.'
+					)
+				);
+				setupSuccess = false;
+				return true; // Continue setup, but mark as failed
+			}
+
+			console.log(
+				chalk.blue(
+					`Custom Bedrock model "${modelIdToSet}" will be used. No validation performed.`
+				)
+			);
 		} else if (selectedValue === '__CUSTOM_AZURE__') {
-			const result = await handleCustomProviderSelection('azure', role);
-			if (!result.success) {
-				setupSuccess = false;
-				return true;
-			}
 			isCustomSelection = true;
-			modelIdToSet = result.modelId;
-			providerHint = result.provider;
+			const { customId } = await inquirer.prompt([
+				{
+					type: 'input',
+					name: 'customId',
+					message: `Enter the custom Azure OpenAI Model ID for the ${role} role (e.g., gpt-4o):`
+				}
+			]);
+			if (!customId) {
+				console.log(chalk.yellow('No custom ID entered. Skipping role.'));
+				return true; // Continue setup, but don't set this role
+			}
+			modelIdToSet = customId;
+			providerHint = CUSTOM_PROVIDERS.AZURE;
+
+			// Check if Azure environment variables exist
+			if (
+				!process.env.AZURE_OPENAI_API_KEY ||
+				!process.env.AZURE_OPENAI_ENDPOINT
+			) {
+				console.error(
+					chalk.red(
+						'Error: AZURE_OPENAI_API_KEY and/or AZURE_OPENAI_ENDPOINT environment variables are missing. Please set them before using custom Azure models.'
+					)
+				);
+				setupSuccess = false;
+				return true; // Continue setup, but mark as failed
+			}
+
+			console.log(
+				chalk.blue(
+					`Custom Azure OpenAI model "${modelIdToSet}" will be used. No validation performed.`
+				)
+			);
 		} else if (selectedValue === '__CUSTOM_VERTEX__') {
-			const result = await handleCustomProviderSelection('vertex', role);
-			if (!result.success) {
-				setupSuccess = false;
-				return true;
-			}
 			isCustomSelection = true;
-			modelIdToSet = result.modelId;
-			providerHint = result.provider;
+			const { customId } = await inquirer.prompt([
+				{
+					type: 'input',
+					name: 'customId',
+					message: `Enter the custom Vertex AI Model ID for the ${role} role (e.g., gemini-1.5-pro-002):`
+				}
+			]);
+			if (!customId) {
+				console.log(chalk.yellow('No custom ID entered. Skipping role.'));
+				return true; // Continue setup, but don't set this role
+			}
+			modelIdToSet = customId;
+			providerHint = CUSTOM_PROVIDERS.VERTEX;
+
+			// Check if Google/Vertex environment variables exist
+			if (
+				!process.env.GOOGLE_API_KEY &&
+				!process.env.GOOGLE_APPLICATION_CREDENTIALS
+			) {
+				console.error(
+					chalk.red(
+						'Error: Either GOOGLE_API_KEY or GOOGLE_APPLICATION_CREDENTIALS environment variable is required. Please set one before using custom Vertex models.'
+					)
+				);
+				setupSuccess = false;
+				return true; // Continue setup, but mark as failed
+			}
+
+			console.log(
+				chalk.blue(
+					`Custom Vertex AI model "${modelIdToSet}" will be used. No validation performed.`
+				)
+			);
 		} else if (
 			selectedValue &&
 			typeof selectedValue === 'object' &&

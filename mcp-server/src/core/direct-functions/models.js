@@ -13,9 +13,19 @@ import {
 	disableSilentMode
 } from '../../../../scripts/modules/utils.js';
 import { createLogWrapper } from '../../tools/utils.js';
+import { CUSTOM_PROVIDERS_ARRAY } from '../../../../src/constants/providers.js';
 
 // Define supported roles for model setting
 const MODEL_ROLES = ['main', 'research', 'fallback'];
+
+/**
+ * Determine provider hint from custom provider flags
+ * @param {Object} args - Arguments containing provider flags
+ * @returns {string|undefined} Provider hint or undefined if no custom provider flag is set
+ */
+function getProviderHint(args) {
+	return CUSTOM_PROVIDERS_ARRAY.find((provider) => args[provider]);
+}
 
 /**
  * Handle setting models for different roles
@@ -28,13 +38,7 @@ async function handleModelSetting(args, context) {
 		const roleKey = `set${role.charAt(0).toUpperCase() + role.slice(1)}`; // setMain, setResearch, setFallback
 
 		if (args[roleKey]) {
-			// Determine provider hint from custom provider flags
-			let providerHint = undefined;
-			if (args.openrouter) providerHint = 'openrouter';
-			else if (args.ollama) providerHint = 'ollama';
-			else if (args.bedrock) providerHint = 'bedrock';
-			else if (args.azure) providerHint = 'azure';
-			else if (args.vertex) providerHint = 'vertex';
+			const providerHint = getProviderHint(args);
 
 			return await setModel(role, args[roleKey], {
 				...context,
@@ -63,13 +67,9 @@ export async function modelsDirect(args, log, context = {}) {
 	log.info(`Using project root: ${projectRoot}`);
 
 	// Validate flags: only one custom provider flag can be used simultaneously
-	const customProviderFlags = [
-		args.openrouter,
-		args.ollama,
-		args.bedrock,
-		args.azure,
-		args.vertex
-	].filter(Boolean);
+	const customProviderFlags = CUSTOM_PROVIDERS_ARRAY.filter(
+		(provider) => args[provider]
+	);
 
 	if (customProviderFlags.length > 1) {
 		log.error(
