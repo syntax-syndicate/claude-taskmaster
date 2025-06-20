@@ -2,4 +2,4 @@
 "task-master-ai": patch
 ---
 
-openai compatible api support
+Improve mcp keys check in cursor
