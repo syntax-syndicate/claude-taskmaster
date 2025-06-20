@@ -526,17 +526,23 @@ function isApiKeySet(providerName, session = null, projectRoot = null) {
 		bedrock: 'AWS_ACCESS_KEY_ID' // Bedrock uses AWS credentials
 		// Add other providers as needed
 	};
-	let envVarName = keyMap[providerName?.toLowerCase()];
-	if (!envVarName) {
-		envVarName = `${providerName?.toUpperCase()}_API_KEY`;
+
+	const providerKey = providerName?.toLowerCase();
+	if (!providerKey || !keyMap[providerKey]) {
+		log('warn', `Unknown provider name: ${providerName} in isApiKeySet check.`);
+		return false;
 	}
+
+	const envVarName = keyMap[providerKey];
 	const apiKeyValue = resolveEnvVariable(envVarName, session, projectRoot);
+
+	// Check if the key exists, is not empty, and is not a placeholder
 	return (
 		apiKeyValue &&
 		apiKeyValue.trim() !== '' &&
-		!/YOUR_.*_API_KEY_HERE/.test(apiKeyValue) &&
+		!/YOUR_.*_API_KEY_HERE/.test(apiKeyValue) && // General placeholder check
 		!apiKeyValue.includes('KEY_HERE')
-	);
+	); // Another common placeholder pattern
 }
 
 /**
@@ -547,8 +553,7 @@ function isApiKeySet(providerName, session = null, projectRoot = null) {
  * @returns {boolean} True if the key exists and is not a placeholder, false otherwise.
  */
 function getMcpApiKeyStatus(providerName, projectRoot = null) {
-	// 1. Restore rootDir check and warning
-	const rootDir = projectRoot || findProjectRoot();
+	const rootDir = projectRoot || findProjectRoot(); // Use existing root finding
 	if (!rootDir) {
 		console.warn(
 			chalk.yellow('Warning: Could not find project root to check mcp.json.')
@@ -557,7 +562,6 @@ function getMcpApiKeyStatus(providerName, projectRoot = null) {
 	}
 	const mcpConfigPath = path.join(rootDir, '.cursor', 'mcp.json');
 
-	// 2. File existence check, keep the commented warn
 	if (!fs.existsSync(mcpConfigPath)) {
 		// console.warn(chalk.yellow('Warning: .cursor/mcp.json not found.'));
 		return false; // File doesn't exist
@@ -566,7 +570,10 @@ function getMcpApiKeyStatus(providerName, projectRoot = null) {
 	try {
 		const mcpConfigRaw = fs.readFileSync(mcpConfigPath, 'utf-8');
 		const mcpConfig = JSON.parse(mcpConfigRaw);
-		const mcpEnv = mcpConfig?.mcpServers?.['task-master-ai']?.env;
+
+		const mcpEnv =
+			mcpConfig?.mcpServers?.['task-master-ai']?.env ||
+			mcpConfig?.mcpServers?.['taskmaster-ai']?.env;
 		if (!mcpEnv) {
 			return false;
 		}
