@@ -24,7 +24,7 @@ export class BedrockAIProvider extends BaseAIProvider {
 			const credentialProvider = fromNodeProviderChain();
 
 			return createAmazonBedrock({
-				credentialProvider,
+				credentialProvider
 			});
 		} catch (error) {
 			this.handleError('client initialization', error);
