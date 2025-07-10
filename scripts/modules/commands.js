@@ -1016,7 +1016,7 @@ function registerCommands(programInstance) {
 					`Updating tasks from ID >= ${fromId} with prompt: "${prompt}"`
 				)
 			);
-			console.log(chalk.blue(`Tasks file: ${tasksPath}`));
+			console.log(chalk.blue(`Tasks file: ${taskMaster.getTasksPath()}`));
 
 			if (useResearch) {
 				console.log(
@@ -1119,6 +1119,7 @@ function registerCommands(programInstance) {
 				const useResearch = options.research || false;
 
 				// Validate tasks file exists
+				const tasksPath = taskMaster.getTasksPath();
 				if (!fs.existsSync(tasksPath)) {
 					console.error(
 						chalk.red(`Error: Tasks file not found at path: ${tasksPath}`)
@@ -1291,6 +1292,7 @@ function registerCommands(programInstance) {
 				const useResearch = options.research || false;
 
 				// Validate tasks file exists
+				const tasksPath = taskMaster.getTasksPath();
 				if (!fs.existsSync(tasksPath)) {
 					console.error(
 						chalk.red(`Error: Tasks file not found at path: ${tasksPath}`)
@@ -4240,6 +4242,7 @@ Examples:
 				const tasksPath = taskMaster.getTasksPath();
 
 				// Validate tasks file exists
+				const tasksPath = taskMaster.getTasksPath();
 				if (!fs.existsSync(tasksPath)) {
 					console.error(
 						chalk.red(`Error: Tasks file not found at path: ${tasksPath}`)
@@ -4380,6 +4383,7 @@ Examples:
 				const tasksPath = taskMaster.getTasksPath();
 
 				// Validate tasks file exists
+				const tasksPath = taskMaster.getTasksPath();
 				if (!fs.existsSync(tasksPath)) {
 					console.error(
 						chalk.red(`Error: Tasks file not found at path: ${tasksPath}`)
@@ -4435,6 +4439,7 @@ Examples:
 				const tasksPath = taskMaster.getTasksPath();
 
 				// Validate tasks file exists
+				const tasksPath = taskMaster.getTasksPath();
 				if (!fs.existsSync(tasksPath)) {
 					console.error(
 						chalk.red(`Error: Tasks file not found at path: ${tasksPath}`)
@@ -4485,6 +4490,7 @@ Examples:
 				const tasksPath = taskMaster.getTasksPath();
 
 				// Validate tasks file exists
+				const tasksPath = taskMaster.getTasksPath();
 				if (!fs.existsSync(tasksPath)) {
 					console.error(
 						chalk.red(`Error: Tasks file not found at path: ${tasksPath}`)
@@ -4531,6 +4537,7 @@ Examples:
 				const tasksPath = taskMaster.getTasksPath();
 
 				// Validate tasks file exists
+				const tasksPath = taskMaster.getTasksPath();
 				if (!fs.existsSync(tasksPath)) {
 					console.error(
 						chalk.red(`Error: Tasks file not found at path: ${tasksPath}`)
@@ -4583,6 +4590,7 @@ Examples:
 				const tasksPath = taskMaster.getTasksPath();
 
 				// Validate tasks file exists
+				const tasksPath = taskMaster.getTasksPath();
 				if (!fs.existsSync(tasksPath)) {
 					console.error(
 						chalk.red(`Error: Tasks file not found at path: ${tasksPath}`)
