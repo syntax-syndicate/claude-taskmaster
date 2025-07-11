@@ -4,7 +4,10 @@ import chalk from 'chalk';
 import { z } from 'zod';
 import { fileURLToPath } from 'url';
 import { log, findProjectRoot, resolveEnvVariable, isEmpty } from './utils.js';
-import { LEGACY_CONFIG_FILE, TASKMASTER_DIR } from '../../src/constants/paths.js';
+import {
+	LEGACY_CONFIG_FILE,
+	TASKMASTER_DIR
+} from '../../src/constants/paths.js';
 import { findConfigPath } from '../../src/utils/path-utils.js';
 import {
 	VALIDATED_PROVIDERS,
@@ -111,11 +114,12 @@ function _loadAndValidateConfig(explicitRoot = null) {
 	let configPath = null;
 	let config = { ...defaults }; // Start with a deep copy of defaults
 	let configExists = false;
-	
+
 	// During initialization (no project markers), skip config file search entirely
-	const hasProjectMarkers = fs.existsSync(path.join(rootToUse, TASKMASTER_DIR)) || 
-	                         fs.existsSync(path.join(rootToUse, LEGACY_CONFIG_FILE));
-	
+	const hasProjectMarkers =
+		fs.existsSync(path.join(rootToUse, TASKMASTER_DIR)) ||
+		fs.existsSync(path.join(rootToUse, LEGACY_CONFIG_FILE));
+
 	if (hasProjectMarkers) {
 		// Only try to find config if we have project markers
 		// This prevents the repeated warnings during init
@@ -213,9 +217,13 @@ function _loadAndValidateConfig(explicitRoot = null) {
 		} else {
 			// Don't warn about missing config during initialization
 			// Only warn if this looks like an existing project (has .taskmaster dir or legacy config marker)
-			const hasTaskmasterDir = fs.existsSync(path.join(rootToUse, TASKMASTER_DIR));
-			const hasLegacyMarker = fs.existsSync(path.join(rootToUse, LEGACY_CONFIG_FILE));
-			
+			const hasTaskmasterDir = fs.existsSync(
+				path.join(rootToUse, TASKMASTER_DIR)
+			);
+			const hasLegacyMarker = fs.existsSync(
+				path.join(rootToUse, LEGACY_CONFIG_FILE)
+			);
+
 			if (hasTaskmasterDir || hasLegacyMarker) {
 				console.warn(
 					chalk.yellow(

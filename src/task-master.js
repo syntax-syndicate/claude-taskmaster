@@ -221,9 +221,12 @@ export function initTaskMaster(overrides = {}) {
 	// Always set default paths first
 	// These can be overridden below if needed
 	paths.configPath = path.join(paths.projectRoot, TASKMASTER_CONFIG_FILE);
-	paths.statePath = path.join(paths.taskMasterDir || path.join(paths.projectRoot, TASKMASTER_DIR), 'state.json');
+	paths.statePath = path.join(
+		paths.taskMasterDir || path.join(paths.projectRoot, TASKMASTER_DIR),
+		'state.json'
+	);
 	paths.tasksPath = path.join(paths.projectRoot, TASKMASTER_TASKS_FILE);
-	
+
 	// Handle overrides - only validate/resolve if explicitly provided
 	if ('configPath' in overrides) {
 		paths.configPath = resolvePath(
