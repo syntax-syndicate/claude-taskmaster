@@ -265,13 +265,13 @@ describe('analyzeTaskComplexity', () => {
 				_rawTaggedData: sampleTasks
 			};
 		});
-		
+
 		// Mock findTaskById to return the expected structure
 		findTaskById.mockImplementation((tasks, taskId) => {
-			const task = tasks?.find(t => t.id === parseInt(taskId));
+			const task = tasks?.find((t) => t.id === parseInt(taskId));
 			return { task: task || null, originalSubtaskCount: null };
 		});
-		
+
 		generateTextService.mockResolvedValue(sampleApiResponse);
 	});
 

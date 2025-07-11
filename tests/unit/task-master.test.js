@@ -258,9 +258,15 @@ describe('initTaskMaster', () => {
 			const taskMaster = initTaskMaster({});
 
 			// Assert - Should return absolute paths with default locations
-			expect(taskMaster.getTasksPath()).toBe(path.join(tempDir, TASKMASTER_TASKS_FILE));
-			expect(taskMaster.getConfigPath()).toBe(path.join(tempDir, TASKMASTER_CONFIG_FILE));
-			expect(taskMaster.getStatePath()).toBe(path.join(tempDir, TASKMASTER_DIR, 'state.json'));
+			expect(taskMaster.getTasksPath()).toBe(
+				path.join(tempDir, TASKMASTER_TASKS_FILE)
+			);
+			expect(taskMaster.getConfigPath()).toBe(
+				path.join(tempDir, TASKMASTER_CONFIG_FILE)
+			);
+			expect(taskMaster.getStatePath()).toBe(
+				path.join(tempDir, TASKMASTER_DIR, 'state.json')
+			);
 		});
 	});
 
@@ -416,9 +422,15 @@ describe('initTaskMaster', () => {
 			expect(taskMaster.getProjectRoot()).toBe(tempDir);
 			expect(taskMaster.getTaskMasterDir()).toBe(taskMasterDir);
 			// Default paths are always set for tasks, config, and state
-			expect(taskMaster.getTasksPath()).toBe(path.join(tempDir, TASKMASTER_TASKS_FILE));
-			expect(taskMaster.getConfigPath()).toBe(path.join(tempDir, TASKMASTER_CONFIG_FILE));
-			expect(taskMaster.getStatePath()).toBe(path.join(taskMasterDir, 'state.json'));
+			expect(taskMaster.getTasksPath()).toBe(
+				path.join(tempDir, TASKMASTER_TASKS_FILE)
+			);
+			expect(taskMaster.getConfigPath()).toBe(
+				path.join(tempDir, TASKMASTER_CONFIG_FILE)
+			);
+			expect(taskMaster.getStatePath()).toBe(
+				path.join(taskMasterDir, 'state.json')
+			);
 			// PRD and complexity report paths are undefined when not provided
 			expect(taskMaster.getPrdPath()).toBeUndefined();
 			expect(taskMaster.getComplexityReportPath()).toBeUndefined();
