@@ -466,7 +466,10 @@ async function expandTask(
 		if (taskAnalysis?.expansionPrompt) {
 			if (typeof taskAnalysis.expansionPrompt === 'string') {
 				expansionPromptText = taskAnalysis.expansionPrompt;
-			} else if (typeof taskAnalysis.expansionPrompt === 'object' && taskAnalysis.expansionPrompt.text) {
+			} else if (
+				typeof taskAnalysis.expansionPrompt === 'object' &&
+				taskAnalysis.expansionPrompt.text
+			) {
 				expansionPromptText = taskAnalysis.expansionPrompt.text;
 			}
 		}
