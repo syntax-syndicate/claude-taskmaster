@@ -4,31 +4,7 @@ early_access: false
 enable_free_tier: true
 reviews:
   profile: assertive
-  request_changes_workflow: false
-  high_level_summary: true
-  high_level_summary_placeholder: '@coderabbitai summary'
-  high_level_summary_in_walkthrough: false
-  auto_title_placeholder: '@coderabbitai'
-  auto_title_instructions: ''
-  review_status: true
-  commit_status: true
-  fail_commit_status: false
-  collapse_walkthrough: false
-  changed_files_summary: true
-  sequence_diagrams: true
-  assess_linked_issues: true
-  related_issues: true
-  related_prs: true
-  suggested_labels: true
-  auto_apply_labels: false
-  suggested_reviewers: true
-  auto_assign_reviewers: false
   poem: false
-  labeling_instructions: []
-  path_filters: []
-  path_instructions: []
-  abort_on_close: true
-  disable_cache: false
   auto_review:
     enabled: true
     auto_incremental_review: true
@@ -46,14 +22,7 @@ reviews:
       enabled: true
     unit_tests:
       enabled: true
-  tools:
-    languagetool:
-      enabled_rules: []
-      disabled_rules: []
-      enabled_categories: []
-      disabled_categories: []
-      enabled_only: false
-      level: default
+  tools: {}
   pre_merge_checks: {}
 chat:
   auto_reply: true
