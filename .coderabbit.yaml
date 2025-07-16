@@ -47,13 +47,6 @@ reviews:
     unit_tests:
       enabled: true
   tools:
-    ast-grep:
-      rule_dirs: []
-      util_dirs: []
-      essential_rules: true
-      packages: []
-    github-checks:
-      timeout_ms: 90000
     languagetool:
       enabled_rules: []
       disabled_rules: []
